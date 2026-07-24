@@ -1,0 +1,425 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getRegistrationWithEventById } from '../../lib/db';
+
+const { regId } = Astro.params;
+const id = parseInt(regId || '', 10);
+
+if (isNaN(id)) {
+  return Astro.redirect('/');
+}
+
+const registration = await getRegistrationWithEventById(id);
+
+if (!registration) {
+  return Astro.redirect('/');
+}
+
+// Redirect jika belum lunas
+if (registration.status === 'PENDING') {
+  return Astro.redirect(`/checkout/${registration.id}`);
+}
+
+const formatDate = (dateStr: string) => {
+  const options: Intl.DateTimeFormatOptions = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+  return new Date(dateStr).toLocaleDateString('id-ID', options);
+};
+
+const formatPrice = (price: number) => {
+  if (price === 0) return 'Gratis';
+  return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(price);
+};
+
+// QR Code Tiket unik untuk validasi masuk panitia
+const ticketCode = `TICKET:FUNRUN-REG-${registration.id}:EMAIL-${registration.email}`;
+const qrCodeUrl = `https://quickchart.io/qr?size=150&text=${encodeURIComponent(ticketCode)}&ecLevel=M`;
+
+let primaryName = registration.name;
+let participants = [];
+
+try {
+  const parsed = JSON.parse(registration.name);
+  if (Array.isArray(parsed) && parsed.length > 0) {
+    primaryName = parsed[0].name;
+    participants = parsed;
+  }
+} catch(e) {}
+---
+
+<Layout title="E-Tiket Event Olahraga">
+  <section class="ticket-section">
+    <div class="glow-spot ticket-glow-1"></div>
+    <div class="glow-spot ticket-glow-2"></div>
+    
+    <div class="container relative z-1 max-width-sm">
+      <div class="success-message">
+        <span class="check-icon">✓</span>
+        <h2>Pembayaran Berhasil!</h2>
+        <p>E-Tiket Anda telah aktif dan diterbitkan secara resmi.</p>
+      </div>
+
+      <!-- Ticket Card -->
+      <div class="ticket-card glass">
+        <div class="ticket-header">
+          <div class="logo">
+            <span class="logo-icon">⚡</span>
+            <span class="logo-text">EVEN<span>TRACK</span></span>
+          </div>
+          <span class="ticket-badge">E-TICKET OFFICIAL</span>
+        </div>
+
+        <div class="ticket-image-header">
+          <img src={registration.eventImageUrl} alt={registration.eventTitle} class="ticket-img" />
+          <div class="overlay"></div>
+          <h1 class="ticket-event-title">{registration.eventTitle}</h1>
+        </div>
+
+        <div class="ticket-body">
+          <div class="ticket-info-grid">
+            <div class="info-group">
+              <span class="label">Nama Pemesan</span>
+              <span class="val">{primaryName}</span>
+            </div>
+            <div class="info-group">
+              <span class="label">Nomor WhatsApp</span>
+              <span class="val">{registration.phone}</span>
+            </div>
+            <div class="info-group">
+              <span class="label">Hari & Tanggal</span>
+              <span class="val">{formatDate(registration.eventDate)}</span>
+            </div>
+            <div class="info-group">
+              <span class="label">Lokasi Acara</span>
+              <span class="val">{registration.eventLocation}</span>
+            </div>
+            <div class="info-group">
+              <span class="label">ID Registrasi</span>
+              <span class="val">#REG-{registration.id}</span>
+            </div>
+            <div class="info-group">
+              <span class="label">Status Pembayaran</span>
+              <span class="val status-paid">LUNAS</span>
+            </div>
+          </div>
+
+          {participants.length > 0 && (
+            <div class="participants-list">
+              <h4 style="font-size: 0.9rem; margin-bottom: 0.75rem; color: var(--text-secondary);">Daftar Peserta Kolektif ({participants.length} Orang)</h4>
+              <table style="width: 100%; text-align: left; border-collapse: collapse; font-size: 0.9rem;">
+                <thead>
+                  <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                    <th style="padding: 0.5rem 0;">Nama Lengkap</th>
+                    <th style="padding: 0.5rem 0;">Jersey</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {participants.map((p: any) => (
+                    <tr style="border-bottom: 1px dashed rgba(255,255,255,0.05);">
+                      <td style="padding: 0.5rem 0; font-weight: 600;">{p.name}</td>
+                      <td style="padding: 0.5rem 0; color: var(--accent); font-weight: bold;">{p.ukuranJersey}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          <div class="ticket-qr-section">
+            <div class="qr-box">
+              <img src={qrCodeUrl} alt="Ticket QR Code" />
+            </div>
+            <div class="qr-instructions">
+              <strong>Tunjukkan QR Code ini</strong>
+              <p>Scan tiket ini kepada panitia di lokasi acara untuk proses check-in pendaftaran.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="ticket-footer-strip">
+          <span>Harap simpan halaman ini atau ambil tangkapan layar (screenshot).</span>
+        </div>
+      </div>
+
+      <div class="ticket-actions">
+        <button onclick="window.print()" class="btn btn-outline">🖨️ Cetak E-Tiket</button>
+        <a href="/" class="btn btn-accent">Kembali ke Beranda</a>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .ticket-section {
+    padding: 4rem 0;
+    position: relative;
+    min-height: calc(100vh - 72px - 300px);
+  }
+
+  .max-width-sm {
+    max-width: 600px;
+  }
+
+  .ticket-glow-1 {
+    top: 5%;
+    right: 10%;
+    width: 350px;
+    height: 350px;
+    background-color: var(--accent-glow);
+  }
+
+  .ticket-glow-2 {
+    bottom: 5%;
+    left: 10%;
+    width: 350px;
+    height: 350px;
+    background-color: var(--primary);
+  }
+
+  .success-message {
+    text-align: center;
+    margin-bottom: 2.5rem;
+  }
+
+  .check-icon {
+    width: 64px;
+    height: 64px;
+    background-color: var(--success);
+    color: #fff;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+  }
+
+  .success-message h2 {
+    font-size: 1.75rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .success-message p {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+  }
+
+  /* Ticket Card */
+  .ticket-card {
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+    background-color: rgba(18, 22, 32, 0.85);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .ticket-header {
+    padding: 1.25rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .ticket-header .logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.25rem;
+    font-weight: 800;
+  }
+
+  .ticket-header .logo-icon {
+    color: var(--accent);
+  }
+
+  .ticket-header .logo-text span {
+    color: var(--accent);
+  }
+
+  .ticket-badge {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    border: 1px solid var(--border-color);
+    padding: 0.25rem 0.6rem;
+    border-radius: 4px;
+  }
+
+  .ticket-image-header {
+    position: relative;
+    height: 160px;
+    overflow: hidden;
+  }
+
+  .ticket-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ticket-image-header .overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(10, 12, 16, 0.95) 0%, rgba(10, 12, 16, 0.4) 100%);
+  }
+
+  .ticket-event-title {
+    position: absolute;
+    bottom: 1.25rem;
+    left: 2rem;
+    right: 2rem;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--text-primary);
+  }
+
+  .ticket-body {
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .ticket-info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem 1rem;
+    border-bottom: 1px dashed var(--border-color);
+    padding-bottom: 2rem;
+  }
+
+  .info-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .info-group .label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+  }
+
+  .info-group .val {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .status-paid {
+    color: var(--success) !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.05em;
+  }
+
+  .ticket-qr-section {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+  }
+
+  .qr-box {
+    background-color: #fff;
+    padding: 0.5rem;
+    border-radius: var(--radius-sm);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .qr-box img {
+    width: 100px;
+    height: 100px;
+    display: block;
+  }
+
+  .qr-instructions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .qr-instructions strong {
+    font-size: 0.95rem;
+    color: var(--text-primary);
+  }
+
+  .qr-instructions p {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    line-height: 1.4;
+  }
+
+  .ticket-footer-strip {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-top: 1px solid var(--border-color);
+    padding: 0.75rem;
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+  }
+
+  .ticket-actions {
+    margin-top: 2rem;
+    display: flex;
+    gap: 1rem;
+  }
+
+  .ticket-actions .btn {
+    flex: 1;
+    padding: 0.9rem;
+  }
+
+  @media (max-width: 480px) {
+    .ticket-info-grid {
+      grid-template-columns: 1fr;
+    }
+    
+    .ticket-qr-section {
+      flex-direction: column;
+      text-align: center;
+    }
+    
+    .ticket-actions {
+      flex-direction: column;
+    }
+  }
+
+  /* Print Styles */
+  @media print {
+    body {
+      background: #fff;
+      color: #000;
+    }
+    
+    .header, .footer, .success-message, .ticket-actions, .glow-spot {
+      display: none !important;
+    }
+    
+    .ticket-section {
+      padding: 0;
+    }
+
+    .ticket-card {
+      border: 1px solid #ccc;
+      box-shadow: none;
+      background: #fff;
+      color: #000;
+      width: 100%;
+    }
+    
+    .info-group .val {
+      color: #000;
+    }
+    
+    .ticket-event-title {
+      color: #fff; /* Tetap putih agar kontras di atas banner */
+    }
+  }
+</style>

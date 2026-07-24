@@ -1,0 +1,278 @@
+---
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { getEventById, updateEvent } from '../../../lib/db';
+
+const { id } = Astro.params;
+const eventId = parseInt(id || '', 10);
+
+if (isNaN(eventId)) {
+  return Astro.redirect('/admin');
+}
+
+const event = await getEventById(eventId);
+
+if (!event) {
+  return Astro.redirect('/admin');
+}
+
+let errorMsg = '';
+
+if (Astro.request.method === 'POST') {
+  try {
+    const formData = await Astro.request.formData();
+    const title = formData.get('title')?.toString() || '';
+    const date = formData.get('date')?.toString() || '';
+    const location = formData.get('location')?.toString() || '';
+    const category = formData.get('category')?.toString() || '';
+    const imageUrl = formData.get('imageUrl')?.toString() || '';
+    const status = formData.get('status')?.toString() || 'UPCOMING';
+    const description = formData.get('description')?.toString() || '';
+    const price = parseInt(formData.get('price')?.toString() || '0', 10);
+    const slots = parseInt(formData.get('slots')?.toString() || '100', 10);
+    const registered = parseInt(formData.get('registered')?.toString() || '0', 10);
+
+    // Simple validation
+    if (!title || !date || !location || !category || !imageUrl || !description) {
+      errorMsg = 'Semua field wajib diisi!';
+    } else {
+      const success = await updateEvent(eventId, {
+        title,
+        date,
+        location,
+        category,
+        imageUrl,
+        status: status as 'UPCOMING' | 'FINISHED',
+        description,
+        price,
+        slots,
+        registered
+      });
+      if (success) {
+        return Astro.redirect('/admin');
+      } else {
+        errorMsg = 'Gagal menyimpan perubahan. Data tidak ditemukan atau tidak ada perubahan.';
+      }
+    }
+  } catch (err) {
+    errorMsg = 'Gagal menyimpan perubahan event.';
+    console.error(err);
+  }
+}
+---
+
+<AdminLayout title={`Edit Event: ${event.title}`}>
+  <section class="admin-form-section">
+    <div class="glow-spot form-glow"></div>
+    <div class="container form-container relative z-1">
+      
+      <div class="form-header">
+        <a href="/admin" class="back-link">&larr; Kembali ke Dashboard</a>
+        <h1 class="form-title">Edit Event</h1>
+        <p class="form-subtitle">Lakukan perubahan informasi untuk event ID #{event.id}</p>
+      </div>
+
+      {errorMsg && <div class="alert alert-danger">{errorMsg}</div>}
+
+      <form method="POST" class="admin-form glass">
+        <div class="form-grid">
+          <!-- Nama Event -->
+          <div class="form-group full-width">
+            <label for="title">Nama Event</label>
+            <input type="text" id="title" name="title" required value={event.title} />
+          </div>
+
+          <!-- Kategori -->
+          <div class="form-group">
+            <label for="category">Kategori Olahraga</label>
+            <select id="category" name="category" required>
+              <option value="RUNNING" selected={event.category === 'RUNNING'}>RUNNING (Lari)</option>
+              <option value="CYCLING" selected={event.category === 'CYCLING'}>CYCLING (Sepeda)</option>
+              <option value="POUNDFIT" selected={event.category === 'POUNDFIT'}>POUNDFIT (Senam)</option>
+              <option value="WALK" selected={event.category === 'WALK'}>WALK (Jalan Santai)</option>
+              <option value="TRIATHLON" selected={event.category === 'TRIATHLON'}>TRIATHLON</option>
+            </select>
+          </div>
+
+          <!-- Tanggal Event -->
+          <div class="form-group">
+            <label for="date">Tanggal Pelaksanaan</label>
+            <input type="date" id="date" name="date" required value={event.date} />
+          </div>
+
+          <!-- Lokasi -->
+          <div class="form-group full-width">
+            <label for="location">Lokasi Event</label>
+            <input type="text" id="location" name="location" required value={event.location} />
+          </div>
+
+          <!-- Image URL -->
+          <div class="form-group full-width">
+            <label for="imageUrl">URL Gambar Banner</label>
+            <input type="url" id="imageUrl" name="imageUrl" required value={event.imageUrl} />
+          </div>
+
+          <!-- Status -->
+          <div class="form-group">
+            <label for="status">Status Event</label>
+            <select id="status" name="status" required>
+              <option value="UPCOMING" selected={event.status === 'UPCOMING'}>UPCOMING (Mendatang)</option>
+              <option value="FINISHED" selected={event.status === 'FINISHED'}>FINISHED (Selesai)</option>
+            </select>
+          </div>
+
+          <!-- Harga Pendaftaran -->
+          <div class="form-group">
+            <label for="price">Harga Tiket (IDR)</label>
+            <input type="number" id="price" name="price" min="0" value={event.price} required />
+          </div>
+
+          <!-- Kuota Pendaftaran (Slots) -->
+          <div class="form-group">
+            <label for="slots">Total Kuota (Slots)</label>
+            <input type="number" id="slots" name="slots" min="1" value={event.slots} required />
+          </div>
+
+          <!-- Terdaftar -->
+          <div class="form-group">
+            <label for="registered">Jumlah Terdaftar</label>
+            <input type="number" id="registered" name="registered" min="0" value={event.registered} required />
+          </div>
+
+          <!-- Deskripsi -->
+          <div class="form-group full-width">
+            <label for="description">Deskripsi Lengkap</label>
+            <textarea id="description" name="description" rows="5" required>{event.description}</textarea>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <a href="/admin" class="btn btn-outline">Batal</a>
+          <button type="submit" class="btn btn-accent">Simpan Perubahan</button>
+        </div>
+      </form>
+    </div>
+  </section>
+</AdminLayout>
+
+<style>
+  .admin-form-section {
+    padding: 3rem 0;
+    position: relative;
+    min-height: calc(100vh - 72px - 300px);
+  }
+
+  .form-glow {
+    top: 10%;
+    right: 5%;
+    width: 400px;
+    height: 400px;
+    background-color: var(--accent-glow);
+  }
+
+  .form-header {
+    margin-bottom: 2.5rem;
+  }
+
+  .back-link {
+    font-size: 0.9rem;
+    color: var(--primary);
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    display: inline-block;
+  }
+
+  .back-link:hover {
+    color: #60a5fa;
+  }
+
+  .form-title {
+    font-size: 2.25rem;
+    font-weight: 800;
+  }
+
+  .form-subtitle {
+    color: var(--text-secondary);
+    font-size: 1rem;
+  }
+
+  .alert-danger {
+    background-color: rgba(239, 68, 68, 0.15);
+    color: var(--danger);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    padding: 1rem 1.5rem;
+    border-radius: var(--radius-md);
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+  }
+
+  /* Form Styling */
+  .admin-form {
+    border-radius: var(--radius-lg);
+    padding: 2.5rem;
+    border: 1px solid var(--border-color);
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .full-width {
+    grid-column: span 2;
+  }
+
+  label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  input, select, textarea {
+    background-color: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    padding: 0.8rem 1rem;
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px var(--accent-glow);
+  }
+
+  select {
+    cursor: pointer;
+  }
+
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 2.5rem;
+    border-top: 1px solid var(--border-color);
+    padding-top: 1.5rem;
+  }
+
+  @media (max-width: 768px) {
+    .form-grid {
+      grid-template-columns: 1fr;
+    }
+    .full-width {
+      grid-column: span 1;
+    }
+    .admin-form {
+      padding: 1.5rem;
+    }
+  }
+</style>

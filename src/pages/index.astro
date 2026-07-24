@@ -1,0 +1,1534 @@
+---
+import Layout from "../layouts/Layout.astro";
+import EventCard from "../components/EventCard.astro";
+import { getUpcomingEvents, getFinishedEvents } from "../lib/db";
+
+const upcomingEvents = await getUpcomingEvents();
+const finishedEvents = await getFinishedEvents();
+
+// Ambil list kategori unik untuk filter
+const categories = [
+  "Semua",
+  "RUNNING",
+  "CYCLING",
+  "POUNDFIT",
+  "WALK",
+  "TRIATHLON",
+];
+---
+
+<Layout title="Platform Pendaftaran Event Olahraga No. 1">
+  <!-- Centered Hero Section -->
+  <section class="hero centered-hero">
+    <div class="glow-spot hero-glow-1"></div>
+    <div class="glow-spot hero-glow-2"></div>
+
+    <div class="container hero-container-centered">
+      <!-- Event Logo Placeholder -->
+      <div class="event-logo-wrapper">
+        <img
+          src="/logo.webp"
+          alt="Logo QRIS RUN"
+          id="main-logo"
+          class="event-hero-logo"
+        />
+      </div>
+
+      <!-- Date & Location -->
+      <div class="event-meta-pills">
+        <div class="pill date-pill glass">17 Agustus 2026</div>
+        <div class="pill location-pill glass">Bendung Waru Turi, Kediri</div>
+      </div>
+
+      <!-- Countdown -->
+      <div class="countdown-wrapper">
+        <p class="countdown-label">ACARA DIMULAI DALAM</p>
+
+        <div id="countdown-timer" class="countdown-timer">
+          <div class="time-box glass">
+            <span class="time-num" id="cd-days">00</span>
+            <span class="time-text">HARI</span>
+          </div>
+          <div class="time-box glass">
+            <span class="time-num" id="cd-hours">00</span>
+            <span class="time-text">JAM</span>
+          </div>
+          <div class="time-box glass">
+            <span class="time-num" id="cd-minutes">00</span>
+            <span class="time-text">MENIT</span>
+          </div>
+          <div class="time-box glass">
+            <span class="time-num" id="cd-seconds">00</span>
+            <span class="time-text">DETIK</span>
+          </div>
+        </div>
+
+        <div
+          id="event-started"
+          class="event-started-box"
+          style="display: none;"
+        >
+          <h2 class="started-text">EVENT STARTED</h2>
+          <a href="/sertifikat" class="btn btn-accent btn-large"
+            >Lihat Sertifikat</a
+          >
+        </div>
+
+        <p class="kuota-text">
+          Kuota terbatas! Harga Early Bird Hingga Kuota Terpenuhi.
+        </p>
+      </div>
+    </div>
+
+    <!-- Static Sponsors Bottom Bar -->
+    <div class="sponsors-bar">
+      <p class="sponsors-title"></p>
+      <div class="sponsor-marquee">
+        <div class="sponsor-track">
+          <!-- 1. Peka -->
+          <img src="/peka.webp" alt="Peka" class="sponsor-logo" />
+
+          <!-- 2. Target QRIS -->
+          <img src="/peka.webp" alt="Target QRIS" class="sponsor-logo" />
+
+          <!-- 3. QRISNIVAL -->
+          <img src="/peka.webp" alt="QRISNIVAL" class="sponsor-logo" />
+
+          <!-- 4. BI -->
+          <img src="/peka.webp" alt="BI" class="sponsor-logo" />
+
+          <!-- 5. Syiar -->
+          <img src="/peka.webp" alt="Syiar" class="sponsor-logo" />
+
+          <!-- 6. Fekdi X IFSE -->
+          <img
+            src="/Road_to_FEKDI_x_IFSE.webp"
+            alt="Fekdi X IFSE"
+            class="sponsor-logo"
+          />
+
+          <!-- 7. 81 -->
+          <img src="/81.webp" alt="81" class="sponsor-logo" />
+
+          <!-- Duplicate for seamless scroll -->
+          <!-- 1. Peka -->
+          <img src="/peka.webp" alt="Peka" class="sponsor-logo" />
+
+          <!-- 2. Target QRIS -->
+          <img src="/peka.webp" alt="Target QRIS" class="sponsor-logo" />
+
+          <!-- 3. QRISNIVAL -->
+          <img src="/peka.webp" alt="QRISNIVAL" class="sponsor-logo" />
+
+          <!-- 4. BI -->
+          <img src="/peka.webp" alt="BI" class="sponsor-logo" />
+
+          <!-- 5. Syiar -->
+          <img src="/peka.webp" alt="Syiar" class="sponsor-logo" />
+
+          <!-- 6. Fekdi X IFSE -->
+          <img
+            src="/Road_to_FEKDI_x_IFSE.webp"
+            alt="Fekdi X IFSE"
+            class="sponsor-logo"
+          />
+
+          <!-- 7. 81 -->
+          <img src="/81.webp" alt="81" class="sponsor-logo" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section class="about-section" id="about">
+    <div class="container about-container">
+      <div class="about-content">
+        <h2 class="about-title">Waru Turi Fun Run Kediri 2026</h2>
+        <p class="about-desc">
+          <strong>Waru Turi Fun Run 2026</strong> adalah event lomba lari rekreasi
+          hasil kolaborasi luar biasa antara <strong>Radar Kediri</strong> dan <strong
+            >Bank Indonesia (BI)</strong
+          >, mengusung tema <em>"A Celebration of Movement in Green Scenery"</em
+          >.
+        </p>
+        <p class="about-desc">
+          Event ini dirancang khusus untuk menghadirkan semangat kebersamaan,
+          gaya hidup sehat, dan sportivitas bagi seluruh peserta dari berbagai
+          kalangan, sambil menikmati udara segar di kawasan Bendung Waru Turi.
+        </p>
+        <p class="about-desc">
+          Tidak sekadar berlari, kami juga memadukan olahraga dengan aksi
+          kepedulian lingkungan nyata melalui kegiatan <strong
+            >penanaman pohon</strong
+          >. Event ini diharapkan memberikan dampak positif berkelanjutan bagi
+          kelestarian alam Kediri.
+        </p>
+      </div>
+      <div class="about-image-wrapper">
+        <img
+          src="/about-image-placeholder.png"
+          alt="Waru Turi Fun Run Poster"
+          class="about-image"
+        />
+      </div>
+    </div>
+  </section>
+
+  <!-- Rute Section -->
+  <section class="rute-section" id="rute">
+    <div class="container rute-container">
+      <div class="section-header" style="text-align: center;">
+        <h2 class="section-title" style="text-transform: uppercase;">
+          Peta Rute Lari
+        </h2>
+        <p class="section-subtitle">
+          Kenali rute tantanganmu dan nikmati pemandangan Bendung Waruturi
+        </p>
+      </div>
+
+      <div class="rute-card-wrapper">
+        <div class="rute-card glass">
+          <img src="/rute-placeholder.png" alt="Peta Rute" class="rute-image" />
+          <div class="rute-details">
+            <h3 class="rute-name">Rute 5K (Fun Run)</h3>
+            <p class="rute-desc">
+              Plan Route : Start (Lap. Bendungan Waru Turi) - Kantor Jasa Tirta
+              - Jembatan Utama - Ujung Jembatan Utama ke Kanan - Jembatan Kedua
+              ke Kiri - Patung Badak ke Kanan - Pintu Gerbang Waduk Sisi Barat
+              ke Kiri - Simpang Tiga Jabon Gg 8 ke Kanan - Simpang Tiga 2 Jabon
+              Gg 8 ke Kanan - Pintu Gerbang Waduk Sisi Barat - Jembatan Utama ke
+              Kanan - Kantor Jasa Tirta - Finish
+            </p>
+            <div class="rute-meta">
+              <div class="meta-item">
+                <span class="meta-icon">📍</span>
+                <span class="meta-text"
+                  ><strong>Start:</strong> Bendung Gerak Waru Turi</span
+                >
+              </div>
+              <div class="meta-item">
+                <span class="meta-icon">🏁</span>
+                <span class="meta-text"
+                  ><strong>Finish:</strong> Bendung Gerak Waru Turi</span
+                >
+              </div>
+              <div class="meta-item">
+                <span class="meta-icon">⏱️</span>
+                <span class="meta-text"
+                  ><strong>COT:</strong> 1 Jam 30 Menit</span
+                >
+              </div>
+              <div class="meta-item">
+                <span class="meta-icon">💧</span>
+                <span class="meta-text"
+                  ><strong>Water Station:</strong> KM 2.5</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Benefit Section -->
+  <section class="benefit-section" id="benefit">
+    <div class="container benefit-container">
+      <h2 class="benefit-title">Kenapa Anda Harus Ikut Event ini?</h2>
+
+      <div class="benefit-grid">
+        <div class="benefit-card glass">
+          <img src="/benefit-bib.png" alt="Nomor BIB" class="benefit-icon" />
+          <p class="benefit-text">Nomor BIB</p>
+        </div>
+
+        <div class="benefit-card glass">
+          <img
+            src="/benefit-jersey.png"
+            alt="Jersey Official"
+            class="benefit-icon"
+          />
+          <p class="benefit-text">Jersey Official</p>
+        </div>
+
+        <div class="benefit-card glass">
+          <img
+            src="/benefit-medal.png"
+            alt="Finisher Medal"
+            class="benefit-icon"
+          />
+          <p class="benefit-text">Finisher Medal</p>
+        </div>
+
+        <div class="benefit-card glass">
+          <img
+            src="/benefit-goodiebag.png"
+            alt="Goodie Bag"
+            class="benefit-icon"
+          />
+          <p class="benefit-text">Goodie Bag</p>
+        </div>
+
+        <div class="benefit-card glass">
+          <img
+            src="/benefit-doorprize.png"
+            alt="Doorprize"
+            class="benefit-icon"
+          />
+          <p class="benefit-text">Doorprize</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="cta-section">
+    <div class="container cta-container">
+      <div class="cta-card glass">
+        <div class="cta-icon-wrapper">
+          <span class="cta-icon">🚀</span>
+        </div>
+        <h2 class="cta-title">Siap Mengikuti Waru Turi Fun Run 2026?</h2>
+        <p class="cta-desc">
+          Tunjukkan Race terbaik kalian dengan menjadi finisher yang akan
+          mendapatkan medali eksklusif. Dapatkan Achievement kalian!
+        </p>
+        <div class="cta-actions">
+          <a href="/events/1" class="btn btn-accent cta-btn">Daftar Sekarang</a>
+          <!-- <a href="/#rute" class="btn btn-outline cta-btn">Pelajari Rute</a> -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="faq-section" id="faq">
+    <div class="container faq-container">
+      <div class="section-header center">
+        <span class="badge-pill">SUPPORT CENTER</span>
+        <h2 class="section-title">Pertanyaan Seputar Event</h2>
+        <p class="section-subtitle">
+          Temukan jawaban atas pertanyaan umum seputar Waru Turi Run 2026 di
+          sini.
+        </p>
+      </div>
+
+      <div class="faq-grid">
+        <div class="faq-item glass">
+          <button class="faq-question">
+            <span>Apa itu Waru Turi Fun Run?</span>
+            <span class="faq-icon">↓</span>
+          </button>
+          <div class="faq-answer">
+            <p>
+              Waru Turi Fun Run adalah event lari rekreasi yang menggabungkan
+              gaya hidup sehat dan pelestarian lingkungan.
+            </p>
+          </div>
+        </div>
+
+        <div class="faq-item glass">
+          <button class="faq-question">
+            <span>Siapa saja yang boleh ikut?</span>
+            <span class="faq-icon">↓</span>
+          </button>
+          <div class="faq-answer">
+            <p>
+              Event ini terbuka untuk umum, dari anak-anak hingga dewasa, baik
+              pelari pemula maupun profesional.
+            </p>
+          </div>
+        </div>
+
+        <div class="faq-item glass">
+          <button class="faq-question">
+            <span>Di mana lokasi start dan finish?</span>
+            <span class="faq-icon">↓</span>
+          </button>
+          <div class="faq-answer">
+            <p>
+              Start dan finish akan dilakukan di kawasan Bendung Gerak Waru
+              Turi, Kediri.
+            </p>
+          </div>
+        </div>
+
+        <div class="faq-item glass">
+          <button class="faq-question">
+            <span>Fasilitas apa saja yang didapat peserta?</span>
+            <span class="faq-icon">↓</span>
+          </button>
+          <div class="faq-answer">
+            <p>
+              Peserta akan mendapatkan Nomor BIB, Jersey Official, Finisher
+              Medal, Goodie Bag, dan kesempatan Doorprize.
+            </p>
+          </div>
+        </div>
+
+        <div class="faq-item glass">
+          <button class="faq-question">
+            <span>Bagaimana cara mendaftar?</span>
+            <span class="faq-icon">↓</span>
+          </button>
+          <div class="faq-answer">
+            <p>
+              Anda bisa mendaftar secara online melalui website ini dengan
+              menekan tombol "Daftar Sekarang".
+            </p>
+          </div>
+        </div>
+
+        <div class="faq-item glass">
+          <button class="faq-question">
+            <span>Bagaimana jika saya datang terlambat?</span>
+            <span class="faq-icon">↓</span>
+          </button>
+          <div class="faq-answer">
+            <p>
+              Peserta yang terlambat setelah flag-off tidak diperkenankan
+              mengikuti lari dan tidak mendapatkan hak finisher.
+            </p>
+          </div>
+        </div>
+
+        <div class="faq-item glass">
+          <button class="faq-question">
+            <span>Apakah boleh membawa hewan peliharaan?</span>
+            <span class="faq-icon">↓</span>
+          </button>
+          <div class="faq-answer">
+            <p>
+              Demi kenyamanan dan keamanan bersama, peserta tidak diperkenankan
+              membawa hewan peliharaan.
+            </p>
+          </div>
+        </div>
+
+        <div class="faq-item glass">
+          <button class="faq-question">
+            <span>Apa yang menyebabkan event dihentikan?</span>
+            <span class="faq-icon">↓</span>
+          </button>
+          <div class="faq-answer">
+            <p>
+              Event dapat dihentikan jika terjadi kondisi force majeure seperti
+              cuaca ekstrem atau bencana alam.
+            </p>
+          </div>
+        </div>
+
+        <div class="faq-item glass">
+          <button class="faq-question">
+            <span>Apa penyebab peserta didiskualifikasi?</span>
+            <span class="faq-icon">↓</span>
+          </button>
+          <div class="faq-answer">
+            <p>
+              Peserta dapat didiskualifikasi jika memotong rute, menggunakan
+              kendaraan, atau tindakan tidak sportif.
+            </p>
+          </div>
+        </div>
+
+        <div class="faq-item glass">
+          <button class="faq-question">
+            <span>Apakah lomba ini trail run atau road race?</span>
+            <span class="faq-icon">↓</span>
+          </button>
+          <div class="faq-answer">
+            <p>
+              Event ini merupakan road race (fun run) dengan rute jalan
+              aspal/cor di sekitar bendungan.
+            </p>
+          </div>
+        </div>
+
+        <div class="faq-item glass">
+          <button class="faq-question">
+            <span>Bolehkah peserta membawa makanan sendiri?</span>
+            <span class="faq-icon">↓</span>
+          </button>
+          <div class="faq-answer">
+            <p>
+              Tentu boleh, namun kami juga telah menyiapkan water station di
+              rute untuk peserta.
+            </p>
+          </div>
+        </div>
+
+        <div class="faq-item glass">
+          <button class="faq-question">
+            <span>Berapa jumlah pos medis & water station?</span>
+            <span class="faq-icon">↓</span>
+          </button>
+          <div class="faq-answer">
+            <p>
+              Akan ada water station di KM 2.5 dan pos medis yang tersebar di
+              sepanjang rute serta area finish.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sticky Kategori Filter -->
+  <!-- <section class="sticky-filter glass">
+    <div class="container filter-container">
+      <div class="filter-scroll-wrapper">
+        {
+          categories.map((cat, i) => (
+            <button
+              class={`filter-btn ${i === 0 ? "active" : ""}`}
+              data-category={cat.toUpperCase()}
+            >
+              {cat === "Semua" ? "🎯 Semua" : `🏅 ${cat}`}
+            </button>
+          ))
+        }
+      </div>
+    </div>
+  </section> -->
+
+  <!-- Halaman Event Mendatang -->
+  <!-- <section class="upcoming-section" id="upcoming">
+    <div class="container">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Event Mendatang</h2>
+          <p class="section-subtitle">
+            Jangan lewatkan event-event seru berikutnya di sekitar Anda
+          </p>
+        </div>
+      </div>
+
+      {
+        upcomingEvents.length > 0 ? (
+          <div class="events-grid" id="events-grid">
+            {upcomingEvents.map((event) => (
+              <div
+                class="event-item-wrapper"
+                data-item-category={event.category.toUpperCase()}
+              >
+                <EventCard event={event} />
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div class="empty-state glass">
+            <p>Belum ada event mendatang yang terdaftar saat ini.</p>
+          </div>
+        )
+      }
+    </div>
+  </section> -->
+
+  <!-- Halaman Event Selesai -->
+  <!-- <section class="finished-section" id="finished">
+    <div class="glow-spot finished-glow"></div>
+    <div class="container">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Event Selesai</h2>
+          <p class="section-subtitle">
+            Kilas balik keseruan event yang telah sukses diselenggarakan
+          </p>
+        </div>
+      </div>
+
+      {
+        finishedEvents.length > 0 ? (
+          <div class="marquee-container">
+            <div class="marquee-track">
+              {/* Duplikasi list event untuk efek infinite marquee */}
+              {[...finishedEvents, ...finishedEvents].map((event) => (
+                <div class="marquee-item">
+                  <EventCard event={event} />
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <div class="empty-state glass">
+            <p>Belum ada event selesai terdaftar.</p>
+          </div>
+        )
+      }
+    </div>
+  </section> -->
+</Layout>
+
+<script>
+  // Countdown Timer Logic
+  const targetDate = new Date("2026-08-17T06:00:00+07:00").getTime();
+
+  const timer = setInterval(() => {
+    const now = new Date().getTime();
+    const distance = targetDate - now;
+
+    if (distance < 0) {
+      clearInterval(timer);
+      const timerElement = document.getElementById("countdown-timer");
+      const startedElement = document.getElementById("event-started");
+      if (timerElement) timerElement.style.display = "none";
+      if (startedElement) startedElement.style.display = "flex";
+      return;
+    }
+
+    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+    const hours = Math.floor(
+      (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
+    );
+    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+    const dEl = document.getElementById("cd-days");
+    const hEl = document.getElementById("cd-hours");
+    const mEl = document.getElementById("cd-minutes");
+    const sEl = document.getElementById("cd-seconds");
+
+    if (dEl) dEl.innerText = days.toString().padStart(2, "0");
+    if (hEl) hEl.innerText = hours.toString().padStart(2, "0");
+    if (mEl) mEl.innerText = minutes.toString().padStart(2, "0");
+    if (sEl) sEl.innerText = seconds.toString().padStart(2, "0");
+  }, 1000);
+
+  // Filter Kategori Logic
+  const filterButtons = document.querySelectorAll(".filter-btn");
+  const eventItems = document.querySelectorAll(".event-item-wrapper");
+
+  filterButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      // Hapus active class dari semua button
+      filterButtons.forEach((btn) => btn.classList.remove("active"));
+
+      // Tambah active class ke button yang diklik
+      button.classList.add("active");
+
+      const targetCategory = button.getAttribute("data-category");
+
+      eventItems.forEach((item) => {
+        const itemCategory = item.getAttribute("data-item-category");
+        if (targetCategory === "SEMUA" || itemCategory === targetCategory) {
+          (item as HTMLElement).style.display = "block";
+          // Animasi fade in
+          (item as HTMLElement).style.opacity = "1";
+          (item as HTMLElement).style.transform = "scale(1)";
+        } else {
+          (item as HTMLElement).style.display = "none";
+        }
+      });
+    });
+  });
+
+  // FAQ Logic
+  const faqItems = document.querySelectorAll(".faq-item");
+  faqItems.forEach((item) => {
+    const btn = item.querySelector(".faq-question");
+    btn?.addEventListener("click", () => {
+      // Menutup FAQ lain yang sedang terbuka
+      faqItems.forEach((otherItem) => {
+        if (otherItem !== item) {
+          otherItem.classList.remove("active");
+        }
+      });
+
+      // Toggle FAQ yang diklik
+      item.classList.toggle("active");
+    });
+  });
+</script>
+
+<style>
+  /* Hero Section */
+  .hero {
+    position: relative;
+    padding: 6rem 0 0 0;
+    overflow: hidden;
+  }
+
+  .hero-glow-1 {
+    top: -10%;
+    right: -10%;
+    width: 500px;
+    height: 500px;
+    background-color: var(--accent-secondary);
+  }
+
+  .hero-glow-2 {
+    bottom: -20%;
+    left: -10%;
+    width: 400px;
+    height: 400px;
+    background-color: var(--primary);
+  }
+
+  .hero-container-centered {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 2rem;
+  }
+
+  .event-logo-wrapper {
+    margin-bottom: 1rem;
+    width: 100%;
+    max-width: 600px;
+  }
+
+  .event-hero-logo {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.5));
+  }
+
+  .event-meta-pills {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .pill {
+    padding: 0.75rem 1.5rem;
+    border-radius: 9999px;
+    font-weight: 600;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-primary);
+  }
+
+  .countdown-wrapper {
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .countdown-label {
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--text-primary);
+    text-transform: uppercase;
+  }
+
+  .countdown-timer {
+    display: flex;
+    gap: 1.5rem;
+  }
+
+  .time-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 90px;
+    height: 90px;
+    border-radius: var(--radius-md);
+    background: rgba(18, 22, 32, 0.7);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-md);
+  }
+
+  .time-num {
+    font-size: 2.5rem;
+    font-weight: 800;
+    font-family: var(--font-display);
+    color: var(--text-primary);
+    line-height: 1;
+  }
+
+  .time-text {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--accent);
+    margin-top: 0.25rem;
+    letter-spacing: 1px;
+  }
+
+  .event-started-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .started-text {
+    font-size: 3rem;
+    font-family: var(--font-display);
+    color: var(--accent);
+    text-transform: uppercase;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-shadow: 0 0 15px var(--accent-glow);
+  }
+
+  .btn-large {
+    padding: 1rem 3rem;
+    font-size: 1.2rem;
+    border-radius: 50px;
+  }
+
+  .kuota-text {
+    font-size: 0.95rem;
+    font-style: italic;
+    color: var(--text-muted);
+  }
+
+  .sponsors-bar {
+    margin-top: 5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    padding: 2.5rem 0;
+    border-top: 1px solid var(--border-color);
+    background: linear-gradient(
+      180deg,
+      transparent 0%,
+      rgba(18, 22, 32, 0.5) 100%
+    );
+  }
+
+  .sponsors-title {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    letter-spacing: 0.15em;
+  }
+
+  .sponsor-marquee {
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+    overflow: hidden;
+    padding: 1rem 0;
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      black 15%,
+      black 85%,
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      black 15%,
+      black 85%,
+      transparent 100%
+    );
+  }
+
+  .sponsor-track {
+    display: flex;
+    align-items: center;
+    gap: 4rem;
+    width: max-content;
+    animation: sponsorScroll 25s linear infinite;
+  }
+
+  .sponsor-track:hover {
+    animation-play-state: paused;
+  }
+
+  @keyframes sponsorScroll {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(calc(-50% - 2rem));
+    }
+  }
+
+  .sponsor-logo {
+    height: 45px;
+    width: auto;
+    object-fit: contain;
+    opacity: 0.7;
+    filter: grayscale(100%);
+    transition: all 0.3s;
+  }
+
+  .sponsors-logo:hover {
+    opacity: 1;
+    filter: grayscale(0%);
+    transform: scale(1.05);
+  }
+
+  /* About Section */
+  .about-section {
+    padding: 6rem 0;
+    background-color: transparent;
+    position: relative;
+  }
+
+  .about-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+  }
+
+  .about-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .about-title {
+    font-size: 2.8rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    line-height: 1.2;
+    margin-bottom: 0.5rem;
+  }
+
+  .about-desc {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+  }
+
+  .about-desc strong {
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  .about-image-wrapper {
+    width: 100%;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow:
+      var(--shadow-lg),
+      0 0 30px rgba(0, 229, 255, 0.1);
+    border: 1px solid var(--border-color);
+  }
+
+  .about-image {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.5s ease;
+  }
+
+  .about-image:hover {
+    transform: scale(1.03);
+  }
+
+  /* Benefit Section */
+  .benefit-section {
+    padding: 6rem 0;
+    text-align: center;
+  }
+
+  .benefit-title {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: #ffffff;
+    margin-bottom: 3.5rem;
+  }
+
+  .benefit-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.5rem;
+  }
+
+  .benefit-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 170px;
+    height: 170px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+  }
+
+  .benefit-card:hover {
+    transform: translateY(-8px);
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.4);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  }
+
+  .benefit-icon {
+    width: 70px;
+    height: 70px;
+    object-fit: contain;
+    margin-bottom: 1.25rem;
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
+  }
+
+  .benefit-text {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 1.2;
+  }
+
+  /* Rute Section */
+  .rute-section {
+    padding: 6rem 0;
+    background-color: var(--bg-secondary);
+  }
+
+  .rute-card-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 3rem;
+  }
+
+  .rute-card {
+    max-width: 800px;
+    width: 100%;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .rute-image {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-bottom: 4px solid var(--accent);
+  }
+
+  .rute-details {
+    padding: 2.5rem;
+    text-align: left;
+  }
+
+  .rute-name {
+    font-size: 1.8rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+  }
+
+  .rute-desc {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+  }
+
+  .rute-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .meta-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+  }
+
+  .meta-item strong {
+    color: var(--text-primary);
+    font-weight: 600;
+  }
+
+  /* CTA Section */
+  .cta-section {
+    padding: 4rem 0;
+    background-color: transparent;
+  }
+
+  .cta-container {
+    display: flex;
+    justify-content: center;
+  }
+
+  .cta-card {
+    max-width: 800px;
+    width: 100%;
+    padding: 4rem 2rem;
+    text-align: center;
+    border-radius: var(--radius-lg);
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.05) 0%,
+      rgba(255, 255, 255, 0.02) 100%
+    );
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: var(--shadow-lg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .cta-icon-wrapper {
+    width: 64px;
+    height: 64px;
+    background: rgba(0, 229, 255, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+    border: 1px solid rgba(0, 229, 255, 0.2);
+  }
+
+  .cta-icon {
+    font-size: 1.8rem;
+  }
+
+  .cta-title {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+  }
+
+  .cta-desc {
+    color: var(--text-secondary);
+    font-size: 1.05rem;
+    line-height: 1.6;
+    max-width: 600px;
+    margin-bottom: 2.5rem;
+  }
+
+  .cta-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .cta-btn {
+    padding: 0.8rem 2.5rem;
+    font-size: 1rem;
+    border-radius: 30px;
+    font-weight: 700;
+  }
+
+  /* FAQ Section */
+  .faq-section {
+    padding: 6rem 0;
+    position: relative;
+    background-color: transparent;
+  }
+
+  .badge-pill {
+    display: inline-block;
+    padding: 0.4rem 1.2rem;
+    background: rgba(0, 229, 255, 0.1);
+    color: var(--accent);
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+  }
+
+  .section-header.center {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .faq-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-top: 3rem;
+  }
+
+  .faq-item {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+
+  .faq-item.active {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+
+  .faq-question {
+    width: 100%;
+    padding: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: transparent;
+    border: none;
+    color: var(--text-primary);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: left;
+    font-family: inherit;
+  }
+
+  .faq-icon {
+    width: 28px;
+    height: 28px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    transition: transform 0.3s ease;
+  }
+
+  .faq-item.active .faq-icon {
+    transform: rotate(180deg);
+  }
+
+  .faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    transition:
+      max-height 0.3s ease,
+      padding 0.3s ease;
+    padding: 0 1.5rem;
+  }
+
+  .faq-item.active .faq-answer {
+    max-height: 200px;
+    padding: 0 1.5rem 1.5rem 1.5rem;
+  }
+
+  .faq-answer p {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  /* Sticky Kategori Filter */
+  .sticky-filter {
+    position: sticky;
+    top: 72px;
+    z-index: 50;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+    background: rgba(10, 12, 16, 0.85);
+    padding: 0.85rem 0;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .filter-scroll-wrapper {
+    display: flex;
+    gap: 0.75rem;
+    overflow-x: auto;
+    scrollbar-width: none; /* Firefox */
+  }
+
+  .filter-scroll-wrapper::-webkit-scrollbar {
+    display: none; /* Chrome/Safari */
+  }
+
+  .filter-btn {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    padding: 0.6rem 1.25rem;
+    border-radius: 9999px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.25s ease;
+  }
+
+  .filter-btn:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-primary);
+  }
+
+  .filter-btn.active {
+    background: var(--accent);
+    color: #000;
+    border-color: var(--accent);
+    box-shadow: var(--shadow-accent);
+  }
+
+  /* Sections general */
+  .upcoming-section,
+  .finished-section {
+    padding: 6rem 0;
+    position: relative;
+  }
+
+  .finished-section {
+    background: linear-gradient(
+      180deg,
+      var(--bg-primary) 0%,
+      var(--bg-secondary) 100%
+    );
+    overflow: hidden;
+  }
+
+  .finished-glow {
+    bottom: -10%;
+    right: -10%;
+    width: 500px;
+    height: 500px;
+    background-color: var(--accent-secondary);
+  }
+
+  .section-header {
+    margin-bottom: 3.5rem;
+  }
+
+  .section-title {
+    font-size: 2.25rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+  }
+
+  .section-subtitle {
+    color: var(--text-secondary);
+    font-size: 1.05rem;
+  }
+
+  /* Grid layout */
+  .events-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 2rem;
+  }
+
+  .empty-state {
+    padding: 4rem 2rem;
+    text-align: center;
+    border-radius: var(--radius-md);
+    color: var(--text-secondary);
+  }
+
+  /* Infinite Marquee */
+  .marquee-container {
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    overflow: hidden;
+    padding: 1rem 0;
+  }
+
+  .marquee-track {
+    display: flex;
+    gap: 2rem;
+    width: max-content;
+    animation: scroll 40s linear infinite;
+  }
+
+  .marquee-track:hover {
+    animation-play-state: paused;
+  }
+
+  .marquee-item {
+    width: 350px;
+    flex-shrink: 0;
+  }
+
+  @keyframes scroll {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(calc(-50% - 1rem));
+    }
+  }
+
+  /* Responsive styling */
+  @media (max-width: 1024px) {
+    .hero-container {
+      grid-template-columns: 1fr;
+      gap: 3rem;
+    }
+
+    .hero-title {
+      font-size: 3rem;
+    }
+
+    .hero-stats {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .hero {
+      padding: 4rem 0 0 0;
+    }
+
+    .hero-title {
+      font-size: 2.5rem;
+    }
+
+    .hero-stats {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    /* Hero Section Adjustments */
+    .event-logo-wrapper {
+      max-width: 320px;
+    }
+
+    .event-meta-pills {
+      flex-wrap: nowrap;
+      gap: 0.5rem;
+    }
+
+    .pill {
+      padding: 0.4rem 0.75rem;
+      font-size: 0.75rem;
+    }
+
+    .countdown-timer {
+      gap: 0.5rem;
+    }
+
+    .time-box {
+      width: 65px;
+      height: 65px;
+    }
+
+    .time-num {
+      font-size: 1.6rem;
+    }
+
+    .time-text {
+      font-size: 0.6rem;
+    }
+
+    .countdown-label {
+      font-size: 0.85rem;
+    }
+
+    /* Sponsor Adjustments */
+    .sponsors-bar {
+      margin-top: 2rem;
+      padding: 1.5rem 0;
+    }
+
+    .sponsor-marquee {
+      -webkit-mask-image: linear-gradient(
+        to right,
+        transparent 5%,
+        black 45%,
+        black 85%,
+        transparent 100%
+      );
+      mask-image: linear-gradient(
+        to right,
+        transparent 5%,
+        black 45%,
+        black 85%,
+        transparent 100%
+      );
+    }
+
+    .sponsor-logo {
+      height: 30px;
+    }
+
+    .sponsor-track {
+      gap: 2rem;
+      animation: sponsorScrollMobile 20s linear infinite;
+    }
+
+    @keyframes sponsorScrollMobile {
+      0% {
+        transform: translateX(0);
+      }
+      100% {
+        transform: translateX(calc(-50% - 1rem));
+      }
+    }
+
+    .about-container {
+      grid-template-columns: 1fr;
+      gap: 3rem;
+      text-align: center;
+    }
+
+    .about-title {
+      font-size: 2.2rem;
+    }
+
+    .benefit-title {
+      font-size: 1.8rem;
+    }
+
+    .benefit-card {
+      width: 140px;
+      height: 140px;
+    }
+
+    .benefit-icon {
+      width: 50px;
+      height: 50px;
+    }
+
+    .rute-details {
+      padding: 1.5rem;
+    }
+
+    .rute-name {
+      font-size: 1.5rem;
+    }
+
+    .cta-card {
+      padding: 3rem 1.5rem;
+    }
+
+    .cta-title {
+      font-size: 1.8rem;
+    }
+
+    .cta-actions {
+      flex-direction: column;
+      width: 100%;
+    }
+
+    .cta-actions .btn {
+      width: 100%;
+    }
+
+    .faq-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .upcoming-section,
+    .finished-section {
+      padding: 4rem 0;
+    }
+  }
+</style>

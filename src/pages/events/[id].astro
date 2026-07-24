@@ -1,0 +1,779 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getEventById, createRegistration, updateRegistrationAmount } from '../../lib/db';
+
+const { id } = Astro.params;
+const eventId = parseInt(id || '', 10);
+
+if (isNaN(eventId)) {
+  return Astro.redirect('/');
+}
+
+const event = await getEventById(eventId);
+
+if (!event) {
+  return Astro.redirect('/');
+}
+
+let errorMsg = '';
+
+if (Astro.request.method === 'POST') {
+  try {
+    const formData = await Astro.request.formData();
+    const email = formData.get('email')?.toString() || '';
+    const phone = formData.get('phone')?.toString() || '';
+
+    // Parse collective participants
+    const participants = [];
+    let i = 1;
+    while (formData.has(`name_${i}`)) {
+      participants.push({
+        name: formData.get(`name_${i}`)?.toString() || '',
+        jenisKelamin: formData.get(`jenisKelamin_${i}`)?.toString() || '',
+        jenisId: formData.get(`jenisId_${i}`)?.toString() || '',
+        nomorId: formData.get(`nomorId_${i}`)?.toString() || '',
+        ukuranJersey: formData.get(`ukuranJersey_${i}`)?.toString() || ''
+      });
+      i++;
+    }
+
+    if (participants.length === 0 || !email || !phone) {
+      errorMsg = 'Data peserta, email, dan nomor WhatsApp wajib diisi!';
+    } else if (event.registered + participants.length > event.slots) {
+      errorMsg = 'Maaf, sisa kuota pendaftaran tidak mencukupi untuk jumlah peserta ini.';
+    } else {
+      // Gunakan harga asli event dari database
+      const basePrice = event.price;
+      const totalBase = basePrice * participants.length;
+
+      // Store participants as JSON string in the name field to avoid DB schema changes
+      const nameField = JSON.stringify(participants);
+
+      // Buat pendaftaran baru dengan status PENDING
+      const regId = await createRegistration({
+        eventId: event.id,
+        name: nameField,
+        email,
+        phone,
+        status: 'PENDING',
+        amount: totalBase,
+        paymentMethod: 'QRIS',
+        checkedIn: false
+      });
+
+      if (regId) {
+        // Gunakan ID Registrasi sebagai kode unik
+        const finalAmount = totalBase + regId;
+        await updateRegistrationAmount(regId, finalAmount);
+        
+        return Astro.redirect(`/checkout/${regId}`);
+      } else {
+        errorMsg = 'Gagal memproses pendaftaran. Silakan coba lagi.';
+      }
+    }
+  } catch (err) {
+    errorMsg = 'Terjadi kesalahan saat memproses pendaftaran.';
+    console.error(err);
+  }
+}
+
+// Formatting helpers
+const formatDate = (dateStr: string) => {
+  const options: Intl.DateTimeFormatOptions = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+  return new Date(dateStr).toLocaleDateString('id-ID', options);
+};
+
+const formatPrice = (price: number) => {
+  if (price === 0) return 'Gratis';
+  return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(price);
+};
+
+const isFull = event.registered >= event.slots;
+const isFinished = event.status === 'FINISHED';
+---
+
+<Layout title={event.title} description={event.description}>
+  <section class="event-detail-section">
+    <div class="glow-spot event-glow-1"></div>
+    <div class="glow-spot event-glow-2"></div>
+    
+    <div class="container relative z-1">
+      <a href="/" class="back-link">&larr; Kembali ke Beranda</a>
+      
+      <!-- Kolom Info Atas (Full Width) -->
+      <div class="info-column" style="margin-bottom: 2rem;">
+        <div class="banner-wrapper glass">
+          <img src={event.imageUrl} alt={event.title} class="detail-banner" />
+          <span class={`badge badge-${event.category.toLowerCase()} detail-badge`}>{event.category}</span>
+        </div>
+      </div>
+
+      <form method="POST" class="reg-form" id="reg-form">
+        <div class="detail-grid">
+          
+          <!-- Kolom Registrasi Kiri -->
+          <div class="reg-column">
+            <div class="reg-card glass">
+
+              <div class="kuota-info">
+                <div class="kuota-label">
+                  <span>Kuota Terisi</span>
+                  <span>{event.registered} / {event.slots} Slot</span>
+                </div>
+                <div class="progress-bar">
+                  <div class="progress-fill" style={`width: ${(event.registered / event.slots) * 100}%`}></div>
+                </div>
+              </div>
+
+              {isFinished ? (
+                <div class="status-alert alert-danger text-center">
+                  <strong>Event Telah Selesai</strong>
+                  <p>Pendaftaran sudah ditutup untuk event ini.</p>
+                </div>
+              ) : isFull ? (
+                <div class="status-alert alert-danger text-center">
+                  <strong>Kuota Penuh</strong>
+                  <p>Maaf, slot pendaftaran telah habis terjual.</p>
+                </div>
+              ) : (
+                <div class="form-wrapper">
+                  <h3>Formulir Pendaftaran</h3>
+                  {errorMsg && <div class="alert alert-danger">{errorMsg}</div>}
+                  
+                  <div class="participant-container" id="participants-container">
+                    <!-- Participant 1 -->
+                    <div class="participant-block" data-index="1">
+                      <h4 class="form-section-title">Data Peserta 1</h4>
+                      
+                      <div class="form-group">
+                        <label for="name_1">Nama Lengkap (Sesuai ID)</label>
+                        <input type="text" id="name_1" name="name_1" required placeholder="Isi Nama sesuai ID Card Anda" />
+                      </div>
+                      
+                      <div class="form-row">
+                        <div class="form-group half">
+                          <label for="jenisKelamin_1">Jenis Kelamin</label>
+                          <select id="jenisKelamin_1" name="jenisKelamin_1" required>
+                            <option value="Pria">Pria</option>
+                            <option value="Wanita">Wanita</option>
+                          </select>
+                        </div>
+                        <div class="form-group half">
+                          <label for="jenisId_1">Jenis ID</label>
+                          <select id="jenisId_1" name="jenisId_1" required>
+                            <option value="KTP">KTP</option>
+                            <option value="SIM">SIM</option>
+                            <option value="Paspor">Paspor</option>
+                            <option value="Kartu Pelajar">Kartu Pelajar</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div class="form-group">
+                        <label for="nomorId_1">Nomor ID</label>
+                        <input type="text" id="nomorId_1" name="nomorId_1" required placeholder="Isi dengan Nomor NIK Anda" />
+                      </div>
+
+                      
+                    </div>
+                  </div>
+
+                  <div class="add-participant-row mt-3">
+                    <button type="button" id="add-participant-btn" class="btn btn-outline btn-sm">+ Tambah Peserta</button>
+                    <button type="button" id="remove-participant-btn" class="btn btn-danger btn-sm" style="display: none;">- Kurangi Peserta</button>
+                  </div>
+                  <input type="hidden" id="jumlah_peserta" name="jumlah_peserta" value="1" />
+                  
+                  <hr style="border-color: rgba(255,255,255,0.1); margin: 2rem 0;" />
+                  
+                  <h4 class="form-section-title">Panduan Ukuran Jersey</h4>
+                  <div class="jersey-preview-card mt-3 text-center">
+                    <img src="/jersey.png" alt="Desain Jersey" class="jersey-thumb" style="width: 100%; max-width: 300px; border-radius: var(--radius-md);" onerror="this.onerror=null; this.src='/logo.webp';" />
+                  </div>
+                  <div class="size-chart-compact mt-2 mb-4">
+                    <table class="compact-table">
+                      <thead>
+                        <tr><th>Size</th><th>Lebar (cm)</th><th>Panjang (cm)</th></tr>
+                      </thead>
+                      <tbody>
+                        <tr><td>S</td><td>47</td><td>68</td></tr>
+                        <tr><td>M</td><td>50</td><td>70</td></tr>
+                        <tr><td>L</td><td>53</td><td>72</td></tr>
+                        <tr><td>XL</td><td>56</td><td>74</td></tr>
+                        <tr><td>XXL</td><td>59</td><td>76</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <div id="jersey-dropdowns-container">
+                    <div class="form-group mt-3 jersey-select-block" data-index="1">
+                      <label for="ukuranJersey_1">Ukuran Jersey Peserta 1</label>
+                      <select id="ukuranJersey_1" name="ukuranJersey_1" required>
+                        <option value="S">S</option>
+                        <option value="M">M</option>
+                        <option value="L">L</option>
+                        <option value="XL">XL</option>
+                        <option value="XXL">XXL</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <h4 class="form-section-title mt-4">Data Kontak (Pemesan)</h4>
+                  <div class="form-row">
+                    <div class="form-group half">
+                      <label for="email">Email Pemesan (Wajib diisi)</label>
+                      <input type="email" id="email" name="email" required placeholder="Wajib isi Email untuk Konfirmasi" />
+                    </div>
+                    <div class="form-group half">
+                      <label for="phone">Nomor WhatsApp</label>
+                      <input type="tel" id="phone" name="phone" required placeholder="08..." />
+                    </div>
+                  </div>
+                  <div class="terms-group mt-4 pt-3" style="border-top: 1px dashed rgba(255,255,255,0.2);">
+                    <label class="checkbox-label">
+                      <input type="checkbox" name="terms" required />
+                      <span>Saya menyetujui <a href="/regulasi" target="_blank" class="terms-link">syarat dan ketentuan</a>.</span>
+                    </label>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+          
+          <!-- Kolom Ringkasan Kanan (Sticky) -->
+          {!isFinished && !isFull && (
+            <div class="summary-column" style="position: sticky; top: 2rem; align-self: start;">
+              <div class="reg-card glass">
+                <div class="price-header" style="margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px dashed rgba(255,255,255,0.2);">
+                  <span class="label">Biaya Pendaftaran</span>
+                  <span class="value price-tag">{formatPrice(event.price)}</span>
+                </div>
+                
+                <h4 class="form-section-title">Ringkasan Pesanan</h4>
+                <div class="category-card selected mt-3">
+                  <div class="category-info">
+                    <span class="cat-name">{event.title}</span>
+                    <span class="cat-type">Total Peserta: <span id="summary-qty">1</span> Orang</span>
+                    <span class="cat-price text-accent" id="summary-price" data-price={event.price}>{formatPrice(event.price)}</span>
+                  </div>
+                  <div class="category-badge">
+                    <span class="badge-text">{event.category}</span>
+                  </div>
+                </div>
+                
+                <div class="summary-extra" style="display: flex; justify-content: space-between; font-size: 0.9rem; margin-top: 1rem; border-top: 1px dashed rgba(255,255,255,0.2); padding-top: 1rem;">
+                  <span class="text-secondary">Fasilitas Jersey</span>
+                  <span style="color: var(--success); font-weight: 600;">GRATIS</span>
+                </div>
+                
+                <button type="submit" class="btn btn-accent btn-block submit-btn mt-4">Konfirmasi Pesanan</button>
+              </div>
+            </div>
+          )}
+        </div>
+      </form>
+
+      <script>
+                  document.addEventListener('DOMContentLoaded', () => {
+                    const container = document.getElementById('participants-container');
+                    const addBtn = document.getElementById('add-participant-btn');
+                    const removeBtn = document.getElementById('remove-participant-btn');
+                    const qtySpan = document.getElementById('summary-qty');
+                    const priceSpan = document.getElementById('summary-price');
+                    const qtyInput = document.getElementById('jumlah_peserta') as HTMLInputElement | null;
+                    
+                    let participantCount = 1;
+                    const basePrice = priceSpan ? parseInt(priceSpan.getAttribute('data-price') || '0', 10) : 0;
+                    
+                    function formatRupiah(angka: number) {
+                      return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
+                    }
+                    
+                    function updateSummary() {
+                      if (qtySpan) qtySpan.textContent = participantCount.toString();
+                      if (priceSpan) priceSpan.textContent = formatRupiah(participantCount * basePrice);
+                      if (qtyInput) qtyInput.value = participantCount.toString();
+                      
+                      if (removeBtn) {
+                        if (participantCount > 1) {
+                          removeBtn.style.display = 'inline-block';
+                        } else {
+                          removeBtn.style.display = 'none';
+                        }
+                      }
+                    }
+                    
+                    if (addBtn) {
+                      addBtn.addEventListener('click', () => {
+                        participantCount++;
+                        const template = `
+                          <div class="participant-block" data-index="${participantCount}" style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px dashed rgba(255,255,255,0.2);">
+                            <h4 class="form-section-title">Data Peserta ${participantCount}</h4>
+                            <div class="form-group">
+                              <label for="name_${participantCount}">Nama Lengkap</label>
+                              <input type="text" id="name_${participantCount}" name="name_${participantCount}" required placeholder="Isi Nama sesuai ID Card Anda" />
+                            </div>
+                            <div class="form-row">
+                              <div class="form-group half">
+                                <label for="jenisKelamin_${participantCount}">Jenis Kelamin</label>
+                                <select id="jenisKelamin_${participantCount}" name="jenisKelamin_${participantCount}" required>
+                                  <option value="Pria">Pria</option>
+                                  <option value="Wanita">Wanita</option>
+                                </select>
+                              </div>
+                              <div class="form-group half">
+                                <label for="jenisId_${participantCount}">Jenis ID</label>
+                                <select id="jenisId_${participantCount}" name="jenisId_${participantCount}" required>
+                                  <option value="KTP">KTP</option>
+                                  <option value="SIM">SIM</option>
+                                  <option value="Paspor">Paspor</option>
+                                  <option value="Kartu Pelajar">Kartu Pelajar</option>
+                                </select>
+                              </div>
+                            </div>
+                            <div class="form-group">
+                              <label for="nomorId_${participantCount}">Nomor ID</label>
+                              <input type="text" id="nomorId_${participantCount}" name="nomorId_${participantCount}" required placeholder="Isi dengan Nomor NIK Anda" />
+                            </div>
+                            </div>
+                          </div>
+                        `;
+                        const jerseyTemplate = `
+                          <div class="form-group mt-3 jersey-select-block" data-index="${participantCount}">
+                            <label for="ukuranJersey_${participantCount}">Ukuran Jersey Peserta ${participantCount}</label>
+                            <select id="ukuranJersey_${participantCount}" name="ukuranJersey_${participantCount}" required>
+                              <option value="S">S</option>
+                              <option value="M">M</option>
+                              <option value="L">L</option>
+                              <option value="XL">XL</option>
+                              <option value="XXL">XXL</option>
+                            </select>
+                          </div>
+                        `;
+                        if (container) container.insertAdjacentHTML('beforeend', template);
+                        const jerseyContainer = document.getElementById('jersey-dropdowns-container');
+                        if (jerseyContainer) jerseyContainer.insertAdjacentHTML('beforeend', jerseyTemplate);
+                        updateSummary();
+                      });
+                    }
+                    
+                    if (removeBtn) {
+                      removeBtn.addEventListener('click', () => {
+                        if (participantCount > 1) {
+                          if (container) {
+                            const block = container.querySelector(`.participant-block[data-index="${participantCount}"]`);
+                            if (block) {
+                              block.remove();
+                              
+                              const jerseyContainer = document.getElementById('jersey-dropdowns-container');
+                              if (jerseyContainer) {
+                                const jerseyBlock = jerseyContainer.querySelector(`.jersey-select-block[data-index="${participantCount}"]`);
+                                if (jerseyBlock) jerseyBlock.remove();
+                              }
+                              
+                              participantCount--;
+                              updateSummary();
+                            }
+                          }
+                        }
+                      });
+                    }
+                  });
+                </script>
+
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .event-detail-section {
+    padding: 3rem 0;
+    position: relative;
+  }
+
+  .event-glow-1 {
+    top: 5%;
+    right: 5%;
+    width: 450px;
+    height: 450px;
+    background-color: var(--accent-glow);
+  }
+
+  .event-glow-2 {
+    bottom: 5%;
+    left: 5%;
+    width: 400px;
+    height: 400px;
+    background-color: var(--primary);
+  }
+
+  .back-link {
+    font-size: 0.95rem;
+    color: var(--primary);
+    font-weight: 600;
+    margin-bottom: 2rem;
+    display: inline-block;
+  }
+
+  .back-link:hover {
+    color: #60a5fa;
+  }
+
+  .detail-grid {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr;
+    gap: 3rem;
+    align-items: start;
+  }
+  
+  @media (max-width: 991px) {
+    .detail-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .info-column {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .banner-wrapper {
+    position: relative;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    height: 200px;
+    border: 1px solid var(--border-color);
+  }
+
+  .detail-banner {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .detail-badge {
+    position: absolute;
+    top: 1.5rem;
+    left: 1.5rem;
+    z-index: 2;
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+  }
+
+  .detail-title {
+    font-size: 2.75rem;
+    line-height: 1.2;
+    font-weight: 800;
+    color: var(--text-primary);
+  }
+
+  .meta-row {
+    display: flex;
+    gap: 2.5rem;
+    flex-wrap: wrap;
+    border-top: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+    padding: 1.5rem 0;
+  }
+
+  .meta-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .meta-icon {
+    font-size: 2rem;
+    color: var(--accent);
+  }
+
+  .meta-text {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .meta-text .label {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+  }
+
+  .meta-text .value {
+    font-size: 1rem;
+    font-weight: 700;
+  }
+
+  .description-box {
+    border-radius: var(--radius-md);
+    padding: 2rem;
+    border: 1px solid var(--border-color);
+  }
+
+  .description-box h3 {
+    margin-bottom: 1rem;
+    font-size: 1.4rem;
+  }
+
+  .description-box p {
+    color: var(--text-secondary);
+    line-height: 1.7;
+  }
+
+  /* Registrasi Kanan */
+  .reg-card {
+    border-radius: var(--radius-lg);
+    padding: 2.5rem;
+    border: 1px solid var(--border-color);
+    position: sticky;
+    top: 96px;
+    background: rgba(18, 22, 32, 0.7);
+  }
+
+  .price-header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .price-header .label {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+  }
+
+  .price-tag {
+    font-size: 2.25rem;
+    font-weight: 800;
+    color: var(--accent);
+    font-family: var(--font-display);
+  }
+
+  .kuota-info {
+    margin-bottom: 2rem;
+  }
+
+  .kuota-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+
+  .progress-bar {
+    height: 8px;
+    background-color: var(--bg-tertiary);
+    border-radius: 9999px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+    border-radius: 9999px;
+  }
+
+  .form-wrapper h3 {
+    font-size: 1.25rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.75rem;
+  }
+  
+  .size-chart-compact {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-sm);
+    padding: 0.75rem;
+  }
+
+  .compact-table {
+    width: 100%;
+    text-align: center;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+  }
+
+  .compact-table th, .compact-table td {
+    padding: 0.25rem;
+    border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+  }
+
+  .compact-table th {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--accent);
+  }
+</style>
+
+<style is:global>
+  .reg-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+  
+  .form-section-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .mt-4 { margin-top: 1.5rem; }
+  .mt-3 { margin-top: 1rem; }
+  
+  .form-row {
+    display: flex;
+    gap: 1rem;
+  }
+  
+  .form-group.half {
+    flex: 1;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .form-group label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+  }
+  
+  .form-group input, .form-group select {
+    padding: 0.8rem 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    font-size: 1rem;
+    transition: all 0.2s;
+  }
+  
+  .form-group input:focus, .form-group select:focus {
+    outline: none;
+    border-color: var(--accent);
+    background: rgba(255, 255, 255, 0.1);
+  }
+  
+  .form-group select option {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+  }
+
+  .category-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.25rem;
+    background: rgba(14, 117, 237, 0.1);
+    border: 2px solid var(--accent);
+    border-radius: var(--radius-sm);
+    margin-bottom: 1rem;
+  }
+  
+  .category-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  
+  .cat-name { font-weight: 700; font-size: 1.1rem; }
+  .cat-type { font-size: 0.85rem; color: var(--text-secondary); }
+  .cat-price { font-weight: 800; font-size: 1.2rem; }
+  
+  .category-badge {
+    background: var(--accent);
+    color: #111;
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-md);
+    font-weight: 800;
+  }
+
+  .jersey-preview-card {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    background: rgba(255,255,255,0.02);
+    border: 1px dashed rgba(255,255,255,0.2);
+    padding: 1rem;
+    border-radius: var(--radius-sm);
+  }
+  
+  .jersey-thumb {
+    width: 100px;
+    height: auto;
+    object-fit: contain;
+  }
+
+  .checkbox-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+  }
+  
+  .checkbox-label input {
+    margin-top: 0.2rem;
+    accent-color: var(--accent);
+  }
+  
+  .terms-link {
+    color: var(--accent);
+    text-decoration: underline;
+  }
+  
+  .terms-link:hover {
+    color: var(--neutral-white);
+  }
+  
+  .btn-block {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1.1rem;
+  }
+
+  @media (max-width: 640px) {
+    .form-row {
+      flex-direction: column;
+    }
+  }
+
+  .status-alert {
+    padding: 1.5rem;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+  }
+
+  .alert-danger {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: var(--danger);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+  }
+
+  .text-center {
+    text-align: center;
+  }
+
+  @media (max-width: 1024px) {
+    .detail-grid {
+      grid-template-columns: 1fr;
+      gap: 3rem;
+    }
+
+    .banner-wrapper {
+      height: 300px;
+    }
+  }
+</style>

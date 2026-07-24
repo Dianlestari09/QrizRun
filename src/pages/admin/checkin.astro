@@ -1,0 +1,608 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import { checkInRegistration } from '../../lib/db';
+
+let resultMsg = '';
+let statusType: 'success' | 'error' | 'warning' | '' = '';
+let checkedInUser = { name: '', eventTitle: '', id: 0 };
+
+if (Astro.request.method === 'POST') {
+  try {
+    const formData = await Astro.request.formData();
+    const rawTicketId = formData.get('ticketId')?.toString() || '';
+    
+    // Parse ID dari QR Code teks format: "TICKET:FUNRUN-REG-[ID]:..."
+    // Atau jika panitia ketik manual angka ID nya saja
+    let regId = parseInt(rawTicketId, 10);
+    
+    if (rawTicketId.startsWith('TICKET:FUNRUN-REG-')) {
+      const parts = rawTicketId.split(':');
+      const regIdPart = parts[1].replace('FUNRUN-REG-', '');
+      regId = parseInt(regIdPart, 10);
+    }
+
+    if (isNaN(regId)) {
+      resultMsg = 'Format Kode Tiket / ID Registrasi tidak valid!';
+      statusType = 'error';
+    } else {
+      const checkinResult = await checkInRegistration(regId);
+      resultMsg = checkinResult.message;
+      
+      if (checkinResult.success) {
+        statusType = 'success';
+        checkedInUser = {
+          name: checkinResult.name || '',
+          eventTitle: checkinResult.eventTitle || '',
+          id: regId
+        };
+      } else {
+        statusType = checkinResult.message.includes('belum lunas') ? 'warning' : 'error';
+        checkedInUser = {
+          name: checkinResult.name || '',
+          eventTitle: checkinResult.eventTitle || '',
+          id: regId
+        };
+      }
+    }
+  } catch (err) {
+    resultMsg = 'Terjadi kesalahan sistem saat memproses check-in.';
+    statusType = 'error';
+    console.error(err);
+  }
+}
+---
+
+<AdminLayout title="Scanner Check-In Tiket">
+  <!-- Load library HTML5-QRCode via CDN -->
+  <script src="https://unpkg.com/html5-qrcode" defer></script>
+
+  <section class="checkin-section">
+    <div class="glow-spot checkin-glow"></div>
+    <div class="container relative z-1 max-width-md">
+      
+      <div class="checkin-header">
+        <a href="/admin" class="back-link">&larr; Kembali ke Dashboard</a>
+        <h1 class="checkin-title">Check-In Tiket</h1>
+        <p class="checkin-subtitle">Scan QR Code E-Tiket peserta atau masukkan ID registrasi untuk check-in masuk</p>
+      </div>
+
+      <!-- Hasil Status Check-In -->
+      {statusType && (
+        <div class={`checkin-result-alert alert-${statusType}`}>
+          <div class="alert-icon">
+            {statusType === 'success' && '✓'}
+            {statusType === 'error' && '✗'}
+            {statusType === 'warning' && '⚠'}
+          </div>
+          <div class="alert-body">
+            <h3>{resultMsg}</h3>
+            {checkedInUser.name && (
+              <div class="user-info">
+                ID Pendaftar: <strong>#REG-{checkedInUser.id}</strong> <br />
+                <div style="margin: 0.5rem 0;">
+                  Nama: 
+                  <ul style="margin-top: 0.2rem; padding-left: 1.5rem;">
+                    {(() => {
+                      try {
+                        const parsed = JSON.parse(checkedInUser.name);
+                        if (Array.isArray(parsed) && parsed.length > 0) {
+                          return parsed.map((p: any) => (
+                            <li><strong>{p.name}</strong> <span style="color:var(--accent); font-size:0.9rem;">(Jersey: {p.ukuranJersey})</span></li>
+                          ));
+                        }
+                      } catch(e) {}
+                      return <li><strong>{checkedInUser.name}</strong></li>;
+                    })()}
+                  </ul>
+                </div>
+                Event: <strong>{checkedInUser.eventTitle}</strong>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      <div class="checkin-grid">
+        <!-- Kamera QR Scanner -->
+        <div class="scanner-card glass">
+          <h3>📷 Kamera Scan QR Code</h3>
+          <p class="desc">Izinkan akses kamera HP/Laptop Anda untuk men-scan E-Tiket</p>
+          
+          <div class="camera-viewport-wrapper">
+            <div id="reader"></div>
+          </div>
+          
+          <div class="scanner-controls">
+            <button id="start-scan-btn" class="btn btn-primary btn-full">Aktifkan Kamera</button>
+            <button id="stop-scan-btn" class="btn btn-outline btn-full hidden">Matikan Kamera</button>
+          </div>
+        </div>
+
+        <!-- Manual Input -->
+        <div class="manual-card glass">
+          <h3>✍️ Check-In Manual</h3>
+          <p class="desc">Gunakan ini jika kamera bermasalah atau untuk input manual</p>
+          
+          <form method="POST" class="manual-form" id="manual-checkin-form">
+            <div class="form-group">
+              <label for="ticketId">ID Registrasi / Kode Tiket</label>
+              <input 
+                type="text" 
+                id="ticketId" 
+                name="ticketId" 
+                placeholder="Contoh: 1 atau TICKET:FUNRUN-REG-1..." 
+                required 
+              />
+            </div>
+            
+            <button type="submit" class="btn btn-accent btn-full">Validasi Masuk</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Hidden Form untuk mengirim hasil scan kamera -->
+  <form id="qr-submit-form" method="POST" class="hidden">
+    <input type="hidden" id="qr-ticket-id-input" name="ticketId" />
+  </form>
+</AdminLayout>
+
+<script>
+  // Client-Side Scanner Logic
+  let html5QrCode: any = null;
+
+  window.addEventListener('DOMContentLoaded', () => {
+    const startBtn = document.getElementById('start-scan-btn');
+    const stopBtn = document.getElementById('stop-scan-btn');
+    const submitForm = document.getElementById('qr-submit-form') as HTMLFormElement;
+    const ticketInput = document.getElementById('qr-ticket-id-input') as HTMLInputElement;
+
+    if (!startBtn || !stopBtn || !submitForm || !ticketInput) return;
+
+    // Inisialisasi html5-qrcode
+    startBtn.addEventListener('click', () => {
+      // @ts-ignore
+      if (typeof Html5Qrcode === 'undefined') {
+        alert('Library scanner QR sedang dimuat. Mohon tunggu 1-2 detik dan coba lagi.');
+        return;
+      }
+
+      startBtn.classList.add('hidden');
+      stopBtn.classList.remove('hidden');
+
+      // @ts-ignore
+      html5QrCode = new Html5Qrcode("reader");
+      
+      const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+
+      html5QrCode.start(
+        { facingMode: "environment" }, // Prioritaskan kamera belakang untuk HP
+        config,
+        (decodedText: string) => {
+          // Callback jika QR berhasil dideteksi
+          html5QrCode.stop().then(() => {
+            // Set value input dan submit POST form
+            ticketInput.value = decodedText;
+            submitForm.submit();
+          }).catch((err: any) => {
+            console.error('Gagal menghentikan scanner:', err);
+          });
+        },
+        (errorMessage: string) => {
+          // Scanner verbose logs (diabaikan saja agar konsol tidak berantakan)
+        }
+      ).catch((err: any) => {
+        console.error('Kamera gagal dimulai:', err);
+        alert('Gagal mengakses kamera. Berikan izin akses kamera pada browser Anda.');
+        startBtn.classList.remove('hidden');
+        stopBtn.classList.add('hidden');
+      });
+    });
+
+    stopBtn.addEventListener('click', () => {
+      if (html5QrCode) {
+        html5QrCode.stop().then(() => {
+          startBtn.classList.remove('hidden');
+          stopBtn.classList.add('hidden');
+        }).catch((err: any) => {
+          console.error(err);
+        });
+      }
+    });
+  });
+</script>
+
+<style>
+  .checkin-section {
+    padding: 3rem 0;
+    position: relative;
+    min-height: calc(100vh - 72px - 300px);
+  }
+
+  .max-width-md {
+    max-width: 900px;
+  }
+
+  .checkin-glow {
+    top: 5%;
+    right: 5%;
+    width: 400px;
+    height: 400px;
+    background-color: var(--accent-glow);
+  }
+
+  .checkin-header {
+    margin-bottom: 2.5rem;
+  }
+
+  .back-link {
+    font-size: 0.95rem;
+    color: var(--primary);
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    display: inline-block;
+  }
+
+  .back-link:hover {
+    color: #60a5fa;
+  }
+
+  .checkin-title {
+    font-size: 2.25rem;
+    font-weight: 800;
+  }
+
+  .checkin-subtitle {
+    color: var(--text-secondary);
+    font-size: 1rem;
+  }
+
+  /* Result Alert Box */
+  .checkin-result-alert {
+    display: flex;
+    gap: 1.5rem;
+    padding: 1.5rem 2rem;
+    border-radius: var(--radius-lg);
+    margin-bottom: 2.5rem;
+    align-items: center;
+  }
+
+  .checkin-result-alert.alert-success {
+    background-color: rgba(16, 185, 129, 0.12);
+    color: var(--success);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+  }
+
+  .checkin-result-alert.alert-error {
+    background-color: rgba(239, 68, 68, 0.12);
+    color: var(--danger);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+  }
+
+  .checkin-result-alert.alert-warning {
+    background-color: rgba(245, 158, 11, 0.12);
+    color: var(--warning);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+  }
+
+  .alert-icon {
+    font-size: 2.25rem;
+    font-weight: bold;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid currentColor;
+    flex-shrink: 0;
+  }
+
+  .alert-body h3 {
+    font-size: 1.25rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .alert-body .user-info {
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+
+  /* Grid Layout */
+  .checkin-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 2.5rem;
+    align-items: start;
+  }
+
+  .scanner-card, .manual-card {
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    border: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .scanner-card h3, .manual-card h3 {
+    font-size: 1.3rem;
+  }
+
+  .desc {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.4;
+  }
+
+  /* Camera Viewport */
+  .camera-viewport-wrapper {
+    background-color: #000;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    aspect-ratio: 4/3;
+    border: 1px solid var(--border-color);
+    position: relative;
+  }
+
+  #reader {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Untuk merapikan tombol-tombol internal html5-qrcode (jika ada) */
+  #reader video {
+    object-fit: cover !important;
+  }
+
+  .scanner-controls {
+    display: flex;
+    gap: 1rem;
+    margin-top: 0.5rem;
+  }
+
+  /* Manual Form */
+  .manual-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-top: 0.5rem;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .form-group label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+  }
+
+  .form-group input {
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    padding: 0.8rem 1rem;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+  }
+
+  .form-group input:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+      if (html5QrCode) {
+        html5QrCode.stop().then(() => {
+          startBtn.classList.remove('hidden');
+          stopBtn.classList.add('hidden');
+        }).catch((err: any) => {
+          console.error(err);
+        });
+      }
+    });
+  });
+</script>
+
+<style>
+  .checkin-section {
+    padding: 3rem 0;
+    position: relative;
+    min-height: calc(100vh - 72px - 300px);
+  }
+
+  .max-width-md {
+    max-width: 900px;
+  }
+
+  .checkin-glow {
+    top: 5%;
+    right: 5%;
+    width: 400px;
+    height: 400px;
+    background-color: var(--accent-glow);
+  }
+
+  .checkin-header {
+    margin-bottom: 2.5rem;
+  }
+
+  .back-link {
+    font-size: 0.95rem;
+    color: var(--primary);
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    display: inline-block;
+  }
+
+  .back-link:hover {
+    color: #60a5fa;
+  }
+
+  .checkin-title {
+    font-size: 2.25rem;
+    font-weight: 800;
+  }
+
+  .checkin-subtitle {
+    color: var(--text-secondary);
+    font-size: 1rem;
+  }
+
+  /* Result Alert Box */
+  .checkin-result-alert {
+    display: flex;
+    gap: 1.5rem;
+    padding: 1.5rem 2rem;
+    border-radius: var(--radius-lg);
+    margin-bottom: 2.5rem;
+    align-items: center;
+  }
+
+  .checkin-result-alert.alert-success {
+    background-color: rgba(16, 185, 129, 0.12);
+    color: var(--success);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+  }
+
+  .checkin-result-alert.alert-error {
+    background-color: rgba(239, 68, 68, 0.12);
+    color: var(--danger);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+  }
+
+  .checkin-result-alert.alert-warning {
+    background-color: rgba(245, 158, 11, 0.12);
+    color: var(--warning);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+  }
+
+  .alert-icon {
+    font-size: 2.25rem;
+    font-weight: bold;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid currentColor;
+    flex-shrink: 0;
+  }
+
+  .alert-body h3 {
+    font-size: 1.25rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .alert-body .user-info {
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+
+  /* Grid Layout */
+  .checkin-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 2.5rem;
+    align-items: start;
+  }
+
+  .scanner-card, .manual-card {
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    border: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .scanner-card h3, .manual-card h3 {
+    font-size: 1.3rem;
+  }
+
+  .desc {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.4;
+  }
+
+  /* Camera Viewport */
+  .camera-viewport-wrapper {
+    background-color: #000;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    aspect-ratio: 4/3;
+    border: 1px solid var(--border-color);
+    position: relative;
+  }
+
+  #reader {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Untuk merapikan tombol-tombol internal html5-qrcode (jika ada) */
+  #reader video {
+    object-fit: cover !important;
+  }
+
+  .scanner-controls {
+    display: flex;
+    gap: 1rem;
+    margin-top: 0.5rem;
+  }
+
+  /* Manual Form */
+  .manual-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-top: 0.5rem;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .form-group label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+  }
+
+  .form-group input {
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    padding: 0.8rem 1rem;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+  }
+
+  .form-group input:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+
+  .btn-full {
+    width: 100%;
+  }
+
+  .hidden {
+    display: none !important;
+  }
+
+  @media (max-width: 768px) {
+    .checkin-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

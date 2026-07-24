@@ -1,0 +1,330 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import { getAllEvents, deleteEvent } from '../../lib/db';
+
+let errorMsg = '';
+let successMsg = '';
+
+// Handle POST request (Hapus Event)
+if (Astro.request.method === 'POST') {
+  try {
+    const formData = await Astro.request.formData();
+    const action = formData.get('action');
+    const idStr = formData.get('id');
+
+    if (action === 'delete' && idStr) {
+      const id = parseInt(idStr.toString(), 10);
+      const success = await deleteEvent(id);
+      if (success) {
+        successMsg = 'Event berhasil dihapus!';
+      } else {
+        errorMsg = 'Gagal menghapus event. Event tidak ditemukan.';
+      }
+    }
+  } catch (err) {
+    errorMsg = 'Terjadi kesalahan saat memproses permintaan.';
+    console.error(err);
+  }
+}
+
+// Re-fetch data
+const eventsDisplay = await getAllEvents();
+
+const formatPrice = (price: number) => {
+  if (price === 0) return 'Gratis';
+  return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(price);
+};
+---
+
+<AdminLayout title="Manajemen Event">
+  <section class="admin-dashboard">
+    <div class="glow-spot admin-glow"></div>
+    <div class="container relative z-1">
+      <div class="admin-header">
+        <div>
+          <h1 class="admin-title">Manajemen Event</h1>
+          <p class="admin-subtitle">Kelola daftar event, tambah event baru, dan edit informasi event.</p>
+        </div>
+        <div class="admin-header-actions">
+          <a href="/admin/add" class="btn btn-accent">+ Tambah Event Baru</a>
+        </div>
+      </div>
+
+      {successMsg && <div class="alert alert-success">{successMsg}</div>}
+      {errorMsg && <div class="alert alert-danger">{errorMsg}</div>}
+
+      <div class="table-container glass">
+        <h2 class="table-title">Daftar Semua Event</h2>
+        
+        {eventsDisplay.length > 0 ? (
+          <div class="table-scroll">
+            <table class="event-table">
+              <thead>
+                <tr>
+                  <th>Banner</th>
+                  <th>Nama Event</th>
+                  <th>Kategori</th>
+                  <th>Tanggal</th>
+                  <th>Lokasi</th>
+                  <th>Harga</th>
+                  <th>Pendaftar</th>
+                  <th>Status</th>
+                  <th class="actions-col">Aksi</th>
+                </tr>
+              </thead>
+              <tbody>
+                {eventsDisplay.map((event) => (
+                  <tr>
+                    <td>
+                      <img src={event.imageUrl} alt={event.title} class="table-img" />
+                    </td>
+                    <td>
+                      <div class="event-name-cell">
+                        <strong>{event.title}</strong>
+                        <span class="event-id">ID: #{event.id}</span>
+                      </div>
+                    </td>
+                    <td>
+                      <span class={`badge badge-${event.category.toLowerCase()}`}>{event.category}</span>
+                    </td>
+                    <td>{event.date}</td>
+                    <td>{event.location}</td>
+                    <td>{formatPrice(event.price)}</td>
+                    <td>{event.registered} / {event.slots}</td>
+                    <td>
+                      <span class={`status-dot ${event.status === 'UPCOMING' ? 'upcoming' : 'finished'}`}>
+                        {event.status}
+                      </span>
+                    </td>
+                    <td>
+                      <div class="action-buttons">
+                        <a href={`/admin/edit/${event.id}`} class="btn-table btn-edit">Edit</a>
+                        
+                        <form method="POST" class="delete-form" onsubmit="return confirm('Apakah Anda yakin ingin menghapus event ini?');">
+                          <input type="hidden" name="action" value="delete" />
+                          <input type="hidden" name="id" value={event.id} />
+                          <button type="submit" class="btn-table btn-delete">Hapus</button>
+                        </form>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <div class="empty-state">
+            <p>Belum ada event yang ditambahkan.</p>
+          </div>
+        )}
+      </div>
+    </div>
+  </section>
+</AdminLayout>
+
+<style>
+  .admin-dashboard {
+    padding: 2rem 0;
+    position: relative;
+    min-height: calc(100vh - 72px);
+  }
+
+  .admin-glow {
+    top: -100px;
+    right: -100px;
+    width: 500px;
+    height: 500px;
+    background-color: rgba(0, 229, 255, 0.15);
+  }
+
+  .admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 2.5rem;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+  }
+
+  .admin-title {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(135deg, #fff, #94a3b8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .admin-subtitle {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+  }
+
+  .admin-header-actions {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .alert {
+    padding: 1rem 1.5rem;
+    border-radius: var(--radius-md);
+    margin-bottom: 2rem;
+    font-weight: 500;
+  }
+
+  .alert-success {
+    background-color: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+    border: 1px solid rgba(16, 185, 129, 0.2);
+  }
+
+  .alert-danger {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+  }
+
+  .table-container {
+    padding: 1.5rem;
+    border-radius: var(--radius-lg);
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+  }
+
+  .table-title {
+    font-size: 1.25rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .table-scroll {
+    overflow-x: auto;
+  }
+
+  .event-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 800px;
+  }
+
+  .event-table th {
+    text-align: left;
+    padding: 1rem;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .event-table td {
+    padding: 1rem;
+    vertical-align: middle;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    color: var(--text-primary);
+  }
+
+  .table-img {
+    width: 64px;
+    height: 48px;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+  }
+
+  .event-name-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .event-id {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+  }
+
+  .badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+  }
+
+  .badge-running { background: rgba(249, 115, 22, 0.15); color: #f97316; }
+  .badge-cycling { background: rgba(56, 189, 248, 0.15); color: #38bdf8; }
+  .badge-poundfit { background: rgba(217, 70, 239, 0.15); color: #d946ef; }
+  .badge-walk { background: rgba(234, 179, 8, 0.15); color: #eab308; }
+  .badge-triathlon { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
+
+  .status-dot {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+
+  .status-dot::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+
+  .status-dot.upcoming::before {
+    background-color: var(--primary);
+    box-shadow: 0 0 8px var(--primary);
+  }
+
+  .status-dot.finished::before {
+    background-color: var(--text-muted);
+  }
+
+  .action-buttons {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .btn-table {
+    padding: 0.4rem 0.8rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+
+  .btn-edit {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-primary);
+  }
+
+  .btn-edit:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .btn-delete {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+  }
+
+  .btn-delete:hover {
+    background: rgba(239, 68, 68, 0.2);
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 3rem 0;
+    color: var(--text-muted);
+  }
+
+  @media (max-width: 768px) {
+    .admin-header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+</style>

@@ -1,0 +1,723 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import { getAllRegistrations, updateRegistrationStatus, getRegistrationWithEventById } from '../../lib/db';
+import { sendTicketConfirmedEmail } from '../../lib/email';
+import { processBankMutationsCSV } from '../../lib/ocr';
+import { Buffer } from 'node:buffer';
+import { createRequire } from 'node:module';
+import { createWorker } from 'tesseract.js';
+
+const require = createRequire(import.meta.url);
+const pdfParse = require('pdf-parse');
+
+let errorMsg = '';
+let successMsg = '';
+
+// Handle POST request (Konfirmasi Pembayaran / Import CSV)
+if (Astro.request.method === 'POST') {
+  try {
+    const formData = await Astro.request.formData();
+    const action = formData.get('action');
+    const idStr = formData.get('id');
+
+    if (action === 'delete_reg' && idStr) {
+      const id = parseInt(idStr.toString(), 10);
+      const { deleteRegistration } = await import('../../lib/db');
+      const success = await deleteRegistration(id);
+      if (success) {
+        successMsg = 'Pendaftaran berhasil dihapus. Slot tiket kembali tersedia!';
+      } else {
+        errorMsg = 'Gagal menghapus pendaftaran.';
+      }
+    } else if (action === 'confirm' && idStr) {
+      const id = parseInt(idStr.toString(), 10);
+      const regDetail = await getRegistrationWithEventById(id);
+      const success = await updateRegistrationStatus(id, 'PAID');
+      if (success) {
+        successMsg = 'Pembayaran berhasil dikonfirmasi secara manual!';
+        if (regDetail) {
+          await sendTicketConfirmedEmail({
+            to: regDetail.email,
+            name: regDetail.name,
+            eventTitle: regDetail.eventTitle,
+            eventDate: regDetail.eventDate,
+            eventLocation: regDetail.eventLocation,
+            amount: regDetail.amount,
+            regId: regDetail.id,
+          });
+        }
+      } else {
+        errorMsg = 'Gagal mengonfirmasi pembayaran.';
+      }
+    } else if (action === 'import_csv') {
+      const file = formData.get('csv_file') as File;
+      if (file && file.size > 0) {
+        let text = '';
+        let isImage = false;
+        const fileName = file.name.toLowerCase();
+
+        if (fileName.endsWith('.pdf')) {
+          try {
+            const buffer = Buffer.from(await file.arrayBuffer());
+            const pdfData = await pdfParse(buffer);
+            text = pdfData.text;
+          } catch (pdfErr: any) {
+            errorMsg = 'Gagal membaca PDF: ' + (pdfErr.message || String(pdfErr));
+            throw new Error('SILENT');
+          }
+        } else if (fileName.match(/\.(png|jpe?g)$/i)) {
+          isImage = true;
+          try {
+            const buffer = Buffer.from(await file.arrayBuffer());
+            const worker = await createWorker('eng');
+            const { data } = await worker.recognize(buffer);
+            text = data.text;
+            console.log("\n=== HASIL OCR FOTO MUTASI ===");
+            console.log(text);
+            console.log("=============================\n");
+            await worker.terminate();
+          } catch (imgErr: any) {
+            errorMsg = 'Gagal membaca Foto Mutasi: ' + (imgErr.message || String(imgErr));
+            throw new Error('SILENT');
+          }
+        } else if (fileName.match(/\.(xlsx|xls)$/i)) {
+          try {
+            const buffer = Buffer.from(await file.arrayBuffer());
+            const xlsx = require('xlsx');
+            const workbook = xlsx.read(buffer, { type: 'buffer' });
+            for (const sheetName of workbook.SheetNames) {
+              const sheet = workbook.Sheets[sheetName];
+              const csvString = xlsx.utils.sheet_to_csv(sheet);
+              text += csvString + '\n';
+            }
+          } catch (xlsErr: any) {
+            errorMsg = 'Gagal membaca File Excel: ' + (xlsErr.message || String(xlsErr));
+            throw new Error('SILENT');
+          }
+        } else {
+          text = await file.text();
+        }
+
+        const pendingRegs = await getAllRegistrations();
+        const pendingOnly = pendingRegs.filter(r => r.status === 'PENDING');
+        
+        const results = await processBankMutationsCSV(text, pendingOnly, isImage);
+        
+        if (results.confirmedCount > 0) {
+          successMsg = `Sistem berhasil memverifikasi ${results.confirmedCount} pembayaran secara otomatis dari mutasi!`;
+          // Mengirim email untuk yang terkonfirmasi otomatis
+          for (const confId of results.confirmedIds) {
+            const regDetail = await getRegistrationWithEventById(confId);
+            if (regDetail) {
+              await sendTicketConfirmedEmail({
+                to: regDetail.email,
+                name: regDetail.name,
+                eventTitle: regDetail.eventTitle,
+                eventDate: regDetail.eventDate,
+                eventLocation: regDetail.eventLocation,
+                amount: regDetail.amount,
+                regId: regDetail.id,
+              });
+            }
+          }
+        } else {
+          errorMsg = 'Sistem memproses CSV mutasi, namun tidak ada kecocokan nominal unik dengan tiket PENDING yang ditemukan.';
+        }
+      } else {
+        errorMsg = 'Mohon unggah file mutasi CSV yang valid.';
+      }
+    }
+  } catch (err: any) {
+    if (err.message !== 'SILENT') {
+      errorMsg = 'Terjadi kesalahan saat memproses permintaan: ' + (err.message || String(err));
+      console.error(err);
+    }
+  }
+}
+
+// Re-fetch data
+const registrationsDisplay = await getAllRegistrations();
+
+const formatPrice = (price: number) => {
+  if (price === 0) return 'Gratis';
+  return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(price);
+};
+
+const formatDate = (dateStr: string) => {
+  return new Date(dateStr).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+};
+
+const parseName = (nameStr: string) => {
+  try {
+    const arr = JSON.parse(nameStr);
+    if (Array.isArray(arr) && arr.length > 0) {
+      if (arr.length === 1) return arr[0].name;
+      const allNames = arr.map((p: any) => p.name).join(', ');
+      return `${allNames} (Kolektif: ${arr.length} orang)`;
+    }
+  } catch (e) {}
+  return nameStr;
+};
+---
+
+<AdminLayout title="Data Pendaftar">
+  <section class="admin-dashboard">
+    <div class="glow-spot admin-glow"></div>
+    <div class="container relative z-1">
+      <div class="admin-header">
+        <div>
+          <h1 class="admin-title">Pendaftar Masuk</h1>
+          <p class="admin-subtitle">Kelola pembayaran, konfirmasi registrasi, dan cek tiket masuk.</p>
+        </div>
+      </div>
+
+      {successMsg && <div class="alert alert-success">{successMsg}</div>}
+      {errorMsg && <div class="alert alert-danger">{errorMsg}</div>}
+
+      <div class="table-container glass">
+        <div class="table-header-flex">
+          <h2 class="table-title">Daftar Pendaftar Masuk</h2>
+          <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+            <div class="filter-group" style="display: flex; gap: 0.5rem; align-items: center;">
+              <label for="filter-date" style="font-size: 0.85rem; color: var(--text-muted);">Filter Tanggal:</label>
+              <input type="date" id="filter-date" class="form-control" style="padding: 0.3rem 0.5rem; border-radius: 4px; background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); color: white;" />
+              <button type="button" id="btn-reset-filter" class="btn btn-outline btn-sm" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;">Reset</button>
+            </div>
+            
+            <button type="button" id="btn-export-csv" class="btn btn-primary btn-small" style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; padding: 0.5rem 1rem;">
+              ⬇️ Export Data
+            </button>
+          </div>
+        </div>
+        
+        {registrationsDisplay.length > 0 ? (
+          <div class="table-scroll">
+            <table class="event-table">
+              <thead>
+                <tr>
+                  <th>Reg ID</th>
+                  <th>Nama Pendaftar</th>
+                  <th>Kontak</th>
+                  <th>Event Terdaftar</th>
+                  <th>Total Bayar</th>
+                  <th>No. Transaksi</th>
+                  <th>Status</th>
+                  <th>Check-In</th>
+                  <th>Tanggal Daftar</th>
+                  <th class="actions-col">Aksi</th>
+                </tr>
+              </thead>
+              <tbody>
+                {registrationsDisplay.map((reg) => (
+                  <tr data-id={reg.id} data-raw-name={reg.name} data-email={reg.email} data-phone={reg.phone} data-amount={reg.amount} data-status={reg.status} data-checkin={reg.checkedIn ? 'SUDAH' : 'BELUM'} data-date={formatDate(reg.createdAt)}>
+                    <td class="reg-id-cell"><strong>#REG-{reg.id}</strong></td>
+                    <td>
+                      <div class="event-name-cell">
+                        <strong>{parseName(reg.name)}</strong>
+                        <span class="event-id">{reg.email}</span>
+                      </div>
+                    </td>
+                    <td>{reg.phone}</td>
+                    <td>
+                      <div class="event-name-cell">
+                        <strong>{reg.eventTitle}</strong>
+                        <span class="event-id">Event ID: #{reg.eventId}</span>
+                      </div>
+                    </td>
+                    <td>{formatPrice(reg.amount)}</td>
+                    <td>
+                      {reg.transactionId ? (
+                        <span style="font-family: monospace; background: rgba(0,0,0,0.2); padding: 0.2rem 0.4rem; border-radius: 4px; font-size: 0.85rem;">{reg.transactionId}</span>
+                      ) : (
+                        <span style="color: var(--text-muted); font-size: 0.85rem;">-</span>
+                      )}
+                    </td>
+                    <td>
+                      <span class={`status-badge ${reg.status.toLowerCase()}`}>
+                        {reg.status}
+                      </span>
+                    </td>
+                    <td>
+                      <span class={`status-badge ${reg.checkedIn ? 'paid' : 'pending'}`}>
+                        {reg.checkedIn ? 'SUDAH' : 'BELUM'}
+                      </span>
+                    </td>
+                    <td class="date-cell">{formatDate(reg.createdAt)}</td>
+                    <td>
+                      <div class="action-buttons">
+                        {reg.status === 'PENDING' ? (
+                          <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                            {reg.paymentProof && (
+                              <button type="button" class="btn-table btn-edit view-proof-btn" data-proof={reg.paymentProof}>
+                                Lihat Bukti
+                              </button>
+                            )}
+                            <form method="POST" style="margin: 0;">
+                              <input type="hidden" name="action" value="confirm" />
+                              <input type="hidden" name="id" value={reg.id} />
+                              <button type="submit" class="btn-table btn-confirm">Konfirmasi Bayar</button>
+                            </form>
+                          </div>
+                        ) : (
+                          <a href={`/ticket/${reg.id}`} class="btn-table btn-edit" target="_blank">Lihat Tiket</a>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <div class="empty-table">
+            <p>Belum ada data pendaftar masuk.</p>
+          </div>
+        )}
+      </div>
+
+      <!-- Modal Pratinjau Bukti Pembayaran -->
+      <div id="receipt-modal" class="modal-overlay glass">
+        <div class="modal-content glass">
+          <span class="close-btn" id="close-modal">&times;</span>
+          <h3 class="modal-title">Bukti Transfer</h3>
+          <div class="modal-body">
+            <img id="modal-img" src="" alt="Bukti Transfer" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</AdminLayout>
+
+<script>
+  // Filter and Export Logic
+  const tableRows = document.querySelectorAll('.event-table tbody tr');
+  const filterDateInput = document.getElementById('filter-date');
+  const resetFilterBtn = document.getElementById('btn-reset-filter');
+  
+  if (filterDateInput && resetFilterBtn) {
+    filterDateInput.addEventListener('change', (e) => {
+      const selectedDate = (e.target as HTMLInputElement).value;
+      if (!selectedDate) {
+        tableRows.forEach(row => (row as HTMLElement).style.display = '');
+        return;
+      }
+      
+      const targetDate = new Date(selectedDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+      
+      tableRows.forEach(row => {
+        const dateCell = row.querySelector('.date-cell');
+        if (dateCell && dateCell.textContent?.includes(targetDate)) {
+          (row as HTMLElement).style.display = '';
+        } else {
+          (row as HTMLElement).style.display = 'none';
+        }
+      });
+    });
+
+    resetFilterBtn.addEventListener('click', () => {
+      (filterDateInput as HTMLInputElement).value = '';
+      tableRows.forEach(row => (row as HTMLElement).style.display = '');
+    });
+  }
+
+  const exportBtn = document.getElementById('btn-export-csv');
+  if (exportBtn) {
+    exportBtn.addEventListener('click', () => {
+      const csvData = [];
+      const headers = ['Reg ID', 'Nama Peserta', 'Email Pemesan', 'No WA Pemesan', 'Jenis Kelamin', 'Jenis ID', 'Nomor ID', 'Ukuran Jersey', 'Total Bayar (Satu Order)', 'Status', 'Check-In', 'Tanggal Daftar'];
+      csvData.push(headers.join(','));
+      
+      tableRows.forEach(row => {
+        if ((row as HTMLElement).style.display !== 'none') {
+           const id = row.querySelector('.reg-id-cell')?.textContent || '';
+           const name = row.getAttribute('data-raw-name') || '';
+           const email = row.getAttribute('data-email') || '';
+           const phone = row.getAttribute('data-phone') || '';
+           const amount = row.getAttribute('data-amount') || '';
+           const status = row.getAttribute('data-status') || '';
+           const checkin = row.getAttribute('data-checkin') || '';
+           const date = row.getAttribute('data-date') || '';
+
+           const escapeCsv = (str: string) => `"${String(str || '-').replace(/"/g, '""')}"`;
+           
+           try {
+             const arr = JSON.parse(name);
+             if (Array.isArray(arr) && arr.length > 0) {
+               arr.forEach((p: any) => {
+                 csvData.push([
+                   escapeCsv(id),
+                   escapeCsv(p.name),
+                   escapeCsv(email),
+                   escapeCsv(phone),
+                   escapeCsv(p.jenisKelamin),
+                   escapeCsv(p.jenisId),
+                   escapeCsv(p.nomorId),
+                   escapeCsv(p.ukuranJersey),
+                   escapeCsv(amount),
+                   escapeCsv(status),
+                   escapeCsv(checkin),
+                   escapeCsv(date)
+                 ].join(','));
+               });
+             } else {
+               csvData.push([ escapeCsv(id), escapeCsv(name), escapeCsv(email), escapeCsv(phone), escapeCsv('-'), escapeCsv('-'), escapeCsv('-'), escapeCsv('-'), escapeCsv(amount), escapeCsv(status), escapeCsv(checkin), escapeCsv(date) ].join(','));
+             }
+           } catch(e) {
+             csvData.push([ escapeCsv(id), escapeCsv(name), escapeCsv(email), escapeCsv(phone), escapeCsv('-'), escapeCsv('-'), escapeCsv('-'), escapeCsv('-'), escapeCsv(amount), escapeCsv(status), escapeCsv(checkin), escapeCsv(date) ].join(','));
+           }
+        }
+      });
+
+      const csvString = csvData.join('\n');
+      const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      
+      const now = new Date();
+      const timestamp = now.toISOString().replace(/[:.]/g, '-');
+      link.setAttribute('download', `data_pendaftar_${timestamp}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    });
+  }
+
+  // Modal Logic
+  const viewProofBtns = document.querySelectorAll('.view-proof-btn');
+  const modal = document.getElementById('receipt-modal');
+  const modalImg = document.getElementById('modal-img') as HTMLImageElement;
+  const closeModal = document.getElementById('close-modal');
+
+  if (modal && modalImg && closeModal) {
+    viewProofBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const proof = btn.getAttribute('data-proof');
+        if (proof) {
+          modalImg.src = proof;
+          modal.classList.add('active');
+        }
+      });
+    });
+
+    closeModal.addEventListener('click', () => {
+      modal.classList.remove('active');
+      modalImg.src = '';
+    });
+
+    // Close modal on background click
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        modal.classList.remove('active');
+        modalImg.src = '';
+      }
+    });
+  }
+
+  // File Preview & Submit Logic
+  const csvFileInput = document.getElementById('csv_file') as HTMLInputElement;
+  const filePreviewContainer = document.getElementById('file-preview-container');
+  const filePreviewContent = document.getElementById('file-preview-content');
+  const filePreviewName = document.getElementById('file-preview-name');
+  const btnCancelImport = document.getElementById('btn-cancel-import');
+  const csvFileLabel = document.getElementById('csv_file_label');
+  const btnProcessImport = document.getElementById('btn-process-import');
+
+  if (csvFileInput && filePreviewContainer && filePreviewContent && filePreviewName && btnCancelImport && csvFileLabel) {
+    csvFileInput.addEventListener('change', () => {
+      const file = csvFileInput.files ? csvFileInput.files[0] : null;
+      if (file) {
+        filePreviewName.textContent = file.name;
+        filePreviewContent.innerHTML = ''; // Clear previous preview
+        
+        if (file.type.startsWith('image/')) {
+          const img = document.createElement('img');
+          const objUrl = URL.createObjectURL(file);
+          img.src = objUrl;
+          img.style.width = '40px';
+          img.style.height = '40px';
+          img.style.objectFit = 'cover';
+          img.style.borderRadius = '4px';
+          img.style.cursor = 'pointer';
+          img.title = 'Klik untuk memperbesar';
+          img.addEventListener('click', () => {
+            if (modal && modalImg) {
+              modalImg.src = objUrl;
+              modal.classList.add('active');
+            }
+          });
+          filePreviewContent.appendChild(img);
+        } else {
+          const icon = document.createElement('span');
+          icon.textContent = '📄';
+          icon.style.fontSize = '1.5rem';
+          icon.style.cursor = 'pointer';
+          icon.title = 'Klik untuk membuka file';
+          const objUrl = URL.createObjectURL(file);
+          icon.addEventListener('click', () => {
+            window.open(objUrl, '_blank');
+          });
+          filePreviewContent.appendChild(icon);
+        }
+
+        // Sembunyikan alert lama jika ada
+        document.querySelectorAll('.alert').forEach(el => {
+          (el as HTMLElement).style.display = 'none';
+        });
+
+        // Show preview, hide select button
+        filePreviewContainer.style.display = 'flex';
+        csvFileLabel.style.display = 'none';
+      }
+    });
+
+    btnCancelImport.addEventListener('click', () => {
+      // Sembunyikan alert lama
+      document.querySelectorAll('.alert').forEach(el => {
+        (el as HTMLElement).style.display = 'none';
+      });
+      csvFileInput.value = ''; // Reset input
+      filePreviewContainer.style.display = 'none';
+      csvFileLabel.style.display = 'flex';
+    });
+
+    if (btnProcessImport) {
+      const form = csvFileInput.closest('form');
+      if (form) {
+        form.addEventListener('submit', () => {
+          btnProcessImport.textContent = 'Memproses...';
+          btnProcessImport.setAttribute('disabled', 'true');
+        });
+      }
+    }
+  }
+</script>
+
+<style>
+  .admin-dashboard {
+    padding: 2rem 0;
+    position: relative;
+    min-height: calc(100vh - 72px);
+  }
+
+  .admin-glow {
+    top: -100px;
+    right: -100px;
+    width: 500px;
+    height: 500px;
+    background-color: rgba(0, 229, 255, 0.15);
+  }
+
+  .admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 2.5rem;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+  }
+
+  .admin-title {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(135deg, #fff, #94a3b8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .admin-subtitle {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+  }
+
+  .alert {
+    padding: 1rem 1.5rem;
+    border-radius: var(--radius-md);
+    margin-bottom: 2rem;
+    font-weight: 500;
+  }
+
+  .alert-success {
+    background-color: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+    border: 1px solid rgba(16, 185, 129, 0.2);
+  }
+
+  .alert-danger {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+  }
+
+  .table-container {
+    padding: 1.5rem;
+    border-radius: var(--radius-lg);
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+  }
+
+  .table-header-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .table-title {
+    font-size: 1.25rem;
+    margin: 0;
+  }
+
+  .table-scroll {
+    overflow-x: auto;
+  }
+
+  .event-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 1000px;
+  }
+
+  .event-table th {
+    text-align: left;
+    padding: 1rem;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .event-table td {
+    padding: 1rem;
+    vertical-align: middle;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    color: var(--text-primary);
+  }
+
+  .event-name-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .event-id {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+  }
+
+  .status-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    display: inline-block;
+  }
+
+  .status-badge.paid {
+    background: rgba(16, 185, 129, 0.15);
+    color: #10b981;
+  }
+
+  .status-badge.pending {
+    background: rgba(245, 158, 11, 0.15);
+    color: #f59e0b;
+  }
+
+  .action-buttons {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .btn-table {
+    padding: 0.4rem 0.8rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+
+  .btn-edit {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-primary);
+  }
+
+  .btn-edit:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .btn-confirm {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+  }
+
+  .btn-confirm:hover {
+    background: rgba(16, 185, 129, 0.2);
+  }
+
+  .empty-table {
+    text-align: center;
+    padding: 3rem 0;
+    color: var(--text-muted);
+  }
+
+  /* Modal Styles */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.8);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(10px);
+  }
+  .modal-overlay.active { display: flex; }
+  
+  .modal-content {
+    position: relative;
+    padding: 2rem;
+    border-radius: var(--radius-lg);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    max-width: 500px;
+    width: 90%;
+  }
+
+  .modal-title {
+    margin-bottom: 1.5rem;
+    font-size: 1.25rem;
+  }
+
+  .close-btn {
+    position: absolute;
+    top: 1rem; right: 1.5rem;
+    font-size: 2rem;
+    cursor: pointer;
+    color: var(--text-secondary);
+  }
+
+  .close-btn:hover { color: var(--text-primary); }
+
+  .modal-body img {
+    width: 100%;
+    max-height: 70vh;
+    object-fit: contain;
+    border-radius: var(--radius-md);
+  }
+
+  @media (max-width: 768px) {
+    .admin-header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+</style>

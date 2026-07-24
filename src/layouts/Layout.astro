@@ -1,0 +1,496 @@
+---
+import "../styles/global.css";
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const {
+  title,
+  description = "Platform Pendaftaran Event Olahraga No. 1 di Indonesia",
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="id" style="overflow-x: hidden;">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="description" content={description} />
+    <title>{title} | Fun Run</title>
+  </head>
+  <body style="overflow-x: hidden; position: relative; width: 100%;">
+    <header class="header glass">
+      <div class="container header-container">
+        <!-- Logo Image Placeholder -->
+        <a href="/" class="logo">
+          <img
+            src="/logo.webp"
+            alt="Logo QRIS RUN"
+            id="main-logo"
+            class="navbar-logo-img"
+          />
+        </a>
+
+        <nav class="nav">
+          <a href="/" class="nav-link">Beranda</a>
+
+          <div class="nav-dropdown">
+            <button class="nav-link dropdown-toggle">Informasi ▾</button>
+            <div class="dropdown-menu">
+              <a href="/jersey">Jersey</a>
+              <a href="/medali">Medali</a>
+              <a href="/rute">Rute</a>
+            </div>
+          </div>
+
+          <a href="/regulasi" class="nav-link">Regulasi</a>
+          <a href="/kontak" class="nav-link">Kontak</a>
+        </nav>
+
+        <div class="header-actions">
+          <a href="/events/1" class="nav-link btn-buy-ticket desktop-only">Daftar</a
+          >
+          <button
+            class="mobile-menu-btn"
+            id="mobile-menu-toggle"
+            aria-label="Toggle Menu"
+          >
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile Nav -->
+      <div class="mobile-nav" id="mobile-nav">
+        <a href="/" class="mobile-nav-link">Beranda</a>
+        <button class="mobile-nav-link" id="mobile-info-toggle" style="width: 100%; text-align: left; background: none; border: none; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: inherit; font-family: inherit; cursor: pointer; display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0;">
+          Informasi <span class="arrow" style="font-size: 0.8em; transition: transform 0.2s;">▾</span>
+        </button>
+        <div class="mobile-dropdown-menu" id="mobile-info-menu" style="display: none; flex-direction: column; padding-left: 1.5rem; background: rgba(0,0,0,0.1); border-bottom: 1px solid rgba(255, 255, 255, 0.05);">
+          <a href="/jersey" class="mobile-nav-link" style="border-bottom: 1px dashed rgba(255,255,255,0.05); font-size: 1rem;">Jersey</a>
+          <a href="/medali" class="mobile-nav-link" style="border-bottom: 1px dashed rgba(255,255,255,0.05); font-size: 1rem;">Medali</a>
+          <a href="/rute" class="mobile-nav-link" style="border-bottom: none; font-size: 1rem;">Rute</a>
+        </div>
+        <a href="/regulasi" class="mobile-nav-link">Regulasi</a>
+        <a href="/kontak" class="mobile-nav-link">Kontak</a>
+        <a href="/events/1" class="mobile-nav-link" style="background-color: var(--accent); color: var(--bg-primary) !important; padding: 0.8rem 1.5rem; border-radius: 12px; text-align: center; margin-top: 1rem; border-bottom: none; font-weight: 800; display: block;">Daftar</a>
+      </div>
+    </header>
+
+    <main class="main-content">
+      <slot />
+    </main>
+
+    <footer class="footer glass">
+      <div class="container footer-grid">
+        <div class="footer-brand">
+          <div class="logo">
+            <img
+              src="/logo.webp"
+              alt="Logo QRIS RUN"
+              class="navbar-logo-img"
+            />
+          </div>
+          <p class="footer-desc">
+            Platform pendaftaran event lari, sepeda, dan olahraga lainnya
+            terbesar dan teraman di Indonesia.
+          </p>
+        </div>
+        <div class="footer-links">
+          <h4>Informasi</h4>
+          <a href="/">Beranda</a>
+          <a href="/jersey">Jersey</a>
+          <a href="/medali">Medali</a>
+          <a href="/rute">Rute</a>
+        </div>
+        <div class="footer-links">
+          <h4>Layanan</h4>
+          <a href="/events/1">Daftar Event</a>
+          <a href="/regulasi">Regulasi</a>
+          <a href="/kontak">Kontak</a>
+        </div>
+        <div class="footer-social">
+          <h4>Ikuti Kami</h4>
+          <div class="social-icons">
+            <a href="#" aria-label="Instagram">IG</a>
+            <a href="#" aria-label="Twitter">TW</a>
+            <a href="#" aria-label="Facebook">FB</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 Fun Run. All rights reserved.</p>
+      </div>
+    </footer>
+
+    <script>
+      const toggleBtn = document.getElementById("mobile-menu-toggle");
+      const mobileNav = document.getElementById("mobile-nav");
+
+      if (toggleBtn && mobileNav) {
+        toggleBtn.addEventListener("click", () => {
+          mobileNav.classList.toggle("active");
+          toggleBtn.classList.toggle("active");
+        });
+      }
+
+      const infoToggle = document.getElementById("mobile-info-toggle");
+      const infoMenu = document.getElementById("mobile-info-menu");
+      if (infoToggle && infoMenu) {
+        infoToggle.addEventListener("click", () => {
+          const arrow = infoToggle.querySelector<HTMLElement>(".arrow");
+          if (infoMenu.style.display === "none") {
+            infoMenu.style.display = "flex";
+            if (arrow) arrow.style.transform = "rotate(180deg)";
+          } else {
+            infoMenu.style.display = "none";
+            if (arrow) arrow.style.transform = "rotate(0deg)";
+          }
+        });
+      }
+    </script>
+  </body>
+</html>
+
+<style>
+  /* Header Styles */
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    height: 72px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+  }
+
+  .navbar-logo-img {
+    height: 40px;
+    width: auto;
+    object-fit: contain;
+  }
+
+  /* Dropdown Styles */
+  .nav-dropdown {
+    position: relative;
+    display: inline-block;
+  }
+
+  .dropdown-toggle {
+    background: none;
+    border: none;
+    color: inherit;
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 0;
+  }
+
+  .dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: var(--bg-secondary);
+    min-width: 160px;
+    box-shadow: var(--shadow-md);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-color);
+    z-index: 1000;
+    padding: 0.5rem 0;
+    margin-top: 0.5rem;
+  }
+
+  .nav-dropdown:hover .dropdown-menu {
+    display: block;
+  }
+
+  .dropdown-menu a {
+    color: var(--text-primary);
+    padding: 0.75rem 1.5rem;
+    display: block;
+    font-size: 0.9rem;
+    transition: background 0.2s;
+  }
+
+  .dropdown-menu a:hover {
+    background-color: var(--card-hover-bg);
+    color: var(--accent);
+  }
+
+  .btn-buy-ticket {
+    background: var(--accent);
+    color: var(--bg-primary) !important;
+    padding: 0.6rem 2.5rem;
+    border-radius: 12px;
+    font-weight: 800;
+    margin-left: 0.5rem;
+    display: inline-block;
+  }
+  .btn-buy-ticket:hover {
+    box-shadow: var(--shadow-accent);
+    transform: translateY(-2px);
+  }
+  .desktop-only {
+    display: none;
+  }
+  @media (min-width: 768px) {
+    .desktop-only {
+      display: inline-block;
+    }
+  }
+
+  .nav {
+    display: flex;
+    gap: 2rem;
+  }
+
+  .nav-link {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    padding: 0.5rem 0.25rem;
+    position: relative;
+  }
+
+  .nav-link:hover,
+  .nav-link.active {
+    color: var(--accent);
+  }
+
+  .nav-link::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: var(--accent);
+    transition: width 0.3s ease;
+  }
+
+  .nav-link:hover::after {
+    width: 100%;
+  }
+
+  .admin-tag {
+    color: var(--primary);
+  }
+  .admin-tag:hover {
+    color: #60a5fa;
+  }
+  .admin-tag::after {
+    background-color: var(--primary);
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .admin-btn {
+    padding: 0.5rem 1.2rem;
+    font-size: 0.85rem;
+    border-color: var(--primary);
+    color: var(--primary);
+  }
+  .admin-btn:hover {
+    background-color: rgba(45, 130, 255, 0.1);
+    border-color: var(--primary);
+  }
+
+  /* Mobile menu button */
+  .mobile-menu-btn {
+    display: none;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 24px;
+    height: 18px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    z-index: 101;
+  }
+
+  .mobile-menu-btn span {
+    display: block;
+    width: 100%;
+    height: 2px;
+    background-color: var(--text-primary);
+    transition: all 0.3s ease;
+  }
+
+  .mobile-menu-btn.active span:nth-child(1) {
+    transform: translateY(8px) rotate(45deg);
+  }
+  .mobile-menu-btn.active span:nth-child(2) {
+    opacity: 0;
+  }
+  .mobile-menu-btn.active span:nth-child(3) {
+    transform: translateY(-8px) rotate(-45deg);
+  }
+
+  .mobile-nav {
+    display: flex;
+    position: fixed;
+    top: 72px;
+    right: 0;
+    transform: translateX(100%);
+    visibility: hidden;
+    width: 280px;
+    height: calc(100vh - 72px);
+    background: var(--bg-secondary);
+    border-left: 1px solid var(--border-color);
+    padding: 1.5rem;
+    flex-direction: column;
+    gap: 1.25rem;
+    z-index: 99;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow-y: auto;
+    box-shadow: -5px 0 15px rgba(0,0,0,0.3);
+  }
+
+  .mobile-nav.active {
+    transform: translateX(0);
+    visibility: visible;
+  }
+
+  .mobile-nav-link {
+    font-size: 1.1rem;
+    font-weight: 600;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  /* Main content */
+  .main-content {
+    min-height: calc(100vh - 72px - 300px);
+  }
+
+  /* Footer Styles */
+  .footer {
+    border-top: 1px solid var(--border-color);
+    padding: 2rem 0;
+    margin-top: 0;
+    position: relative;
+    z-index: 10;
+  }
+
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 3rem;
+  }
+
+  .footer-brand {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .footer-desc {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    max-width: 320px;
+  }
+
+  .footer-links,
+  .footer-social {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .footer-links h4,
+  .footer-social h4 {
+    font-size: 1.1rem;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+  }
+
+  .footer-links a {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+  }
+
+  .footer-links a:hover {
+    color: var(--accent);
+  }
+
+  .social-icons {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .social-icons a {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: var(--bg-tertiary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.85rem;
+  }
+
+  .social-icons a:hover {
+    background-color: var(--accent);
+    color: #000;
+    box-shadow: var(--shadow-accent);
+  }
+
+  .footer-bottom {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+  }
+
+  @media (max-width: 768px) {
+    .navbar-logo-img {
+      height: 30px;
+    }
+
+    .nav,
+    .header-actions .admin-btn {
+      display: none;
+    }
+
+    .mobile-menu-btn {
+      display: flex;
+    }
+
+    .footer-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+
+    .footer-brand,
+    .footer-social {
+      grid-column: 1 / -1;
+    }
+  }
+</style>

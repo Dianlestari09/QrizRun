@@ -1,0 +1,928 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getRegistrationWithEventById, uploadPaymentProof } from '../../lib/db';
+import { generateDynamicQRIS } from '../../lib/qris';
+import { validateReceiptOCR } from '../../lib/ocr';
+
+const { regId } = Astro.params;
+const id = parseInt(regId || '', 10);
+
+if (isNaN(id)) {
+  return Astro.redirect('/');
+}
+
+const registration = await getRegistrationWithEventById(id);
+
+if (!registration) {
+  return Astro.redirect('/');
+}
+
+// Jika sudah lunas, tampilkan halaman konfirmasi (tidak redirect ke tiket)
+// E-tiket hanya dikirim via email
+const isPaid = registration.status === 'PAID';
+
+const serviceFee = 0; // Transfer manual tidak ada biaya admin
+// Nominal unik sudah dihitung pada saat pembuatan registrasi (disimpan di registration.amount)
+const totalPay = registration.amount;
+
+// Hitung Batas Waktu Pembayaran 1 Menit × 60 Detik × 1000 Milidetik
+//Baris 45: errorMsg = 'Pendaftaran Anda sudah kadaluarsa (melebihi batas waktu 1 menit)...'
+//Baris 259: <p>Batas waktu pembayaran 1 menit telah habis...</p>
+const limitTime = new Date(registration.createdAt).getTime() + (1 * 60 * 60 * 1000);
+const isExpired = registration.status === 'EXPIRED' || (registration.status === 'PENDING' && Date.now() > limitTime);
+
+let successMsg = '';
+let errorMsg = '';
+
+let primaryName = registration.name;
+let participantCount = 1;
+
+try {
+  // Coba parse jika nama disimpan sebagai JSON array (Pendaftaran Kolektif)
+  const parsed = JSON.parse(registration.name);
+  if (Array.isArray(parsed) && parsed.length > 0) {
+    primaryName = parsed[0].name;
+    participantCount = parsed.length;
+  }
+} catch (e) {
+  // Abaikan jika bukan JSON (pendaftaran lama)
+}
+
+if (Astro.url.searchParams.get('uploaded') === '1') {
+  successMsg = 'Bukti pembayaran berhasil dikirim! Pesanan Anda sedang menunggu konfirmasi dari Admin. Anda akan mendapat E-Tiket via email setelah pembayaran dikonfirmasi.';
+}
+
+if (Astro.request.method === 'POST') {
+  try {
+    if (isExpired) {
+      errorMsg = 'Pendaftaran Anda sudah kadaluarsa (melebihi batas waktu 1 jam)! Silakan lakukan pendaftaran ulang.';
+    } else {
+      const formData = await Astro.request.formData();
+      const receiptFile = formData.get('receipt') as File;
+      const transactionId = formData.get('transactionId')?.toString() || '';
+      
+      if (!transactionId) {
+        errorMsg = 'Silakan masukkan Nomor Transaksi / Ref yang tertera pada bukti transfer Anda.';
+      } else if (receiptFile && receiptFile.size > 0) {
+        // Validasi ukuran (misal maksimal 2MB)
+        if (receiptFile.size > 2 * 1024 * 1024) {
+          errorMsg = 'Ukuran berkas terlalu besar! Maksimal 2MB.';
+        } else {
+          const buffer = Buffer.from(await receiptFile.arrayBuffer());
+          const base64Image = `data:${receiptFile.type};base64,${buffer.toString('base64')}`;
+          
+          // 1. Verifikasi Struk Pembayaran dengan OCR (Tesseract.js)
+          const ocrResult = await validateReceiptOCR(base64Image, totalPay, transactionId);
+          
+          if (!ocrResult.success) {
+            errorMsg = ocrResult.message;
+          } else {
+            // 2. Unggah bukti ke Supabase (Cek Duplikasi & Simpan Waktu OCR)
+            const finalTime = ocrResult.extractedTime || new Date().toISOString();
+            const uploadResult = await uploadPaymentProof(registration.id, base64Image, transactionId, finalTime);
+            if (uploadResult.success) {
+              return Astro.redirect(`${Astro.url.pathname}?uploaded=1`);
+            } else {
+              errorMsg = uploadResult.message;
+            }
+          }
+        }
+      } else {
+        errorMsg = 'Mohon pilih file bukti transfer terlebih dahulu.';
+      }
+    }
+  } catch (err) {
+    errorMsg = 'Terjadi kesalahan saat memproses unggahan bukti.';
+    console.error(err);
+  }
+}
+
+const formatPrice = (price: number) => {
+  return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(price);
+};
+
+// Cek env untuk QRIS Statis
+const staticQrisPayload = import.meta.env.STATIC_QRIS_PAYLOAD || process.env.STATIC_QRIS_PAYLOAD || '';
+let staticQrisUrl = '';   // QR statis asli - kompatibel dengan semua bank & e-wallet
+let dynamicQrisUrl = '';  // QR dinamis (amount auto-fill) - khusus Shopee/Dana/dll yang support
+let isQrisAvailable = false;
+
+if (staticQrisPayload) {
+  try {
+    // QR Statis: gunakan payload asli TANPA injeksi amount → kompatibel dengan semua bank
+    // User scan ini, app bank tanya nominal → user masukkan angka unik yang ditampilkan
+    // Hapus tag CRC lama dulu, lalu hitung ulang agar QR valid
+    staticQrisUrl = `https://quickchart.io/qr?size=280&text=${encodeURIComponent(staticQrisPayload)}&ecLevel=H`;
+
+    // QR Dinamis: injeksi amount → hanya untuk ShopeePay/Dana/GoPay yang support QRIS dinamis
+    const dynamicPayload = generateDynamicQRIS(staticQrisPayload, totalPay);
+    dynamicQrisUrl = `https://quickchart.io/qr?size=280&text=${encodeURIComponent(dynamicPayload)}&ecLevel=H`;
+    isQrisAvailable = true;
+  } catch (err) {
+    console.error('Error generating QRIS payload:', err);
+  }
+}
+---
+
+<Layout title="Pembayaran Tiket">
+  <section class="checkout-section">
+    <div class="glow-spot checkout-glow"></div>
+    
+    <div class="container relative z-1 max-width-md">
+      {registration.status === 'PENDING' && registration.paymentProof && (
+        <script>
+          // Auto refresh setiap 15 detik jika sudah upload bukti untuk mengecek konfirmasi admin
+          setTimeout(() => {
+            window.location.reload();
+          }, 15000);
+        </script>
+      )}
+      <a href={`/events/${registration.eventId}`} class="back-link">&larr; Kembali</a>
+      
+      <h1 class="checkout-title">Pembayaran</h1>
+      
+      {isPaid ? (
+        <div class="paid-confirmation glass">
+          <div class="paid-icon">🎉</div>
+          <h2 class="paid-title">Pembayaran Terkonfirmasi!</h2>
+          <p class="paid-subtitle">
+            Pendaftaran Anda untuk <strong>{registration.eventTitle}</strong> telah dikonfirmasi oleh admin.
+          </p>
+          <div class="paid-email-notice">
+            <span class="notice-icon">📧</span>
+            <div>
+              <strong>Cek email Anda!</strong>
+              <p>E-Tiket telah dikirim ke <strong>{registration.email}</strong>. Buka email tersebut untuk melihat dan menyimpan tiket Anda. Periksa juga folder <em>Spam/Promosi</em> jika tidak ada di inbox.</p>
+            </div>
+          </div>
+          <div class="paid-actions">
+            <a href="/" class="btn btn-primary">Kembali ke Beranda</a>
+          </div>
+        </div>
+      ) : (
+      <>
+
+      <!-- Metode Pembayaran Dihapus (Hanya QRIS) -->
+
+      <!-- Detail Pembayaran & Box Kiri -->
+      {!isPaid && !isExpired && registration.status === 'PENDING' && !registration.paymentProof && (
+        <div class="countdown-banner glass">
+          <span class="icon">⏳</span>
+          Sisa waktu pembayaran: <strong id="countdown-timer">Menghitung...</strong>
+          <div id="limit-time-data" data-time={limitTime} style="display:none;"></div>
+        </div>
+      )}
+      <div class="checkout-details glass">
+        
+          <div class="qris-payment-box" id="panel-qris">
+            <div class="qris-logo-header">
+              <span class="logo-txt">QRIS</span>
+              <span class="sub-txt">GPN</span>
+            </div>
+
+            {/* QR Dinamis — nominal auto-fill */}
+            <div class="qr-code-wrapper">
+              <img src={dynamicQrisUrl} alt="QRIS QR Code" class="qris-img" />
+            </div>
+
+            <div class="nominal-tag">
+              <span class="lbl">TOTAL BAYAR (OTOMATIS TERISI)</span>
+              <strong class="val">{formatPrice(totalPay)}</strong>
+            </div>
+            
+            <p class="scan-instructions">
+              Scan QR ini menggunakan aplikasi <strong>bank manapun</strong> (BCA, BRI, BNI, Mandiri, dll) atau <strong>e-wallet</strong> (ShopeePay, GoPay, Dana, OVO, dll). Nominal <strong>{formatPrice(totalPay)}</strong> otomatis terisi. Setelah bayar, unggah screenshot bukti di sebelah kanan.
+            </p>
+          </div>
+
+
+        <!-- Sisi Kanan: Form Upload Bukti -->
+        <div class="payment-summary">
+          <div class="summary-row">
+            <span class="label">Pemesan Utama</span>
+            <span class="val font-semibold">
+              {primaryName} 
+              {participantCount > 1 && <span class="badge badge-reguler" style="font-size:0.7rem; padding: 0.1rem 0.4rem; margin-left: 0.5rem;">Kolektif ({participantCount} Orang)</span>}
+            </span>
+          </div>
+          <div class="summary-row">
+            <span class="label">Email</span>
+            <span class="val text-muted">{registration.email}</span>
+          </div>
+          <div class="summary-row">
+            <span class="label">Tiket: {registration.eventTitle}</span>
+            <span class="val">{formatPrice(registration.amount)}</span>
+          </div>
+          
+          <div class="summary-total">
+            <span class="total-label">Total Bayar</span>
+            <span class="total-val">{formatPrice(totalPay)}</span>
+          </div>
+
+          <div class="upload-area">
+            {errorMsg && <div class="alert alert-danger">{errorMsg}</div>}
+            {successMsg && <div class="alert alert-success">{successMsg}</div>}
+
+            {isExpired ? (
+              <div class="waiting-box expired glass">
+                <div class="waiting-icon">❌</div>
+                <h3>Pendaftaran Kadaluarsa</h3>
+                <p>Batas waktu pembayaran 1 jam telah habis. Pendaftaran Anda otomatis dibatalkan oleh sistem. Silakan lakukan pendaftaran ulang.</p>
+                <a href="/" class="btn btn-primary" style="margin-top: 1rem; width: 100%; text-align: center;">Kembali ke Beranda</a>
+              </div>
+            ) : registration.paymentProof ? (
+              <div class="waiting-box glass">
+                <div class="waiting-icon">⌛</div>
+                <h3>Bukti Transfer Terkirim</h3>
+                <p>Status pendaftaran Anda sedang dalam proses verifikasi manual oleh Admin. Halaman ini akan diperbarui otomatis jika pembayaran Anda terkonfirmasi.</p>
+                <div class="preview-receipt">
+                  <span class="helper">Pratinjau Bukti:</span>
+                  <img src={registration.paymentProof} alt="Bukti Pembayaran" class="receipt-preview-img" />
+                </div>
+              </div>
+            ) : (
+              <form method="POST" enctype="multipart/form-data" class="upload-form">
+                <span class="upload-title">Unggah Bukti Pembayaran</span>
+                
+                <div class="form-group" style="margin-bottom: 1rem;">
+                  <label for="transactionId" style="display:block; margin-bottom: 0.5rem; color: var(--text-secondary); font-size: 0.9rem;">Nomor Transaksi / Ref:</label>
+                  <input type="text" id="transactionId" name="transactionId" class="form-control" placeholder="Contoh: 202607AABBCC" required style="width: 100%; padding: 0.75rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); background: rgba(0,0,0,0.2); color: #fff;" />
+                </div>
+
+
+
+                <label for="receipt" class="custom-file-upload">
+                  <span class="icon">📁</span>
+                  <span class="text" id="file-name-text">Pilih Foto Bukti Transfer (Max 2MB)</span>
+                  <input type="file" id="receipt" name="receipt" accept="image/*" required />
+                </label>
+                
+                <button type="submit" class="btn btn-accent btn-full payment-btn" id="upload-btn">
+                  Kirim Bukti Transfer
+                </button>
+              </form>
+            )}
+          </div>
+          
+          <span class="safe-note">🔒 Transaksi aman. Tiket Anda akan terbit setelah admin memverifikasi bukti transfer masuk.</span>
+        </div>
+      </div>
+      </>
+      )}
+    </div>
+  </section>
+</Layout>
+
+<script>
+  // Script untuk mengganti tulisan file upload jika berkas sudah dipilih
+  const fileInput = document.getElementById('receipt') as HTMLInputElement;
+  const fileNameText = document.getElementById('file-name-text');
+  const uploadBtn = document.getElementById('upload-btn');
+
+  if (fileInput && fileNameText) {
+    fileInput.addEventListener('change', () => {
+      if (fileInput.files && fileInput.files.length > 0) {
+        fileNameText.textContent = `File terpilih: ${fileInput.files[0].name}`;
+      } else {
+        fileNameText.textContent = 'Pilih Foto Bukti Transfer (Max 2MB)';
+      }
+    });
+  }
+
+  // Tampilkan loading text pada tombol kirim saat proses OCR berjalan (bisa makan waktu 2-3 detik)
+  if (uploadBtn && fileInput) {
+    const form = fileInput.closest('form');
+    if (form) {
+      form.addEventListener('submit', () => {
+        uploadBtn.textContent = 'Membaca teks struk (OCR)...';
+        uploadBtn.setAttribute('disabled', 'true');
+      });
+    }
+  }
+
+
+
+  // Countdown Timer
+  const timerEl = document.getElementById('countdown-timer');
+  const limitTimeStr = document.getElementById('limit-time-data')?.dataset.time;
+  if (timerEl && limitTimeStr) {
+    const limitTime = parseInt(limitTimeStr, 10);
+    const updateTimer = () => {
+      const now = new Date().getTime();
+      const distance = limitTime - now;
+      
+      if (distance < 0) {
+        timerEl.innerHTML = "KADALUARSA";
+        timerEl.style.color = "#ef4444";
+        setTimeout(() => window.location.reload(), 2000);
+        return;
+      }
+      
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+      
+      timerEl.innerHTML = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    };
+    
+    updateTimer();
+    setInterval(updateTimer, 1000);
+  }
+</script>
+
+<style>
+  .countdown-banner {
+    margin-bottom: 1.5rem;
+    padding: 1rem 1.5rem;
+    background: rgba(245, 158, 11, 0.1);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    font-size: 1.1rem;
+    color: var(--text-primary);
+  }
+  .countdown-banner .icon { font-size: 1.25rem; }
+  .countdown-banner strong { color: #f59e0b; letter-spacing: 1px; font-variant-numeric: tabular-nums; }
+
+  .hidden { display: none !important; }
+
+  /* Method Grid — 2 column */
+  .method-grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  /* Badges on method buttons */
+  .method-btn {
+    position: relative;
+  }
+
+  .badge-recommended {
+    display: block;
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: #10b981;
+    margin-top: 0.25rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .badge-limited {
+    display: block;
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: #f59e0b;
+    margin-top: 0.25rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .badge-secondary {
+    display: block;
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    margin-top: 0.25rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+
+  /* Bank nominal warning box */
+  .bank-nominal {
+    border-color: rgba(245, 158, 11, 0.4);
+    background-color: rgba(245, 158, 11, 0.05);
+  }
+
+  .accent-orange {
+    color: #f59e0b !important;
+    font-size: 1.5rem !important;
+  }
+
+  .nominal-tag .lbl-sub {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    margin-top: 0.25rem;
+    font-weight: 500;
+  }
+
+  .checkout-section {
+    padding: 3rem 0;
+    position: relative;
+    min-height: calc(100vh - 72px - 300px);
+  }
+
+  .max-width-md {
+    max-width: 850px;
+  }
+
+  .checkout-glow {
+    top: 15%;
+    left: 10%;
+    width: 450px;
+    height: 450px;
+    background-color: var(--accent-glow);
+  }
+
+  .back-link {
+    font-size: 0.95rem;
+    color: var(--primary);
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    display: inline-block;
+  }
+
+  .back-link:hover {
+    color: #60a5fa;
+  }
+
+  .checkout-title {
+    font-size: 2.25rem;
+    font-weight: 800;
+    margin-bottom: 2rem;
+  }
+
+  /* Metode Pembayaran */
+  .payment-methods {
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+    border: 1px solid var(--border-color);
+    margin-bottom: 2rem;
+  }
+
+  .section-label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    letter-spacing: 0.05em;
+    margin-bottom: 1rem;
+  }
+
+  .method-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+  }
+
+  .method-btn {
+    background-color: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: var(--text-primary);
+  }
+
+  .method-btn:hover:not(.disabled) {
+    border-color: var(--accent);
+  }
+
+  .method-btn.active {
+    border-color: var(--primary);
+    background-color: rgba(45, 130, 255, 0.1);
+    box-shadow: 0 0 0 2px rgba(45, 130, 255, 0.2);
+  }
+
+  .method-btn.disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .method-btn .icon {
+    font-size: 1.5rem;
+  }
+
+  .method-btn .name {
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-align: center;
+  }
+
+  /* Checkout Details Grid */
+  .checkout-details {
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-color);
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    overflow: hidden;
+  }
+
+  .bank-details-box, .qris-payment-box {
+    background-color: rgba(255, 255, 255, 0.02);
+    border-right: 1px solid var(--border-color);
+    padding: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .bank-logo-header, .qris-logo-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 800;
+  }
+
+  .bank-logo-header .logo-txt {
+    color: #fff;
+    font-size: 1.75rem;
+    background-color: #0056a3;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+  }
+
+  .qris-logo-header .logo-txt {
+    color: #fff;
+    font-size: 1.75rem;
+    background-color: #e51a2d;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    letter-spacing: 0.05em;
+  }
+
+  .bank-logo-header .sub-txt, .qris-logo-header .sub-txt {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    letter-spacing: 0.1em;
+  }
+
+  .rekening-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .rek-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .rek-item .lbl, .nominal-tag .lbl {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+  }
+
+  .rek-item .val, .nominal-tag .val {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
+  .rek-item .text-accent {
+    color: var(--accent);
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+  }
+
+  .rek-item .text-large {
+    font-size: 1.5rem;
+    color: var(--text-primary);
+    font-family: var(--font-display);
+  }
+
+  /* QRIS CSS */
+  .qr-code-wrapper {
+    background-color: #fff;
+    padding: 1.25rem;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: fit-content;
+    align-self: center;
+    box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3);
+  }
+
+  .qris-img {
+    width: 200px;
+    height: 200px;
+  }
+
+  .nominal-tag {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    align-items: center;
+    text-align: center;
+    border: 1px solid var(--border-color);
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius-sm);
+    background-color: rgba(255, 255, 255, 0.01);
+  }
+
+  .nominal-tag .val {
+    font-size: 1.4rem;
+    color: var(--primary);
+  }
+
+  .scan-instructions {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin-top: 1rem;
+    border-top: 1px solid var(--border-color);
+    padding-top: 1rem;
+  }
+
+  /* Payment Summary Right Side */
+  .payment-summary {
+    padding: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.95rem;
+  }
+
+  .summary-row .label {
+    color: var(--text-secondary);
+  }
+
+  .summary-row .val {
+    color: var(--text-primary);
+  }
+
+  .font-semibold {
+    font-weight: 600;
+  }
+
+  .text-muted {
+    color: var(--text-muted);
+  }
+
+  .summary-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--border-color);
+    padding-top: 1.25rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .total-label {
+    font-size: 1.1rem;
+    font-weight: 700;
+  }
+
+  .total-val {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--accent);
+    font-family: var(--font-display);
+  }
+
+  /* Upload & Alert Box */
+  .upload-area {
+    margin-top: 0.5rem;
+  }
+
+  .alert {
+    padding: 0.8rem 1.2rem;
+    border-radius: var(--radius-sm);
+    margin-bottom: 1rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  .alert-danger {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: var(--danger);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+  }
+
+  .alert-success {
+    background-color: rgba(16, 185, 129, 0.1);
+    color: var(--success);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+  }
+
+  .upload-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .upload-title {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
+  .custom-file-upload {
+    border: 2px dashed var(--border-color);
+    border-radius: var(--radius-sm);
+    padding: 1.5rem 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    background-color: var(--bg-primary);
+    transition: border-color 0.2s ease;
+    text-align: center;
+  }
+
+  .custom-file-upload:hover {
+    border-color: var(--accent);
+  }
+
+  .custom-file-upload .icon {
+    font-size: 2rem;
+  }
+
+  .custom-file-upload .text {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+  }
+
+  .custom-file-upload input[type="file"] {
+    display: none;
+  }
+
+  .payment-btn {
+    padding: 1rem;
+    font-size: 1rem;
+  }
+
+  /* Waiting Box */
+  .waiting-box {
+    text-align: center;
+    padding: 2rem 1.5rem;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+    background-color: rgba(245, 158, 11, 0.03);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .waiting-box.expired {
+    background-color: rgba(239, 68, 68, 0.03);
+    border-color: var(--danger);
+  }
+
+  .waiting-box.expired h3 {
+    color: var(--danger);
+  }
+
+  .waiting-icon {
+    font-size: 2.5rem;
+    animation: spin 3s infinite linear;
+  }
+
+  .waiting-box.expired .waiting-icon {
+    animation: none;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  .waiting-box h3 {
+    font-size: 1.15rem;
+    color: var(--warning);
+  }
+
+  .waiting-box p {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+  }
+
+  .preview-receipt {
+    width: 100%;
+    margin-top: 1rem;
+    border-top: 1px solid var(--border-color);
+    padding-top: 1rem;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .preview-receipt .helper {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+  }
+
+  .receipt-preview-img {
+    width: 100%;
+    max-height: 150px;
+    object-fit: contain;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-color);
+    background-color: #000;
+  }
+
+  .safe-note {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    line-height: 1.4;
+  }
+
+  .paid-confirmation {
+    padding: 3rem 2rem;
+    text-align: center;
+    border-top: 4px solid #10b981;
+    margin-top: 2rem;
+  }
+
+  .paid-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    animation: bounce 2s infinite;
+  }
+
+  .paid-title {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: #10b981;
+    margin-bottom: 0.5rem;
+  }
+
+  .paid-subtitle {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+  }
+
+  .paid-email-notice {
+    background-color: rgba(34, 211, 238, 0.1);
+    border: 1px solid rgba(34, 211, 238, 0.3);
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    text-align: left;
+    margin-bottom: 2rem;
+  }
+
+  .paid-email-notice .notice-icon {
+    font-size: 2rem;
+  }
+
+  .paid-email-notice strong {
+    color: #22d3ee;
+    display: block;
+    margin-bottom: 0.25rem;
+    font-size: 1.1rem;
+  }
+
+  .paid-email-notice p {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .paid-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+  }
+
+  @keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+    40% {transform: translateY(-20px);}
+    60% {transform: translateY(-10px);}
+  }
+
+  @media (max-width: 768px) {
+    .checkout-details {
+      grid-template-columns: 1fr;
+    }
+    
+    .bank-details-box, .qris-payment-box {
+      border-right: none;
+      border-bottom: 1px solid var(--border-color);
+      padding: 2rem;
+    }
+    
+    .payment-summary {
+      padding: 2rem;
+    }
+  }
+</style>

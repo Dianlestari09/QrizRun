@@ -1,0 +1,30 @@
+{
+  "name": "fun-run",
+  "type": "module",
+  "version": "0.0.1",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/check": "^0.9.9",
+    "@astrojs/node": "^11.0.2",
+    "@supabase/supabase-js": "^2.110.7",
+    "@types/nodemailer": "^8.0.1",
+    "astro": "^7.1.1",
+    "better-sqlite3": "^12.11.1",
+    "nodemailer": "^9.0.3",
+    "pdf-parse": "^1.1.1",
+    "tesseract.js": "^7.0.0",
+    "typescript": "^6.0.3",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13"
+  }
+}

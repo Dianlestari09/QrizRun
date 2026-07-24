@@ -1,0 +1,220 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = "Admin Dashboard | Fun Run" } = Astro.props;
+const currentPath = Astro.url.pathname;
+---
+
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="description" content={description} />
+    <title>{title} | Admin</title>
+  </head>
+  <body class="admin-body">
+    <div class="admin-layout">
+      <!-- Sidebar -->
+      <aside class="admin-sidebar glass">
+        <div class="sidebar-header">
+          <a href="/admin" class="logo">
+            <div class="logo-icon">⚡</div>
+            <span class="logo-text">FUN <span>RUN</span></span>
+          </a>
+        </div>
+        
+        <nav class="sidebar-nav">
+          <a href="/admin" class={`sidebar-link ${currentPath === '/admin' || currentPath === '/admin/' ? 'active' : ''}`}>
+            <span class="icon">📊</span>
+            Dashboard
+          </a>
+          <a href="/admin/events" class={`sidebar-link ${currentPath.includes('/admin/events') || currentPath.includes('/admin/add') || currentPath.includes('/admin/edit') ? 'active' : ''}`}>
+            <span class="icon">📅</span>
+            Manajemen Event
+          </a>
+          <a href="/admin/registrations" class={`sidebar-link ${currentPath.includes('/admin/registrations') ? 'active' : ''}`}>
+            <span class="icon">👥</span>
+            Pendaftar Masuk
+          </a>
+          <a href="/admin/checkin" class={`sidebar-link ${currentPath.includes('/admin/checkin') ? 'active' : ''}`}>
+            <span class="icon">📷</span>
+            Check-In Tiket
+          </a>
+        </nav>
+
+        <div class="sidebar-footer">
+          <a href="/" class="sidebar-link back-link">
+            <span class="icon">🏠</span>
+            Web Publik
+          </a>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="admin-content">
+        <slot />
+      </main>
+    </div>
+
+    <style>
+      .admin-body {
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
+        background-color: var(--bg-primary);
+        color: var(--text-primary);
+        font-family: var(--font-sans);
+      }
+
+      .admin-layout {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* Sidebar Styles */
+      .admin-sidebar {
+        width: 280px;
+        min-height: 100vh;
+        background: var(--bg-secondary);
+        border-right: 1px solid var(--border-color);
+        display: flex;
+        flex-direction: column;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 100;
+      }
+
+      .sidebar-header {
+        padding: 2rem 1.5rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      }
+      
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        text-decoration: none;
+      }
+      
+      .logo-icon {
+        background: linear-gradient(135deg, var(--accent), var(--primary));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-size: 1.5rem;
+      }
+      
+      .logo-text {
+        font-family: var(--font-display);
+        font-weight: 900;
+        font-size: 1.25rem;
+        letter-spacing: -0.02em;
+        color: var(--text-primary);
+      }
+      
+      .logo-text span {
+        color: var(--accent);
+      }
+
+      .sidebar-nav {
+        flex: 1;
+        padding: 2rem 1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .sidebar-link {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem 1.25rem;
+        border-radius: var(--radius-md);
+        color: var(--text-secondary);
+        font-weight: 600;
+        transition: all 0.3s ease;
+        text-decoration: none;
+      }
+
+      .sidebar-link:hover {
+        background: rgba(0, 229, 255, 0.1);
+        color: var(--accent);
+      }
+
+      .sidebar-link .icon {
+        font-size: 1.2rem;
+      }
+
+      .sidebar-footer {
+        padding: 1.5rem 1rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+      }
+
+      .back-link {
+        background: rgba(255, 255, 255, 0.03);
+      }
+      .back-link:hover {
+        background: rgba(255, 255, 255, 0.08);
+        color: var(--text-primary);
+      }
+
+      /* Content Area */
+      .admin-content {
+        flex: 1;
+        margin-left: 280px;
+        min-height: 100vh;
+        background: var(--bg-primary);
+        padding: 2rem 0;
+      }
+
+      @media (max-width: 1024px) {
+        .admin-sidebar {
+          width: 240px;
+        }
+        .admin-content {
+          margin-left: 240px;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .admin-layout {
+          flex-direction: column;
+        }
+        .admin-sidebar {
+          width: 100%;
+          min-height: auto;
+          position: relative;
+          border-right: none;
+          border-bottom: 1px solid var(--border-color);
+        }
+        .admin-content {
+          margin-left: 0;
+          padding-top: 1rem;
+        }
+        .sidebar-header {
+          padding: 1rem 1.5rem;
+        }
+        .sidebar-nav {
+          padding: 1rem;
+          flex-direction: row;
+          flex-wrap: wrap;
+        }
+        .sidebar-link {
+          padding: 0.75rem 1rem;
+        }
+        .sidebar-footer {
+          display: none;
+        }
+      }
+    </style>
+  </body>
+</html>

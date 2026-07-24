@@ -1,0 +1,267 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import { createEvent } from '../../lib/db';
+
+let errorMsg = '';
+
+if (Astro.request.method === 'POST') {
+  try {
+    const formData = await Astro.request.formData();
+    const title = formData.get('title')?.toString() || '';
+    const date = formData.get('date')?.toString() || '';
+    const location = formData.get('location')?.toString() || '';
+    const category = formData.get('category')?.toString() || '';
+    const imageUrl = formData.get('imageUrl')?.toString() || '';
+    const status = formData.get('status')?.toString() || 'UPCOMING';
+    const description = formData.get('description')?.toString() || '';
+    const price = parseInt(formData.get('price')?.toString() || '0', 10);
+    const slots = parseInt(formData.get('slots')?.toString() || '100', 10);
+    const registered = parseInt(formData.get('registered')?.toString() || '0', 10);
+
+    // Simple validation
+    if (!title || !date || !location || !category || !imageUrl || !description) {
+      errorMsg = 'Semua field wajib diisi!';
+    } else {
+      await createEvent({
+        title,
+        date,
+        location,
+        category,
+        imageUrl,
+        status: status as 'UPCOMING' | 'FINISHED',
+        description,
+        price,
+        slots,
+        registered
+      });
+      return Astro.redirect('/admin');
+    }
+  } catch (err) {
+    errorMsg = 'Gagal menambahkan event. Periksa kembali inputan Anda.';
+    console.error(err);
+  }
+}
+---
+
+<AdminLayout title="Tambah Event Baru">
+  <section class="admin-form-section">
+    <div class="glow-spot form-glow"></div>
+    <div class="container form-container relative z-1">
+      
+      <div class="form-header">
+        <a href="/admin" class="back-link">&larr; Kembali ke Dashboard</a>
+        <h1 class="form-title">Tambah Event Baru</h1>
+        <p class="form-subtitle">Buat dan umumkan event olahraga baru Anda ke publik</p>
+      </div>
+
+      {errorMsg && <div class="alert alert-danger">{errorMsg}</div>}
+
+      <form method="POST" class="admin-form glass">
+        <div class="form-grid">
+          <!-- Nama Event -->
+          <div class="form-group full-width">
+            <label for="title">Nama Event</label>
+            <input type="text" id="title" name="title" required placeholder="Contoh: Bandung Ultra Trail Run 2026" />
+          </div>
+
+          <!-- Kategori -->
+          <div class="form-group">
+            <label for="category">Kategori Olahraga</label>
+            <select id="category" name="category" required>
+              <option value="RUNNING">RUNNING (Lari)</option>
+              <option value="CYCLING">CYCLING (Sepeda)</option>
+              <option value="POUNDFIT">POUNDFIT (Senam)</option>
+              <option value="WALK">WALK (Jalan Santai)</option>
+              <option value="TRIATHLON">TRIATHLON</option>
+            </select>
+          </div>
+
+          <!-- Tanggal Event -->
+          <div class="form-group">
+            <label for="date">Tanggal Pelaksanaan</label>
+            <input type="date" id="date" name="date" required />
+          </div>
+
+          <!-- Lokasi -->
+          <div class="form-group full-width">
+            <label for="location">Lokasi Event</label>
+            <input type="text" id="location" name="location" required placeholder="Contoh: KAB. GARUT, JAWA BARAT" />
+          </div>
+
+          <!-- Image URL -->
+          <div class="form-group full-width">
+            <label for="imageUrl">URL Gambar Banner</label>
+            <input type="url" id="imageUrl" name="imageUrl" required placeholder="Masukkan URL gambar (Unsplash dll.)" />
+            <span class="input-helper">Rekomendasi gunakan gambar lanskap. Contoh default: https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?q=80&w=640</span>
+          </div>
+
+          <!-- Status -->
+          <div class="form-group">
+            <label for="status">Status Event</label>
+            <select id="status" name="status" required>
+              <option value="UPCOMING">UPCOMING (Mendatang)</option>
+              <option value="FINISHED">FINISHED (Selesai)</option>
+            </select>
+          </div>
+
+          <!-- Harga Pendaftaran -->
+          <div class="form-group">
+            <label for="price">Harga Tiket (IDR)</label>
+            <input type="number" id="price" name="price" min="0" value="0" required />
+          </div>
+
+          <!-- Kuota Pendaftaran (Slots) -->
+          <div class="form-group">
+            <label for="slots">Total Kuota (Slots)</label>
+            <input type="number" id="slots" name="slots" min="1" value="100" required />
+          </div>
+
+          <!-- Terdaftar (Awal) -->
+          <div class="form-group">
+            <label for="registered">Jumlah Terdaftar Awal</label>
+            <input type="number" id="registered" name="registered" min="0" value="0" required />
+          </div>
+
+          <!-- Deskripsi -->
+          <div class="form-group full-width">
+            <label for="description">Deskripsi Lengkap</label>
+            <textarea id="description" name="description" rows="5" required placeholder="Tuliskan deskripsi lengkap, rute, fasilitas, dan detail event lainnya..."></textarea>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <a href="/admin" class="btn btn-outline">Batal</a>
+          <button type="submit" class="btn btn-accent">Publish Event</button>
+        </div>
+      </form>
+    </div>
+  </section>
+</AdminLayout>
+
+<style>
+  .admin-form-section {
+    padding: 3rem 0;
+    position: relative;
+    min-height: calc(100vh - 72px - 300px);
+  }
+
+  .form-glow {
+    top: 10%;
+    right: 5%;
+    width: 400px;
+    height: 400px;
+    background-color: var(--accent-glow);
+  }
+
+  .form-header {
+    margin-bottom: 2.5rem;
+  }
+
+  .back-link {
+    font-size: 0.9rem;
+    color: var(--primary);
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    display: inline-block;
+  }
+
+  .back-link:hover {
+    color: #60a5fa;
+  }
+
+  .form-title {
+    font-size: 2.25rem;
+    font-weight: 800;
+  }
+
+  .form-subtitle {
+    color: var(--text-secondary);
+    font-size: 1rem;
+  }
+
+  .alert-danger {
+    background-color: rgba(239, 68, 68, 0.15);
+    color: var(--danger);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    padding: 1rem 1.5rem;
+    border-radius: var(--radius-md);
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+  }
+
+  /* Form Styling */
+  .admin-form {
+    border-radius: var(--radius-lg);
+    padding: 2.5rem;
+    border: 1px solid var(--border-color);
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .full-width {
+    grid-column: span 2;
+  }
+
+  label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  input, select, textarea {
+    background-color: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    padding: 0.8rem 1rem;
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px var(--accent-glow);
+  }
+
+  select {
+    cursor: pointer;
+  }
+
+  .input-helper {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+  }
+
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 2.5rem;
+    border-top: 1px solid var(--border-color);
+    padding-top: 1.5rem;
+  }
+
+  @media (max-width: 768px) {
+    .form-grid {
+      grid-template-columns: 1fr;
+    }
+    .full-width {
+      grid-column: span 1;
+    }
+    .admin-form {
+      padding: 1.5rem;
+    }
+  }
+</style>
