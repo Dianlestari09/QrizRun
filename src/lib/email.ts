@@ -22,7 +22,7 @@ function createTransporter() {
   });
 }
 
-const FROM_NAME = 'Qris Run';
+const FROM_NAME = 'Syiar QRIS Run';
 const BASE_URL = process.env.PUBLIC_BASE_URL || import.meta.env.PUBLIC_BASE_URL || 'http://localhost:4321';
 
 // ─────────────────────────────────────────
@@ -72,14 +72,14 @@ function wrapEmailTemplate(title: string, bodyHtml: string): string {
   <div class="wrapper">
     <div class="card">
       <div class="header">
-        <div class="header-logo">⚡ FUN <span>RUN</span></div>
-        <div class="header-tagline">Platform Pendaftaran Event Olahraga</div>
+        <div class="header-logo">⚡ Syiar <span>QRIS Run</span></div>
+        <div class="header-tagline">Event Lari Edukasi & Digitalisasi Bank Indonesia</div>
       </div>
       <div class="body">
         ${bodyHtml}
       </div>
       <div class="footer">
-        <p>Email ini dikirim otomatis oleh sistem Qris Run.</p>
+        <p>Email ini dikirim otomatis oleh sistem Syiar QRIS Run.</p>
         <p>Jangan balas email ini. Hubungi panitia jika ada pertanyaan.</p>
       </div>
     </div>
@@ -140,7 +140,7 @@ export async function sendPaymentReceivedEmail(params: {
     await transporter.sendMail({
       from: `"${FROM_NAME}" <${process.env.EMAIL_USER || import.meta.env.EMAIL_USER}>`,
       to: params.to,
-      subject: `[Qris Run] Bukti Pembayaran Diterima — ${params.eventTitle}`,
+      subject: `[Syiar QRIS Run] Bukti Pembayaran Diterima — ${params.eventTitle}`,
       html: wrapEmailTemplate('Bukti Pembayaran Diterima', bodyHtml),
     });
     console.log(`[EMAIL] Sent payment received email to ${params.to}`);
@@ -206,8 +206,8 @@ export async function sendTicketConfirmedEmail(params: {
       
       <!-- Ticket Header -->
       <div style="background-color: #1e293b; padding: 15px 25px; border-bottom: 1px solid #334155; display: flex; justify-content: space-between; align-items: center;">
-        <span style="color: #f8fafc; font-weight: 800; font-size: 18px;">⚡ QRIS RUN</span>
-        <span style="background-color: rgba(255,255,255,0.1); color: #f8fafc; padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: 600; letter-spacing: 1px;">E-TICKET OFFICIAL</span>
+        <span style="color: #94a3b8; font-weight: 700; font-size: 14px; letter-spacing: 1px;">🎫 OFFICIAL E-TICKET</span>
+        <span style="background-color: rgba(16, 185, 129, 0.1); color: #34d399; padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: 700; letter-spacing: 1px;">CONFIRMED</span>
       </div>
 
       <!-- Event Title Banner -->
@@ -271,7 +271,7 @@ export async function sendTicketConfirmedEmail(params: {
     await transporter.sendMail({
       from: `"${FROM_NAME}" <${process.env.EMAIL_USER || import.meta.env.EMAIL_USER}>`,
       to: params.to,
-      subject: `[Qris Run] ✅ Pembayaran Dikonfirmasi — E-Tiket ${params.eventTitle} Siap!`,
+      subject: `[Syiar QRIS Run] ✅ Pembayaran Dikonfirmasi — E-Tiket ${params.eventTitle} Siap!`,
       html: wrapEmailTemplate('E-Tiket Siap', bodyHtml),
     });
     console.log(`[EMAIL] Sent ticket confirmation email to ${params.to}`);

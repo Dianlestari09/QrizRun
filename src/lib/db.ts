@@ -34,9 +34,9 @@ export interface Registration {
 function mapEvent(dbEvent: any): Event {
   return {
     id: dbEvent.id,
-    title: dbEvent.title,
+    title: dbEvent.title ? dbEvent.title.replace(/Fun Run/gi, 'Syiar QRIS Run') : '',
     date: dbEvent.date,
-    location: dbEvent.location,
+    location: 'Kediri Town Square, Jawa Timur', // Override DB location
     category: dbEvent.category,
     imageUrl: dbEvent.image_url,
     status: dbEvent.status,
@@ -188,57 +188,6 @@ export async function deleteEvent(id: number): Promise<boolean> {
 /* --- Queries Registrasi --- */
 
 export async function createRegistration(reg: Omit<Registration, 'id' | 'createdAt'>): Promise<number | null> {
-  // 1. Cari registration yang kadaluarsa untuk Daur Ulang ID
-  const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
-  
-  // Cek yang statusnya sudah EXPIRED
-  let { data: expiredRegs } = await supabase
-    .from('registrations')
-    .select('id')
-    .eq('status', 'EXPIRED')
-    .order('id', { ascending: true })
-    .limit(1);
-
-  // Jika tidak ada EXPIRED, cek yang PENDING tapi usianya lebih dari 1 jam
-  if (!expiredRegs || expiredRegs.length === 0) {
-    const { data: oldPendingRegs } = await supabase
-      .from('registrations')
-      .select('id')
-      .eq('status', 'PENDING')
-      .lt('created_at', oneHourAgo)
-      .order('id', { ascending: true })
-      .limit(1);
-    expiredRegs = oldPendingRegs;
-  }
-
-  // Jika ditemukan pendaftar kadaluarsa, lakukan daur ulang (UPDATE)
-  if (expiredRegs && expiredRegs.length > 0) {
-    const recycledId = expiredRegs[0].id;
-    const { error: updateError } = await supabase
-      .from('registrations')
-      .update({
-        event_id: reg.eventId,
-        name: reg.name,
-        email: reg.email,
-        phone: reg.phone,
-        status: reg.status,
-        amount: reg.amount,
-        payment_method: reg.paymentMethod,
-        payment_proof: null,
-        transaction_id: null,
-        transaction_time: null,
-        checked_in: false,
-        created_at: new Date().toISOString() // Reset waktu pendaftaran
-      })
-      .eq('id', recycledId);
-      
-    if (!updateError) {
-      return recycledId; // Berhasil mendaur ulang ID
-    }
-    // Jika gagal update, abaikan dan lanjut ke INSERT biasa
-  }
-
-  // 2. Jika tidak ada ID untuk didaur ulang, buat ID baru (INSERT)
   const { data, error } = await supabase
     .from('registrations')
     .insert({
@@ -294,7 +243,7 @@ export async function getAllRegistrations(): Promise<(Registration & { eventTitl
     const reg = mapRegistration(dbReg);
     
     // Dynamic Expiration Check
-    const limitTime = new Date(reg.createdAt).getTime() + (1 * 60 * 60 * 1000); // 1 jam
+    const limitTime = new Date(reg.createdAt).getTime() + (30 * 60 * 1000); // 30 menit
     if (reg.status === 'PENDING' && Date.now() > limitTime) {
       reg.status = 'EXPIRED';
     }
@@ -306,7 +255,7 @@ export async function getAllRegistrations(): Promise<(Registration & { eventTitl
     if (reg.status !== 'EXPIRED' && !isPendingWithoutProof) {
       acc.push({
         ...reg,
-        eventTitle: dbReg.events?.title || 'Unknown Event',
+        eventTitle: (dbReg.events?.title || 'Unknown Event').replace(/Fun Run/gi, 'Syiar QRIS Run'),
       });
     }
     
@@ -338,8 +287,8 @@ export async function getRegistrationWithEventById(id: number): Promise<(Registr
 
   const reg = mapRegistration(data);
 
-  // Check TTL Expiration (1 Jam)
-  const limitTime = new Date(reg.createdAt).getTime() + (1 * 60 * 60 * 1000);
+  // Check TTL Expiration (30 Menit)
+  const limitTime = new Date(reg.createdAt).getTime() + (30 * 60 * 1000);
   if (reg.status === 'PENDING' && Date.now() > limitTime) {
     const { error: updateError } = await supabase
       .from('registrations')
@@ -355,9 +304,9 @@ export async function getRegistrationWithEventById(id: number): Promise<(Registr
 
   return {
     ...reg,
-    eventTitle: data.events?.title || 'Unknown Event',
+    eventTitle: (data.events?.title || 'Unknown Event').replace(/Fun Run/gi, 'Syiar QRIS Run'),
     eventDate: data.events?.date || '',
-    eventLocation: data.events?.location || '',
+    eventLocation: 'Kediri Town Square, Jawa Timur', // Override DB location
     eventImageUrl: data.events?.image_url || '',
   };
 }
@@ -473,7 +422,7 @@ export async function checkInRegistration(id: number): Promise<{ success: boolea
   };
 }
 
-export async function uploadPaymentProof(id: number, base64Image: string, transactionId: string, transactionTime: string): Promise<{ success: boolean; message: string }> {
+export async function uploadPaymentProof(id: number, base64Image: string, transactionTime: string): Promise<{ success: boolean; message: string }> {
   // 1. Cek duplikasi gambar (jika gambar sama persis)
   const { data: imageDupes } = await supabase
     .from('registrations')
@@ -481,17 +430,10 @@ export async function uploadPaymentProof(id: number, base64Image: string, transa
     .eq('payment_proof', base64Image)
     .not('id', 'eq', id);
 
-  // 2. Cek duplikasi Nomor Transaksi (mencegah gambar diedit nominalnya tapi nomor transaksinya tetap sama)
-  const { data: trxDupes } = await supabase
-    .from('registrations')
-    .select('id')
-    .eq('transaction_id', transactionId)
-    .not('id', 'eq', id);
-
-  if ((imageDupes && imageDupes.length > 0) || (trxDupes && trxDupes.length > 0)) {
+  if ((imageDupes && imageDupes.length > 0)) {
     return {
       success: false,
-      message: 'Bukti transfer atau Nomor Transaksi ini sudah pernah digunakan oleh pendaftar lain! Pendaftaran ditolak atas indikasi kecurangan (Duplikasi).'
+      message: 'Bukti transfer ini sudah pernah digunakan oleh pendaftar lain! Pendaftaran ditolak atas indikasi kecurangan (Duplikasi).'
     };
   }
 
@@ -500,7 +442,6 @@ export async function uploadPaymentProof(id: number, base64Image: string, transa
     .from('registrations')
     .update({ 
       payment_proof: base64Image,
-      transaction_id: transactionId,
       transaction_time: transactionTime
     })
     .eq('id', id);

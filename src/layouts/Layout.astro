@@ -21,7 +21,7 @@ const {
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <meta name="generator" content={Astro.generator} />
     <meta name="description" content={description} />
-    <title>{title} | Qris Run</title>
+    <title>{title} | Syiar QRIS Run</title>
   </head>
   <body style="overflow-x: clip; position: relative; width: 100%;">
     <header class="header glass">
@@ -30,7 +30,7 @@ const {
         <a href="/" class="logo">
           <img
             src="/logo.webp"
-            alt="Logo QRIS RUN"
+            alt="Logo Syiar QRIS Run"
             id="main-logo"
             class="navbar-logo-img"
           />
@@ -40,11 +40,14 @@ const {
           <a href="/" class="nav-link">Beranda</a>
 
           <div class="nav-dropdown">
-            <button class="nav-link dropdown-toggle">Informasi ▾</button>
+            <button class="nav-link dropdown-toggle" aria-expanded="false"
+              >Informasi <span class="arrow">▾</span></button
+            >
             <div class="dropdown-menu">
-              <a href="/jersey">Jersey</a>
-              <a href="/medali">Medali</a>
-              <a href="/rute">Rute</a>
+              <a href="/jersey" class="dropdown-item">Jersey</a>
+              <a href="/medali" class="dropdown-item">Medali</a>
+              <a href="/rute" class="dropdown-item">Rute</a>
+              <a href="/panduan" class="dropdown-item">Panduan Pendaftaran</a>
             </div>
           </div>
 
@@ -76,7 +79,8 @@ const {
         <div class="mobile-dropdown-menu" id="mobile-info-menu" style="display: none; flex-direction: column; padding-left: 1.5rem; background: rgba(0,0,0,0.1); border-bottom: 1px solid rgba(255, 255, 255, 0.05);">
           <a href="/jersey" class="mobile-nav-link" style="border-bottom: 1px dashed rgba(255,255,255,0.05); font-size: 1rem;">Jersey</a>
           <a href="/medali" class="mobile-nav-link" style="border-bottom: 1px dashed rgba(255,255,255,0.05); font-size: 1rem;">Medali</a>
-          <a href="/rute" class="mobile-nav-link" style="border-bottom: none; font-size: 1rem;">Rute</a>
+          <a href="/rute" class="mobile-nav-link" style="border-bottom: 1px dashed rgba(255,255,255,0.05); font-size: 1rem;">Rute</a>
+          <a href="/panduan" class="mobile-nav-link" style="border-bottom: none; font-size: 1rem;">Panduan Pendaftaran</a>
         </div>
         <a href="/regulasi" class="mobile-nav-link">Regulasi</a>
         <a href="/kontak" class="mobile-nav-link">Kontak</a>
@@ -94,7 +98,7 @@ const {
           <div class="logo">
             <img
               src="/logo.webp"
-              alt="Logo QRIS RUN"
+              alt="Logo Syiar QRIS Run"
               class="navbar-logo-img"
             />
           </div>
@@ -134,7 +138,7 @@ const {
         </div>
       </div>
       <div class="footer-bottom">
-        <p>&copy; 2026 Qris Run. All rights reserved.</p>
+        <p>&copy; 2026 Syiar QRIS Run. All rights reserved.</p>
       </div>
     </footer>
 
@@ -238,7 +242,6 @@ const {
     border: 1px solid rgba(255, 255, 255, 0.1);
     z-index: 1000;
     padding: 0.5rem 0;
-    margin-top: 0.5rem;
   }
 
   .nav-dropdown:hover .dropdown-menu {
