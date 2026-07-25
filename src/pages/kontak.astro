@@ -2,12 +2,12 @@
 import Layout from "../layouts/Layout.astro";
 ---
 
-<Layout title="Kontak - Waru Turi Fun Run 2026">
+<Layout title="Kontak - Syiar QRIS Run 2026">
   <!-- Header / Contact Info Section -->
   <section class="kontak-section section-padding">
     <div class="container kontak-container">
       <div class="kontak-header">
-        <span class="badge-blue">SUPPORT CENTER</span>
+        <!-- <span class="badge-blue">SUPPORT CENTER</span> -->
         <h1 class="page-title">
           Ada Pertanyaan? <br class="mobile-hidden" /><span
             class="text-accent italic">Kami Siap Membantu.</span>
@@ -29,7 +29,7 @@ import Layout from "../layouts/Layout.astro";
             <div class="contact-info">
               <span class="contact-label">LOKASI</span>
               <p class="contact-value">
-                Bendung Gerak Waru Turi, Gampengrejo, Kediri, Jawa Timur
+                Kediri Town Square, Jl. Hasanudin No.2, Balowerti, Gampengrejo, Kediri, Jawa Timur
               </p>
             </div>
           </div>
@@ -40,7 +40,7 @@ import Layout from "../layouts/Layout.astro";
             </div>
             <div class="contact-info">
               <span class="contact-label">WHATSAPP</span>
-              <p class="contact-value">+62 812-3456-7890</p>
+              <p class="contact-value">+62 815-5257-733</p>
             </div>
           </div>
 
@@ -50,19 +50,9 @@ import Layout from "../layouts/Layout.astro";
             </div>
             <div class="contact-info">
               <span class="contact-label">EMAIL</span>
-              <p class="contact-value">event@waruturirun.com</p>
+              <p class="contact-value">event@syiarqrisrun.com</p>
             </div>
           </div>
-        </div>
-      </div>
-
-      <div class="social-section">
-        <p class="social-label">IKUTI PERJALANAN KAMI</p>
-        <div class="social-icons">
-          <a href="#" class="social-btn">IG</a>
-          <a href="#" class="social-btn">🔗</a>
-          <a href="#" class="social-btn">▶️</a>
-          <a href="#" class="social-btn">🌐</a>
         </div>
       </div>
     </div>
@@ -73,11 +63,11 @@ import Layout from "../layouts/Layout.astro";
     <div class="container">
       <div class="map-header">
         <div class="map-title-area">
-          <span class="badge-blue">VENUE RACE</span>
+          <!-- <span class="badge-blue">VENUE RACE</span> -->
           <h2 class="section-title">Lokasi Start & Finish</h2>
         </div>
         <a
-          href="https://maps.google.com"
+          href="https://maps.app.goo.gl/dvgMRX7o7s7K3Cub6"
           target="_blank"
           rel="noopener noreferrer"
           class="maps-link"
@@ -87,17 +77,16 @@ import Layout from "../layouts/Layout.astro";
       </div>
 
       <div class="map-container glass">
-        <img
-          src="/map-placeholder.png"
-          alt="Peta Lokasi Waru Turi Fun Run"
-          class="map-image"
-        />
-        <div class="map-pin">
-          <div class="pin-icon-wrapper">
-            <span class="pin-icon">🚩</span>
-          </div>
-          <span class="pin-text">Main Event Area</span>
-        </div>
+        <iframe 
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3952.793740004018!2d112.0118543147783!3d-7.811651994370626!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e785712c4161555%3A0x812234035606114!2sKediri%20Town%20Square!5e0!3m2!1sen!2sid!4v1689840000000!5m2!1sen!2sid" 
+          width="100%" 
+          height="100%" 
+          style="border:0; min-height: 400px;" 
+          allowfullscreen="" 
+          loading="lazy" 
+          referrerpolicy="no-referrer-when-downgrade"
+          class="map-iframe"
+        ></iframe>
       </div>
     </div>
   </section>
@@ -132,7 +121,7 @@ import Layout from "../layouts/Layout.astro";
 
   /* Kontak Section */
   .kontak-section {
-    background-color: var(--bg-primary);
+    background-color: #ffffff; /* White background */
     padding-top: 120px; /* Memberi ruang untuk navbar */
   }
 
@@ -151,25 +140,25 @@ import Layout from "../layouts/Layout.astro";
     font-weight: 800;
     line-height: 1.2;
     margin-bottom: 1.5rem;
-    color: var(--neutral-white);
+    color: #111827; /* Dark text for title */
   }
 
   .page-subtitle {
     font-size: 1.15rem;
     line-height: 1.7;
-    color: var(--text-secondary);
+    color: #374151; /* Darker gray for subtitle */
     max-width: 650px;
     margin: 0 auto;
   }
 
   /* Kontak Card */
   .kontak-card {
-    background: var(--card-bg);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: #f8fafc; /* Light gray card background */
+    border: 1px solid #e2e8f0;
     border-radius: var(--radius-lg);
     padding: 3rem;
     margin-bottom: 3rem;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
   }
 
   .card-title {
@@ -215,14 +204,14 @@ import Layout from "../layouts/Layout.astro";
     font-size: 0.85rem;
     font-weight: 700;
     letter-spacing: 1px;
-    color: var(--text-secondary);
+    color: #4b5563; /* Darker gray for label */
     text-transform: uppercase;
   }
 
   .contact-value {
     font-size: 1.1rem;
     font-weight: 500;
-    color: var(--neutral-white);
+    color: #111827; /* Dark text for value */
     margin: 0;
   }
 
@@ -268,7 +257,7 @@ import Layout from "../layouts/Layout.astro";
 
   /* Map Section */
   .map-section {
-    background-color: var(--bg-secondary);
+    background-color: #cbd5e1; /* Match CTA background */
   }
 
   .map-header {
@@ -281,7 +270,7 @@ import Layout from "../layouts/Layout.astro";
   .section-title {
     font-size: 2.2rem;
     font-weight: 800;
-    color: var(--neutral-white);
+    color: #111827; /* Dark text for title */
   }
 
   .maps-link {
@@ -313,57 +302,10 @@ import Layout from "../layouts/Layout.astro";
     border: 1px solid rgba(255, 255, 255, 0.1);
   }
 
-  .map-image {
+  .map-iframe {
     width: 100%;
     height: 100%;
-    object-fit: cover;
-    opacity: 0.7;
-    transition: opacity 0.3s;
     display: block;
-  }
-
-  .map-image:hover {
-    opacity: 0.9;
-  }
-
-  .map-pin {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5rem;
-    pointer-events: none;
-  }
-
-  .pin-icon-wrapper {
-    background-color: #2b498f;
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 3px solid #ffffff;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-  }
-
-  .pin-icon {
-    font-size: 1.2rem;
-  }
-
-  .pin-text {
-    background-color: #111827;
-    color: #ffffff;
-    padding: 0.4rem 1rem;
-    border-radius: 20px;
-    font-size: 0.9rem;
-    font-weight: 600;
-    white-space: nowrap;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
   }
 
   @media (max-width: 768px) {
