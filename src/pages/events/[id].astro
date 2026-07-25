@@ -94,8 +94,6 @@ const isFinished = event.status === 'FINISHED';
 
 <Layout title={event.title} description={event.description}>
   <section class="event-detail-section">
-    <div class="glow-spot event-glow-1"></div>
-    <div class="glow-spot event-glow-2"></div>
     
     <div class="container relative z-1">
       <!-- <a href="/" class="back-link">&larr; Kembali ke Beranda</a> -->
@@ -150,7 +148,7 @@ const isFinished = event.status === 'FINISHED';
                         <input type="text" id="name_1" name="name_1" required placeholder="Isi Nama sesuai ID Card Anda" />
                       </div>
                       
-                      <div class="form-row">
+                      <div class="form-row mt-3">
                         <div class="form-group half">
                           <label for="jenisKelamin_1">Jenis Kelamin</label>
                           <select id="jenisKelamin_1" name="jenisKelamin_1" required>
@@ -169,7 +167,7 @@ const isFinished = event.status === 'FINISHED';
                         </div>
                       </div>
 
-                      <div class="form-group">
+                      <div class="form-group mt-3">
                         <label for="nomorId_1">Nomor ID</label>
                         <input type="text" id="nomorId_1" name="nomorId_1" required placeholder="Isi dengan Nomor NIK Anda" />
                       </div>
@@ -178,8 +176,8 @@ const isFinished = event.status === 'FINISHED';
                     </div>
                   </div>
 
-                  <div class="add-participant-row mt-3">
-                    <button type="button" id="add-participant-btn" class="btn btn-outline btn-sm">+ Tambah Peserta</button>
+                  <div class="add-participant-row mt-4">
+                    <button type="button" id="add-participant-btn" class="btn btn-accent btn-sm">+ Tambah Peserta</button>
                     <button type="button" id="remove-participant-btn" class="btn btn-danger btn-sm" style="display: none;">- Kurangi Peserta</button>
                   </div>
                   <input type="hidden" id="jumlah_peserta" name="jumlah_peserta" value="1" />
@@ -317,13 +315,13 @@ const isFinished = event.status === 'FINISHED';
                       addBtn.addEventListener('click', () => {
                         participantCount++;
                         const template = `
-                          <div class="participant-block" data-index="${participantCount}" style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px dashed rgba(255,255,255,0.2);">
+                          <div class="participant-block" data-index="${participantCount}" style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px dashed rgba(148, 163, 184, 0.35);">
                             <h4 class="form-section-title">Data Peserta ${participantCount}</h4>
                             <div class="form-group">
                               <label for="name_${participantCount}">Nama Lengkap</label>
                               <input type="text" id="name_${participantCount}" name="name_${participantCount}" required placeholder="Isi Nama sesuai ID Card Anda" />
                             </div>
-                            <div class="form-row">
+                            <div class="form-row mt-3">
                               <div class="form-group half">
                                 <label for="jenisKelamin_${participantCount}">Jenis Kelamin</label>
                                 <select id="jenisKelamin_${participantCount}" name="jenisKelamin_${participantCount}" required>
@@ -341,10 +339,9 @@ const isFinished = event.status === 'FINISHED';
                                 </select>
                               </div>
                             </div>
-                            <div class="form-group">
+                            <div class="form-group mt-3">
                               <label for="nomorId_${participantCount}">Nomor ID</label>
                               <input type="text" id="nomorId_${participantCount}" name="nomorId_${participantCount}" required placeholder="Isi dengan Nomor NIK Anda" />
-                            </div>
                             </div>
                           </div>
                         `;
@@ -726,12 +723,12 @@ const isFinished = event.status === 'FINISHED';
   .form-section-title {
     font-size: 1rem;
     font-weight: 700;
-    color: var(--accent);
+    color: #111827;
     text-transform: uppercase;
     letter-spacing: 1px;
     margin-bottom: 0.5rem;
     padding-bottom: 0.5rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(148, 163, 184, 0.35);
   }
   
   .mt-4 { margin-top: 1.5rem; }
