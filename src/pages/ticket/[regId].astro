@@ -150,9 +150,12 @@ try {
 
 <style>
   .ticket-section {
-    padding: 4rem 0;
+    margin-top: 2.5rem;
+    padding: 4rem 0 2rem;
     position: relative;
     min-height: calc(100vh - 72px - 300px);
+    background: #cbd5e1;
+    color: #111827;
   }
 
   .max-width-sm {
@@ -198,19 +201,20 @@ try {
   .success-message h2 {
     font-size: 1.75rem;
     margin-bottom: 0.5rem;
+    color: #111827;
   }
 
   .success-message p {
-    color: var(--text-secondary);
+    color: #475569;
     font-size: 0.95rem;
   }
 
   /* Ticket Card */
   .ticket-card {
     border-radius: var(--radius-lg);
-    border: 1px solid var(--border-color);
+    border: 1px solid rgba(148, 163, 184, 0.35);
     overflow: hidden;
-    background-color: rgba(18, 22, 32, 0.85);
+    background-color: #ffffff;
     box-shadow: var(--shadow-lg);
   }
 
@@ -222,12 +226,22 @@ try {
     border-bottom: 1px solid var(--border-color);
   }
 
+  .ticket-header {
+    padding: 1.25rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.35);
+    color: #111827;
+  }
+
   .ticket-header .logo {
     display: flex;
     align-items: center;
     gap: 0.5rem;
     font-size: 1.25rem;
     font-weight: 800;
+    color: #111827;
   }
 
   .ticket-header .logo-icon {
@@ -242,15 +256,15 @@ try {
     font-size: 0.7rem;
     font-weight: 700;
     letter-spacing: 0.05em;
-    color: var(--text-muted);
-    border: 1px solid var(--border-color);
+    color: #475569;
+    border: 1px solid rgba(148, 163, 184, 0.55);
     padding: 0.25rem 0.6rem;
     border-radius: 4px;
   }
 
   .ticket-image-header {
     position: relative;
-    height: 160px;
+    height: 180px;
     overflow: hidden;
   }
 
@@ -263,7 +277,7 @@ try {
   .ticket-image-header .overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(to top, rgba(10, 12, 16, 0.95) 0%, rgba(10, 12, 16, 0.4) 100%);
+    background: linear-gradient(to top, rgba(15, 23, 42, 0.85) 0%, rgba(15, 23, 42, 0.4) 100%);
   }
 
   .ticket-event-title {
@@ -273,7 +287,7 @@ try {
     right: 2rem;
     font-size: 1.5rem;
     font-weight: 800;
-    color: var(--text-primary);
+    color: #f8fafc;
   }
 
   .ticket-body {
@@ -287,7 +301,7 @@ try {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 1.5rem 1rem;
-    border-bottom: 1px dashed var(--border-color);
+    border-bottom: 1px dashed rgba(148, 163, 184, 0.55);
     padding-bottom: 2rem;
   }
 
@@ -299,7 +313,7 @@ try {
 
   .info-group .label {
     font-size: 0.75rem;
-    color: var(--text-muted);
+    color: #475569;
     text-transform: uppercase;
     font-weight: 700;
     letter-spacing: 0.05em;
@@ -308,7 +322,7 @@ try {
   .info-group .val {
     font-size: 0.95rem;
     font-weight: 600;
-    color: var(--text-primary);
+    color: #111827;
   }
 
   .status-paid {
@@ -347,22 +361,22 @@ try {
 
   .qr-instructions strong {
     font-size: 0.95rem;
-    color: var(--text-primary);
+    color: #111827;
   }
 
   .qr-instructions p {
     font-size: 0.8rem;
-    color: var(--text-secondary);
+    color: #475569;
     line-height: 1.4;
   }
 
   .ticket-footer-strip {
-    background-color: rgba(0, 0, 0, 0.2);
-    border-top: 1px solid var(--border-color);
+    background-color: #f1f5f9;
+    border-top: 1px solid rgba(148, 163, 184, 0.35);
     padding: 0.75rem;
     text-align: center;
     font-size: 0.75rem;
-    color: var(--text-muted);
+    color: #475569;
   }
 
   .ticket-actions {
@@ -374,6 +388,18 @@ try {
   .ticket-actions .btn {
     flex: 1;
     padding: 0.9rem;
+  }
+
+  .ticket-actions .btn.btn-outline {
+    background: #111827;
+    color: #ffffff;
+    border-color: #111827;
+  }
+
+  .ticket-actions .btn.btn-outline:hover {
+    background: #0f172a;
+    border-color: #0f172a;
+    color: #ffffff;
   }
 
   @media (max-width: 480px) {

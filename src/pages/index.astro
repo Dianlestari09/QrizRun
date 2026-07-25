@@ -1147,6 +1147,15 @@ const categories = [
       max-width: 320px;
     }
 
+    /* Make hero logo smaller on mobile to fit screens */
+    .event-hero-logo {
+      max-width: 220px;
+      height: auto;
+      margin: 0 auto;
+      display: block;
+      margin-top: 38px; /* space from fixed navbar on mobile */
+    }
+
     .event-meta-pills {
       flex-wrap: nowrap;
       gap: 0.5rem;
@@ -1202,12 +1211,12 @@ const categories = [
     }
 
     .sponsor-logo {
-      height: 30px;
+      height: 60px; /* larger on mobile for visibility */
     }
 
     .sponsor-track {
       gap: 0;
-      animation: sponsorScrollMobile 20s linear infinite;
+      animation: sponsorScrollMobile 10s linear infinite; /* a bit faster on mobile */
     }
 
     @keyframes sponsorScrollMobile {

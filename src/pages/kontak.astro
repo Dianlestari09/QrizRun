@@ -77,16 +77,20 @@ import Layout from "../layouts/Layout.astro";
       </div>
 
       <div class="map-container glass">
-        <iframe 
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3952.793740004018!2d112.0118543147783!3d-7.811651994370626!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e785712c4161555%3A0x812234035606114!2sKediri%20Town%20Square!5e0!3m2!1sen!2sid!4v1689840000000!5m2!1sen!2sid" 
-          width="100%" 
-          height="100%" 
-          style="border:0; min-height: 400px;" 
-          allowfullscreen="" 
-          loading="lazy" 
+        <iframe
+          src="https://maps.google.com/maps?q=-7.811651994370626,112.0118543147783&z=17&output=embed"
+          width="100%"
+          height="100%"
+          style="border:0; min-height: 400px;"
+          allowfullscreen=""
+          loading="lazy"
           referrerpolicy="no-referrer-when-downgrade"
           class="map-iframe"
         ></iframe>
+        <div class="map-center-label" role="note">
+          <span class="pin">📍</span>
+          <span class="map-label-text">Kediri Town Square — Start & Finish</span>
+        </div>
       </div>
     </div>
   </section>
@@ -308,6 +312,25 @@ import Layout from "../layouts/Layout.astro";
     display: block;
   }
 
+  .map-center-label {
+    position: absolute;
+    right: 12px;
+    bottom: 12px;
+    transform: none;
+    background: rgba(2,6,23,0.75);
+    color: #fff;
+    padding: 0.45rem 0.75rem;
+    border-radius: 10px;
+    display: inline-flex;
+    gap: 0.5rem;
+    align-items: center;
+    font-weight: 700;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+    pointer-events: none;
+  }
+
+  .map-center-label .pin { font-size: 1.05rem; }
+
   @media (max-width: 768px) {
     .page-title {
       font-size: 2.2rem;
@@ -326,5 +349,6 @@ import Layout from "../layouts/Layout.astro";
     .map-container {
       height: 300px;
     }
+    .map-center-label { padding: 0.35rem 0.6rem; font-size: 0.95rem; right: 10px; bottom: 10px; }
   }
 </style>

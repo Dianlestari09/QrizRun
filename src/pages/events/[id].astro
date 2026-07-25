@@ -98,7 +98,7 @@ const isFinished = event.status === 'FINISHED';
     <div class="glow-spot event-glow-2"></div>
     
     <div class="container relative z-1">
-      <a href="/" class="back-link">&larr; Kembali ke Beranda</a>
+      <!-- <a href="/" class="back-link">&larr; Kembali ke Beranda</a> -->
       
       <!-- Kolom Info Atas (Full Width) -->
       <div class="info-column" style="margin-bottom: 2rem;">
@@ -187,8 +187,17 @@ const isFinished = event.status === 'FINISHED';
                   <hr style="border-color: rgba(255,255,255,0.1); margin: 2rem 0;" />
                   
                   <h4 class="form-section-title">Panduan Ukuran Jersey</h4>
-                  <div class="jersey-preview-card mt-3 text-center">
-                    <img src="/jersey.png" alt="Desain Jersey" class="jersey-thumb" style="width: 100%; max-width: 300px; border-radius: var(--radius-md);" onerror="this.onerror=null; this.src='/logo.webp';" />
+                  <div class="jersey-preview-card mt-3">
+                    <div class="jersey-preview-grid">
+                      <div class="jersey-preview-item">
+                        <img src="/jersey-placeholder.webp" alt="Jersey Depan" class="jersey-thumb" />
+                        <span class="jersey-caption">Depan Jersey</span>
+                      </div>
+                      <div class="jersey-preview-item">
+                        <img src="/jersey-back-placeholder.webp" alt="Jersey Belakang" class="jersey-thumb" />
+                        <span class="jersey-caption">Belakang Jersey</span>
+                      </div>
+                    </div>
                   </div>
                   <div class="size-chart-compact mt-2 mb-4">
                     <table class="compact-table">
@@ -389,6 +398,8 @@ const isFinished = event.status === 'FINISHED';
   .event-detail-section {
     padding: 3rem 0;
     position: relative;
+    background: #cbd5e1;
+    color: #111827;
   }
 
   .event-glow-1 {
@@ -396,7 +407,7 @@ const isFinished = event.status === 'FINISHED';
     right: 5%;
     width: 450px;
     height: 450px;
-    background-color: var(--accent-glow);
+    background-color: rgba(232, 186, 70, 0.25);
   }
 
   .event-glow-2 {
@@ -440,16 +451,56 @@ const isFinished = event.status === 'FINISHED';
 
   .banner-wrapper {
     position: relative;
+    margin-top: 2.5rem;
     border-radius: var(--radius-lg);
     overflow: hidden;
-    height: 200px;
-    border: 1px solid var(--border-color);
+    border: 1px solid rgba(148, 163, 184, 0.35);
+    background: #ffffff;
+    /* padding: 1rem; */
+  }
+
+  .jersey-banner-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .jersey-banner-item {
+    position: relative;
+    background: #f8fafc;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    border: 1px solid rgba(148, 163, 184, 0.35);
+  }
+
+  .jersey-caption {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 0.75rem 1rem;
+    background: rgba(15, 23, 42, 0.75);
+    color: #ffffff;
+    font-weight: 700;
+    text-align: center;
+    font-size: 0.9rem;
   }
 
   .detail-banner {
     width: 100%;
-    height: 100%;
+    height: 320px;
     object-fit: cover;
+    display: block;
+  }
+
+  @media (max-width: 991px) {
+    .jersey-banner-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .detail-banner {
+      height: 260px;
+    }
   }
 
   .detail-badge {
@@ -465,15 +516,15 @@ const isFinished = event.status === 'FINISHED';
     font-size: 2.75rem;
     line-height: 1.2;
     font-weight: 800;
-    color: var(--text-primary);
+    color: #111827;
   }
 
   .meta-row {
     display: flex;
     gap: 2.5rem;
     flex-wrap: wrap;
-    border-top: 1px solid var(--border-color);
-    border-bottom: 1px solid var(--border-color);
+    border-top: 1px solid rgba(148, 163, 184, 0.35);
+    border-bottom: 1px solid rgba(148, 163, 184, 0.35);
     padding: 1.5rem 0;
   }
 
@@ -506,16 +557,18 @@ const isFinished = event.status === 'FINISHED';
   .description-box {
     border-radius: var(--radius-md);
     padding: 2rem;
-    border: 1px solid var(--border-color);
+    border: 1px solid rgba(148, 163, 184, 0.35);
+    background: #ffffff;
   }
 
   .description-box h3 {
     margin-bottom: 1rem;
     font-size: 1.4rem;
+    color: #111827;
   }
 
   .description-box p {
-    color: var(--text-secondary);
+    color: #374151;
     line-height: 1.7;
   }
 
@@ -523,8 +576,9 @@ const isFinished = event.status === 'FINISHED';
   .reg-card {
     border-radius: var(--radius-lg);
     padding: 2.5rem;
-    border: 1px solid var(--border-color);
-    background: rgba(18, 22, 32, 0.7);
+    border: 1px solid rgba(148, 163, 184, 0.35);
+    background: #ffffff;
+    color: #111827;
   }
 
   @media (min-width: 1025px) {
@@ -543,7 +597,7 @@ const isFinished = event.status === 'FINISHED';
 
   .price-header .label {
     font-size: 0.9rem;
-    color: var(--text-secondary);
+    color: #475569;
   }
 
   .price-tag {
@@ -582,15 +636,63 @@ const isFinished = event.status === 'FINISHED';
   .form-wrapper h3 {
     font-size: 1.25rem;
     margin-bottom: 1.5rem;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid rgba(148, 163, 184, 0.35);
     padding-bottom: 0.75rem;
+    color: #111827;
   }
   
+  .add-participant-row {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .btn-sm {
+    padding: 0.55rem 1rem;
+    font-size: 0.9rem;
+    border-radius: 0.75rem;
+  }
+
+  .btn-outline {
+    background: #f8fafc;
+    color: #111827;
+    border-color: rgba(148, 163, 184, 0.85);
+    box-shadow: 0 1px 4px rgba(15, 23, 42, 0.08);
+  }
+
+  .btn-outline:hover {
+    background: #e2e8f0;
+    color: #111827;
+    border-color: rgba(148, 163, 184, 1);
+  }
+
+  .btn-outline.btn-sm {
+    padding: 0.55rem 1rem;
+    border-width: 1px;
+  }
+
+  .btn-danger.btn-sm {
+    padding: 0.55rem 1rem;
+  }
+
+  .form-section-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #111827;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.35);
+  }
+
   .size-chart-compact {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: #f8fafc;
+    border: 1px solid rgba(148, 163, 184, 0.35);
     border-radius: var(--radius-sm);
     padding: 0.75rem;
+    color: #111827;
   }
 
   .compact-table {
@@ -598,17 +700,18 @@ const isFinished = event.status === 'FINISHED';
     text-align: center;
     border-collapse: collapse;
     font-size: 0.85rem;
+    color: #111827;
   }
 
   .compact-table th, .compact-table td {
-    padding: 0.25rem;
-    border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+    padding: 0.5rem 0.25rem;
+    border-bottom: 1px dashed rgba(148, 163, 184, 0.45);
   }
 
   .compact-table th {
     font-size: 0.8rem;
     font-weight: 600;
-    color: var(--accent);
+    color: #111827;
   }
 </style>
 
@@ -651,15 +754,15 @@ const isFinished = event.status === 'FINISHED';
   .form-group label {
     font-size: 0.9rem;
     font-weight: 600;
-    color: var(--text-secondary);
+    color: #475569;
   }
   
   .form-group input, .form-group select {
     padding: 0.8rem 1rem;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: #f8fafc;
+    border: 1px solid rgba(148, 163, 184, 0.35);
     border-radius: var(--radius-sm);
-    color: var(--text-primary);
+    color: #111827;
     font-size: 1rem;
     transition: all 0.2s;
   }
@@ -667,7 +770,7 @@ const isFinished = event.status === 'FINISHED';
   .form-group input:focus, .form-group select:focus {
     outline: none;
     border-color: var(--accent);
-    background: rgba(255, 255, 255, 0.1);
+    background: #ffffff;
   }
   
   .form-group select option {
@@ -680,8 +783,8 @@ const isFinished = event.status === 'FINISHED';
     justify-content: space-between;
     align-items: center;
     padding: 1.25rem;
-    background: rgba(14, 117, 237, 0.1);
-    border: 2px solid var(--accent);
+    background: #f8fafc;
+    border: 2px solid rgba(232, 186, 70, 0.3);
     border-radius: var(--radius-sm);
     margin-bottom: 1rem;
   }
@@ -697,7 +800,7 @@ const isFinished = event.status === 'FINISHED';
   .cat-price { font-weight: 800; font-size: 1.2rem; }
   
   .category-badge {
-    background: var(--accent);
+    background: #e8ba46;
     color: #111;
     padding: 0.5rem 1rem;
     border-radius: var(--radius-md);
@@ -705,19 +808,47 @@ const isFinished = event.status === 'FINISHED';
   }
 
   .jersey-preview-card {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-    background: rgba(255,255,255,0.02);
-    border: 1px dashed rgba(255,255,255,0.2);
-    padding: 1rem;
+    background: #f8fafc;
+    border: 1px solid rgba(148, 163, 184, 0.35);
     border-radius: var(--radius-sm);
+    padding: 1rem;
   }
   
+  .jersey-preview-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .jersey-preview-item {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--radius-md);
+    background: #ffffff;
+    border: 1px solid rgba(148, 163, 184, 0.35);
+  }
+
   .jersey-thumb {
-    width: 100px;
-    height: auto;
-    object-fit: contain;
+    width: 100%;
+    height: 240px;
+    object-fit: cover;
+    display: block;
+  }
+
+  .jersey-caption {
+    display: block;
+    text-align: center;
+    padding: 0.75rem 0.5rem;
+    background: rgba(15, 23, 42, 0.85);
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 0.95rem;
+  }
+
+  @media (max-width: 991px) {
+    .jersey-preview-grid {
+      grid-template-columns: 1fr;
+    }
   }
 
   .checkbox-label {
@@ -747,6 +878,29 @@ const isFinished = event.status === 'FINISHED';
     width: 100%;
     padding: 1rem;
     font-size: 1.1rem;
+  }
+
+  /* Page-specific CTA button visibility fixes for light panels */
+  .btn-outline {
+    background: #f8fafc;
+    color: #111827;
+    border-color: rgba(148, 163, 184, 0.7);
+  }
+
+  .btn-outline:hover {
+    background: #e2e8f0;
+    border-color: rgba(148, 163, 184, 1);
+    color: #111827;
+  }
+
+  .btn-danger {
+    background: #dc2626;
+    color: #fff;
+  }
+
+  .explanation-text,
+  .penjelasan-bawah {
+    color: #475569;
   }
 
   @media (max-width: 640px) {

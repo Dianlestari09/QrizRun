@@ -179,7 +179,8 @@ const {
     display: flex;
     align-items: center;
     border-bottom: 1px solid var(--border-color);
-    background-color: rgba(43, 119, 223, 0.5);
+    background: linear-gradient(to bottom right, var(--bg-primary) 0%, #201a4e 40%, var(--primary) 100%), rgba(43, 119, 223, 0.5);
+    background-blend-mode: overlay;
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
   }
@@ -411,7 +412,8 @@ const {
     margin-top: 0;
     position: relative;
     z-index: 10;
-    background-color: rgba(43, 119, 223, 0.5);
+    background: linear-gradient(to bottom right, var(--bg-primary) 0%, #201a4e 40%, var(--primary) 100%), rgba(43, 119, 223, 0.5);
+    background-blend-mode: overlay;
   }
 
   .footer-grid {
@@ -489,6 +491,10 @@ const {
   @media (max-width: 768px) {
     .navbar-logo-img {
       height: 30px;
+    }
+    /* Pastikan tombol 'Daftar' di header tidak terlihat pada layar mobile */
+    .nav-link.btn-buy-ticket {
+      display: none !important;
     }
 
     .nav,
