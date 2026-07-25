@@ -1,14 +1,16 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import CTA from "../components/CTA.astro";
+import RuteComponent from "../components/Rute.astro";
 ---
 
-<Layout title="Rute Lomba - Waru Turi Fun Run 2026">
+<Layout title="Rute Lomba - Syiar QRIS Run 2026">
   <section class="page-hero">
     <div class="hero-bg-overlay"></div>
     <div class="container hero-content">
       <h1 class="page-title">Rute Lomba</h1>
       <p class="page-subtitle">
-        Jelajahi jalur lari yang menyegarkan di kawasan Bendungan Waru Turi.
+        Jelajahi jalur lari yang menyegarkan di Kediri Town Square.
         Nikmati pemandangan asri, lintasan yang aman, dan pengalaman lari yang
         tak terlupakan di setiap kilometernya.
       </p>
@@ -21,71 +23,9 @@ import Layout from "../layouts/Layout.astro";
     </div>
   </section>
 
-  <section class="rute-section section-padding">
-    <div class="container rute-container">
-      <div class="rute-card-wrapper">
-        <div class="rute-card glass">
-          <img src="/rute-placeholder.png" alt="Peta Rute" class="rute-image" />
-          <div class="rute-details">
-            <h3 class="rute-name">Rute 5K (Fun Run)</h3>
-            <p class="rute-desc">
-              Plan Route : Start (Lap. Bendungan Waru Turi) - Kantor Jasa Tirta
-              - Jembatan Utama - Ujung Jembatan Utama ke Kanan - Jembatan Kedua
-              ke Kiri - Patung Badak ke Kanan - Pintu Gerbang Waduk Sisi Barat
-              ke Kiri - Simpang Tiga Jabon Gg 8 ke Kanan - Simpang Tiga 2 Jabon
-              Gg 8 ke Kanan - Pintu Gerbang Waduk Sisi Barat - Jembatan Utama ke
-              Kanan - Kantor Jasa Tirta - Finish
-            </p>
-            <div class="rute-meta">
-              <div class="meta-item">
-                <span class="meta-icon">📍</span>
-                <span class="meta-text"
-                  ><strong>Start:</strong> Bendung Gerak Waru Turi</span
-                >
-              </div>
-              <div class="meta-item">
-                <span class="meta-icon">🏁</span>
-                <span class="meta-text"
-                  ><strong>Finish:</strong> Bendung Gerak Waru Turi</span
-                >
-              </div>
-              <div class="meta-item">
-                <span class="meta-icon">⏱️</span>
-                <span class="meta-text"
-                  ><strong>COT:</strong> 1 Jam 30 Menit</span
-                >
-              </div>
-              <div class="meta-item">
-                <span class="meta-icon">💧</span>
-                <span class="meta-text"
-                  ><strong>Water Station:</strong> KM 2.5</span
-                >
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+  <RuteComponent />
 
-  <!-- CTA Section -->
-  <section class="cta-section">
-    <div class="container cta-container">
-      <div class="cta-card">
-        <div class="cta-icon-wrapper">
-          <span class="cta-icon">🚀</span>
-        </div>
-        <h2 class="cta-title">Siap Mengikuti Waru Turi Fun Run 2026?</h2>
-        <p class="cta-desc">
-          Tunjukkan Race terbaik kalian dengan menjadi finisher yang akan
-          mendapatkan medali eksklusif. Dapatkan Achievement kalian!
-        </p>
-        <div class="cta-actions">
-          <a href="/events/1" class="btn btn-accent cta-btn">Daftar Sekarang</a>
-        </div>
-      </div>
-    </div>
-  </section>
+  <CTA />
 </Layout>
 
 <style>
@@ -93,7 +33,7 @@ import Layout from "../layouts/Layout.astro";
     position: relative;
     padding: 120px 0 60px;
     text-align: center;
-    background-image: url("/about-image-placeholder.png");
+    background-image: url("/bg_hero.webp");
     background-size: cover;
     background-position: center;
     color: var(--neutral-white);
@@ -101,20 +41,6 @@ import Layout from "../layouts/Layout.astro";
     display: flex;
     align-items: center;
     justify-content: center;
-  }
-
-  .hero-bg-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(
-      to right,
-      rgba(14, 117, 237, 0.9) 0%,
-      rgba(19, 187, 203, 0.85) 100%
-    );
-    z-index: 1;
   }
 
   .hero-content {
@@ -172,178 +98,5 @@ import Layout from "../layouts/Layout.astro";
 
   .section-padding {
     padding: 80px 0;
-  }
-
-  /* Rute Section */
-  .rute-section {
-    background-color: var(--bg-primary);
-  }
-
-  .rute-card-wrapper {
-    display: flex;
-    justify-content: center;
-  }
-
-  .rute-card {
-    max-width: 1000px;
-    width: 100%;
-    border-radius: var(--radius-lg);
-    overflow: hidden;
-    background: var(--card-bg);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-  }
-
-  .rute-image {
-    width: 100%;
-    height: auto;
-    display: block;
-    border-bottom: 4px solid var(--accent);
-  }
-
-  .rute-details {
-    padding: 3rem;
-    text-align: left;
-  }
-
-  .rute-name {
-    font-size: 2rem;
-    font-weight: 800;
-    margin-bottom: 1.5rem;
-    color: var(--text-primary);
-  }
-
-  .rute-desc {
-    font-size: 1.1rem;
-    line-height: 1.7;
-    color: var(--text-secondary);
-    margin-bottom: 2rem;
-    padding-bottom: 2rem;
-    border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
-  }
-
-  .rute-meta {
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
-  }
-
-  .meta-item {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    font-size: 1.05rem;
-    color: var(--text-secondary);
-  }
-
-  .meta-item strong {
-    color: var(--text-primary);
-    font-weight: 600;
-  }
-
-  /* CTA Section */
-  .cta-section {
-    padding: 4rem 0;
-    background-color: transparent;
-  }
-
-  .cta-container {
-    display: flex;
-    justify-content: center;
-  }
-
-  .cta-card {
-    max-width: 800px;
-    width: 100%;
-    padding: 4rem 2rem;
-    text-align: center;
-    border-radius: var(--radius-lg);
-    background-color: #2b498f; /* Warna card biru solid sesuai gambar */
-    border: none;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-bottom: 0;
-  }
-
-  .cta-icon-wrapper {
-    width: 64px;
-    height: 64px;
-    background-color: rgba(255, 255, 255, 0.1);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 1.5rem;
-    border: none;
-  }
-
-  .cta-icon {
-    font-size: 1.8rem;
-  }
-
-  .cta-title {
-    font-size: 2.2rem;
-    font-weight: 800;
-    color: var(--text-primary);
-    margin-bottom: 1rem;
-  }
-
-  .cta-desc {
-    color: var(--text-secondary);
-    font-size: 1.05rem;
-    line-height: 1.6;
-    max-width: 600px;
-    margin-bottom: 2.5rem;
-  }
-
-  .cta-actions {
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-
-  .cta-btn {
-    padding: 0.8rem 2.5rem;
-    font-size: 1rem;
-    border-radius: 30px;
-    font-weight: 700;
-    background: #d4a938; /* Warna kuning emas solid */
-    color: #111;
-    border: none;
-    transition: background 0.2s;
-  }
-  .cta-btn:hover {
-    background: #b58d28;
-    color: #000;
-  }
-
-  @media (max-width: 768px) {
-    .rute-details {
-      padding: 1.5rem;
-    }
-
-    .rute-name {
-      font-size: 1.5rem;
-    }
-
-    .cta-card {
-      padding: 3rem 1.5rem;
-    }
-
-    .cta-title {
-      font-size: 1.8rem;
-    }
-
-    .cta-actions {
-      flex-direction: column;
-      width: 100%;
-    }
-
-    .cta-actions .btn {
-      width: 100%;
-    }
   }
 </style>

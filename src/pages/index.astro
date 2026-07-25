@@ -1,6 +1,8 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import EventCard from "../components/EventCard.astro";
+import CTA from "../components/CTA.astro";
+import RuteComponent from "../components/Rute.astro";
 import { getUpcomingEvents, getFinishedEvents } from "../lib/db";
 
 const upcomingEvents = await getUpcomingEvents();
@@ -17,9 +19,10 @@ const categories = [
 ];
 ---
 
-<Layout title="Platform Pendaftaran Event Olahraga No. 1">
+<Layout title="Syiar QRIS Run 2026">
   <!-- Centered Hero Section -->
   <section class="hero centered-hero">
+    <div class="hero-bg-overlay"></div>
     <div class="glow-spot hero-glow-1"></div>
     <div class="glow-spot hero-glow-2"></div>
 
@@ -36,8 +39,8 @@ const categories = [
 
       <!-- Date & Location -->
       <div class="event-meta-pills">
-        <div class="pill date-pill glass">17 Agustus 2026</div>
-        <div class="pill location-pill glass">Bendung Waru Turi, Kediri</div>
+        <div class="pill date-pill glass">16 Agustus 2026</div>
+        <div class="pill location-pill glass">Kediri Town Square</div>
       </div>
 
       <!-- Countdown -->
@@ -74,7 +77,9 @@ const categories = [
           >
         </div>
 
-        <p class="kuota-text">
+        <a href="/events/1" class="btn btn-accent btn-large" style="margin-top: 2rem; margin-bottom: 2rem;">Daftar Sekarang</a>
+
+        <p class="kuota-text" style="color: white;">
           Kuota terbatas! Harga Early Bird Hingga Kuota Terpenuhi.
         </p>
       </div>
@@ -85,56 +90,10 @@ const categories = [
       <p class="sponsors-title"></p>
       <div class="sponsor-marquee">
         <div class="sponsor-track">
-          <!-- 1. Peka -->
-          <img src="/peka.webp" alt="Peka" class="sponsor-logo" />
+          
+          <img src="/logo_sponsor.webp" alt="Logo" class="sponsor-logo" />
+          <img src="/logo_sponsor.webp" alt="Logo" class="sponsor-logo" />
 
-          <!-- 2. Target QRIS -->
-          <img src="/peka.webp" alt="Target QRIS" class="sponsor-logo" />
-
-          <!-- 3. QRISNIVAL -->
-          <img src="/peka.webp" alt="QRISNIVAL" class="sponsor-logo" />
-
-          <!-- 4. BI -->
-          <img src="/peka.webp" alt="BI" class="sponsor-logo" />
-
-          <!-- 5. Syiar -->
-          <img src="/peka.webp" alt="Syiar" class="sponsor-logo" />
-
-          <!-- 6. Fekdi X IFSE -->
-          <img
-            src="/Road_to_FEKDI_x_IFSE.webp"
-            alt="Fekdi X IFSE"
-            class="sponsor-logo"
-          />
-
-          <!-- 7. 81 -->
-          <img src="/81.webp" alt="81" class="sponsor-logo" />
-
-          <!-- Duplicate for seamless scroll -->
-          <!-- 1. Peka -->
-          <img src="/peka.webp" alt="Peka" class="sponsor-logo" />
-
-          <!-- 2. Target QRIS -->
-          <img src="/peka.webp" alt="Target QRIS" class="sponsor-logo" />
-
-          <!-- 3. QRISNIVAL -->
-          <img src="/peka.webp" alt="QRISNIVAL" class="sponsor-logo" />
-
-          <!-- 4. BI -->
-          <img src="/peka.webp" alt="BI" class="sponsor-logo" />
-
-          <!-- 5. Syiar -->
-          <img src="/peka.webp" alt="Syiar" class="sponsor-logo" />
-
-          <!-- 6. Fekdi X IFSE -->
-          <img
-            src="/Road_to_FEKDI_x_IFSE.webp"
-            alt="Fekdi X IFSE"
-            class="sponsor-logo"
-          />
-
-          <!-- 7. 81 -->
-          <img src="/81.webp" alt="81" class="sponsor-logo" />
         </div>
       </div>
     </div>
@@ -144,90 +103,26 @@ const categories = [
   <section class="about-section" id="about">
     <div class="container about-container">
       <div class="about-content">
-        <h2 class="about-title">Waru Turi Fun Run Kediri 2026</h2>
+        <h2 class="about-title">Syiar QRIS Run 2026</h2>
         <p class="about-desc">
-          <strong>Waru Turi Fun Run 2026</strong> adalah event lomba lari rekreasi
-          hasil kolaborasi luar biasa antara <strong>Radar Kediri</strong> dan <strong
-            >Bank Indonesia (BI)</strong
-          >, mengusung tema <em>"A Celebration of Movement in Green Scenery"</em
-          >.
+          <strong>Syiar QRIS Run 2026</strong> merupakan ajang lari yang diselenggarakan oleh <strong>Bank Indonesia Kediri</strong> untuk mengajak masyarakat menerapkan gaya hidup sehat sekaligus mendukung percepatan digitalisasi sistem pembayaran melalui QRIS.
         </p>
         <p class="about-desc">
-          Event ini dirancang khusus untuk menghadirkan semangat kebersamaan,
-          gaya hidup sehat, dan sportivitas bagi seluruh peserta dari berbagai
-          kalangan, sambil menikmati udara segar di kawasan Bendung Waru Turi.
+          Tak hanya berlari untuk kesehatan, setiap transaksi QRIS yang Anda lakukan juga menjadi bagian dari <strong>gerakan berwakaf</strong>, menghadirkan manfaat yang terus mengalir bagi sesama.
         </p>
         <p class="about-desc">
-          Tidak sekadar berlari, kami juga memadukan olahraga dengan aksi
-          kepedulian lingkungan nyata melalui kegiatan <strong
-            >penanaman pohon</strong
-          >. Event ini diharapkan memberikan dampak positif berkelanjutan bagi
-          kelestarian alam Kediri.
+          Melalui semangat <em>"Berlari, Berwakaf, dan Bertransaksi dengan QRIS"</em>, setiap langkah dan setiap transaksi menjadi bagian dari <strong>gerakan kebaikan</strong> yang memberikan manfaat bagi sesama.
+        </p>
+        <p class="about-desc">
+          Mari dukung <strong>percepatan digitalisasi pembayaran</strong> sekaligus <strong>menebarkan kebaikan</strong> dalam setiap langkah. Mari Berlari, Berbagi, dan Memberi Arti.
         </p>
       </div>
       <div class="about-image-wrapper">
         <img
-          src="/about-image-placeholder.png"
-          alt="Waru Turi Fun Run Poster"
+          src="/about-image-placeholder.webp"
+          alt="Syiar QRIS Run 2026 Poster"
           class="about-image"
         />
-      </div>
-    </div>
-  </section>
-
-  <!-- Rute Section -->
-  <section class="rute-section" id="rute">
-    <div class="container rute-container">
-      <div class="section-header" style="text-align: center;">
-        <h2 class="section-title" style="text-transform: uppercase;">
-          Peta Rute Lari
-        </h2>
-        <p class="section-subtitle">
-          Kenali rute tantanganmu dan nikmati pemandangan Bendung Waruturi
-        </p>
-      </div>
-
-      <div class="rute-card-wrapper">
-        <div class="rute-card glass">
-          <img src="/rute-placeholder.png" alt="Peta Rute" class="rute-image" />
-          <div class="rute-details">
-            <h3 class="rute-name">Rute 5K (Fun Run)</h3>
-            <p class="rute-desc">
-              Plan Route : Start (Lap. Bendungan Waru Turi) - Kantor Jasa Tirta
-              - Jembatan Utama - Ujung Jembatan Utama ke Kanan - Jembatan Kedua
-              ke Kiri - Patung Badak ke Kanan - Pintu Gerbang Waduk Sisi Barat
-              ke Kiri - Simpang Tiga Jabon Gg 8 ke Kanan - Simpang Tiga 2 Jabon
-              Gg 8 ke Kanan - Pintu Gerbang Waduk Sisi Barat - Jembatan Utama ke
-              Kanan - Kantor Jasa Tirta - Finish
-            </p>
-            <div class="rute-meta">
-              <div class="meta-item">
-                <span class="meta-icon">📍</span>
-                <span class="meta-text"
-                  ><strong>Start:</strong> Bendung Gerak Waru Turi</span
-                >
-              </div>
-              <div class="meta-item">
-                <span class="meta-icon">🏁</span>
-                <span class="meta-text"
-                  ><strong>Finish:</strong> Bendung Gerak Waru Turi</span
-                >
-              </div>
-              <div class="meta-item">
-                <span class="meta-icon">⏱️</span>
-                <span class="meta-text"
-                  ><strong>COT:</strong> 1 Jam 30 Menit</span
-                >
-              </div>
-              <div class="meta-item">
-                <span class="meta-icon">💧</span>
-                <span class="meta-text"
-                  ><strong>Water Station:</strong> KM 2.5</span
-                >
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   </section>
@@ -239,13 +134,13 @@ const categories = [
 
       <div class="benefit-grid">
         <div class="benefit-card glass">
-          <img src="/benefit-bib.png" alt="Nomor BIB" class="benefit-icon" />
+          <img src="/benefit-bib.webp" alt="Nomor BIB" class="benefit-icon" />
           <p class="benefit-text">Nomor BIB</p>
         </div>
 
         <div class="benefit-card glass">
           <img
-            src="/benefit-jersey.png"
+            src="/benefit-jersey.webp"
             alt="Jersey Official"
             class="benefit-icon"
           />
@@ -254,7 +149,7 @@ const categories = [
 
         <div class="benefit-card glass">
           <img
-            src="/benefit-medal.png"
+            src="/benefit-medal.webp"
             alt="Finisher Medal"
             class="benefit-icon"
           />
@@ -263,7 +158,7 @@ const categories = [
 
         <div class="benefit-card glass">
           <img
-            src="/benefit-goodiebag.png"
+            src="/benefit-goodiebag.webp"
             alt="Goodie Bag"
             class="benefit-icon"
           />
@@ -272,7 +167,7 @@ const categories = [
 
         <div class="benefit-card glass">
           <img
-            src="/benefit-doorprize.png"
+            src="/benefit-doorprize.webp"
             alt="Doorprize"
             class="benefit-icon"
           />
@@ -282,34 +177,19 @@ const categories = [
     </div>
   </section>
 
-  <!-- CTA Section -->
-  <section class="cta-section">
-    <div class="container cta-container">
-      <div class="cta-card glass">
-        <div class="cta-icon-wrapper">
-          <span class="cta-icon">🚀</span>
-        </div>
-        <h2 class="cta-title">Siap Mengikuti Waru Turi Fun Run 2026?</h2>
-        <p class="cta-desc">
-          Tunjukkan Race terbaik kalian dengan menjadi finisher yang akan
-          mendapatkan medali eksklusif. Dapatkan Achievement kalian!
-        </p>
-        <div class="cta-actions">
-          <a href="/events/1" class="btn btn-accent cta-btn">Daftar Sekarang</a>
-          <!-- <a href="/#rute" class="btn btn-outline cta-btn">Pelajari Rute</a> -->
-        </div>
-      </div>
-    </div>
-  </section>
+  <!-- Rute Section -->
+  <RuteComponent / >
+
+  <CTA />
 
   <!-- FAQ Section -->
   <section class="faq-section" id="faq">
     <div class="container faq-container">
       <div class="section-header center">
-        <span class="badge-pill">SUPPORT CENTER</span>
+        <!-- <span class="badge-pill">SUPPORT CENTER</span> -->
         <h2 class="section-title">Pertanyaan Seputar Event</h2>
         <p class="section-subtitle">
-          Temukan jawaban atas pertanyaan umum seputar Waru Turi Run 2026 di
+          Temukan jawaban atas pertanyaan umum seputar Syiar QRIS Run 2026 di
           sini.
         </p>
       </div>
@@ -317,13 +197,13 @@ const categories = [
       <div class="faq-grid">
         <div class="faq-item glass">
           <button class="faq-question">
-            <span>Apa itu Waru Turi Fun Run?</span>
+            <span>Apa itu Syiar QRIS Run ?</span>
             <span class="faq-icon">↓</span>
           </button>
           <div class="faq-answer">
             <p>
-              Waru Turi Fun Run adalah event lari rekreasi yang menggabungkan
-              gaya hidup sehat dan pelestarian lingkungan.
+              Syiar QRIS Run adalah event lari rekreasi yang menggabungkan
+              gaya hidup sehat dan kepedulian sosial.
             </p>
           </div>
         </div>
@@ -348,8 +228,7 @@ const categories = [
           </button>
           <div class="faq-answer">
             <p>
-              Start dan finish akan dilakukan di kawasan Bendung Gerak Waru
-              Turi, Kediri.
+              Start dan finish akan dilakukan di Kediri Town Square.
             </p>
           </div>
         </div>
@@ -439,8 +318,8 @@ const categories = [
           </button>
           <div class="faq-answer">
             <p>
-              Event ini merupakan road race (fun run) dengan rute jalan
-              aspal/cor di sekitar bendungan.
+              Event ini merupakan road race dengan rute jalan
+              aspal/cor.
             </p>
           </div>
         </div>
@@ -562,7 +441,7 @@ const categories = [
 
 <script>
   // Countdown Timer Logic
-  const targetDate = new Date("2026-08-17T06:00:00+07:00").getTime();
+  const targetDate = new Date("2026-08-16T06:00:00+07:00").getTime();
 
   const timer = setInterval(() => {
     const now = new Date().getTime();
@@ -647,6 +526,9 @@ const categories = [
     position: relative;
     padding: 6rem 0 0 0;
     overflow: hidden;
+    background-image: url('/bg_hero.webp');
+    background-size: cover;
+    background-position: center;
   }
 
   .hero-glow-1 {
@@ -786,7 +668,7 @@ const categories = [
   }
 
   .sponsors-bar {
-    margin-top: 5rem;
+    margin-top: 2rem;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -795,7 +677,6 @@ const categories = [
     z-index: 1;
     width: 100%;
     padding: 2.5rem 0;
-    border-top: 1px solid var(--border-color);
     background: linear-gradient(
       180deg,
       transparent 0%,
@@ -815,7 +696,7 @@ const categories = [
     max-width: 1000px;
     margin: 0 auto;
     overflow: hidden;
-    padding: 1rem 0;
+    padding: 0.5rem 0;
     -webkit-mask-image: linear-gradient(
       to right,
       transparent 0%,
@@ -835,7 +716,7 @@ const categories = [
   .sponsor-track {
     display: flex;
     align-items: center;
-    gap: 4rem;
+    gap: 0;
     width: max-content;
     animation: sponsorScroll 25s linear infinite;
   }
@@ -854,24 +735,22 @@ const categories = [
   }
 
   .sponsor-logo {
-    height: 45px;
+    height: 100px;
     width: auto;
     object-fit: contain;
-    opacity: 0.7;
-    filter: grayscale(100%);
+    opacity: 0.9;
     transition: all 0.3s;
   }
 
   .sponsors-logo:hover {
     opacity: 1;
-    filter: grayscale(0%);
     transform: scale(1.05);
   }
 
   /* About Section */
   .about-section {
     padding: 6rem 0;
-    background-color: transparent;
+    background-color: #ffffff;
     position: relative;
   }
 
@@ -891,14 +770,14 @@ const categories = [
   .about-title {
     font-size: 2.8rem;
     font-weight: 800;
-    color: var(--text-primary);
+    color: #111827; /* Darker text for title on white bg */
     line-height: 1.2;
     margin-bottom: 0.5rem;
   }
 
   .about-desc {
     font-size: 1.1rem;
-    color: var(--text-secondary);
+    color: #4b5563; /* Lighter text for description on white bg */
     line-height: 1.7;
   }
 
@@ -933,12 +812,13 @@ const categories = [
   .benefit-section {
     padding: 6rem 0;
     text-align: center;
+    background-color: #cbd5e1; /* Slightly darker gray background */
   }
 
   .benefit-title {
     font-size: 2.2rem;
     font-weight: 800;
-    color: #ffffff;
+    color: #111827; /* Dark text for title */
     margin-bottom: 3.5rem;
   }
 
@@ -956,8 +836,8 @@ const categories = [
     justify-content: center;
     width: 170px;
     height: 170px;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: #ffffff; /* White card background */
+    border: 1px solid #e2e8f0;
     border-radius: var(--radius-lg);
     padding: 1.5rem;
     transition: all 0.3s ease;
@@ -965,9 +845,9 @@ const categories = [
 
   .benefit-card:hover {
     transform: translateY(-8px);
-    background: rgba(255, 255, 255, 0.15);
-    border-color: rgba(255, 255, 255, 0.4);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    background: #ffffff;
+    border-color: #cbd5e1;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   }
 
   .benefit-icon {
@@ -975,164 +855,21 @@ const categories = [
     height: 70px;
     object-fit: contain;
     margin-bottom: 1.25rem;
-    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
   }
 
   .benefit-text {
     font-size: 1rem;
     font-weight: 700;
-    color: #ffffff;
+    color: #111827; /* Dark text for benefit text */
     line-height: 1.2;
-  }
-
-  /* Rute Section */
-  .rute-section {
-    padding: 6rem 0;
-    background-color: var(--bg-secondary);
-  }
-
-  .rute-card-wrapper {
-    display: flex;
-    justify-content: center;
-    margin-top: 3rem;
-  }
-
-  .rute-card {
-    max-width: 800px;
-    width: 100%;
-    border-radius: var(--radius-lg);
-    overflow: hidden;
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
-    box-shadow: var(--shadow-lg);
-  }
-
-  .rute-image {
-    width: 100%;
-    height: auto;
-    display: block;
-    border-bottom: 4px solid var(--accent);
-  }
-
-  .rute-details {
-    padding: 2.5rem;
-    text-align: left;
-  }
-
-  .rute-name {
-    font-size: 1.8rem;
-    font-weight: 800;
-    margin-bottom: 1rem;
-    color: var(--text-primary);
-  }
-
-  .rute-desc {
-    font-size: 0.95rem;
-    line-height: 1.6;
-    color: var(--text-secondary);
-    margin-bottom: 1.5rem;
-    padding-bottom: 1.5rem;
-    border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
-  }
-
-  .rute-meta {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .meta-item {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    font-size: 0.95rem;
-    color: var(--text-secondary);
-  }
-
-  .meta-item strong {
-    color: var(--text-primary);
-    font-weight: 600;
-  }
-
-  /* CTA Section */
-  .cta-section {
-    padding: 4rem 0;
-    background-color: transparent;
-  }
-
-  .cta-container {
-    display: flex;
-    justify-content: center;
-  }
-
-  .cta-card {
-    max-width: 800px;
-    width: 100%;
-    padding: 4rem 2rem;
-    text-align: center;
-    border-radius: var(--radius-lg);
-    background: linear-gradient(
-      135deg,
-      rgba(255, 255, 255, 0.05) 0%,
-      rgba(255, 255, 255, 0.02) 100%
-    );
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: var(--shadow-lg);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .cta-icon-wrapper {
-    width: 64px;
-    height: 64px;
-    background: rgba(0, 229, 255, 0.1);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 1.5rem;
-    border: 1px solid rgba(0, 229, 255, 0.2);
-  }
-
-  .cta-icon {
-    font-size: 1.8rem;
-  }
-
-  .cta-title {
-    font-size: 2.2rem;
-    font-weight: 800;
-    color: var(--text-primary);
-    margin-bottom: 1rem;
-  }
-
-  .cta-desc {
-    color: var(--text-secondary);
-    font-size: 1.05rem;
-    line-height: 1.6;
-    max-width: 600px;
-    margin-bottom: 2.5rem;
-  }
-
-  .cta-actions {
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-
-  .cta-btn {
-    padding: 0.8rem 2.5rem;
-    font-size: 1rem;
-    border-radius: 30px;
-    font-weight: 700;
   }
 
   /* FAQ Section */
   .faq-section {
     padding: 6rem 0;
     position: relative;
-    background-color: transparent;
+    background-color: #ffffff;
   }
 
   .badge-pill {
@@ -1155,6 +892,14 @@ const categories = [
     align-items: center;
   }
 
+  .faq-section .section-title {
+    color: #111827;
+  }
+
+  .faq-section .section-subtitle {
+    color: #4b5563;
+  }
+
   .faq-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -1163,16 +908,16 @@ const categories = [
   }
 
   .faq-item {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: #f8fafc; /* Light background for FAQ items */
+    border: 1px solid #e2e8f0;
     border-radius: var(--radius-md);
     overflow: hidden;
     transition: all 0.3s ease;
   }
 
   .faq-item.active {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(255, 255, 255, 0.2);
+    background: #f1f5f9;
+    border-color: #cbd5e1;
   }
 
   .faq-question {
@@ -1183,7 +928,7 @@ const categories = [
     align-items: center;
     background: transparent;
     border: none;
-    color: var(--text-primary);
+    color: #111827; /* Dark text for question */
     font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
@@ -1194,13 +939,14 @@ const categories = [
   .faq-icon {
     width: 28px;
     height: 28px;
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.05);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 0.9rem;
     transition: transform 0.3s ease;
+    color: #111827;
   }
 
   .faq-item.active .faq-icon {
@@ -1222,7 +968,7 @@ const categories = [
   }
 
   .faq-answer p {
-    color: var(--text-secondary);
+    color: #4b5563; /* Dark text for answer */
     font-size: 0.95rem;
     line-height: 1.6;
     margin: 0;
@@ -1460,7 +1206,7 @@ const categories = [
     }
 
     .sponsor-track {
-      gap: 2rem;
+      gap: 0;
       animation: sponsorScrollMobile 20s linear infinite;
     }
 

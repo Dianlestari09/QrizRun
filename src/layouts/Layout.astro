@@ -80,7 +80,7 @@ const {
         </div>
         <a href="/regulasi" class="mobile-nav-link">Regulasi</a>
         <a href="/kontak" class="mobile-nav-link">Kontak</a>
-        <a href="/events/1" class="mobile-nav-link" style="background-color: var(--accent); color: var(--bg-primary) !important; padding: 0.8rem 1.5rem; border-radius: 12px; text-align: center; margin-top: 1rem; border-bottom: none; font-weight: 800; display: block;">Daftar</a>
+        <a href="/events/1" class="mobile-nav-link" style="background-color: var(--accent); color: var(--bg-primary) !important; padding: 0.8rem 3rem; border-radius: 12px; text-align: center; margin-top: 1rem; border-bottom: none; font-weight: 800; display: block;">Daftar</a>
       </div>
     </header>
 
@@ -99,8 +99,7 @@ const {
             />
           </div>
           <p class="footer-desc">
-            Platform pendaftaran event lari, sepeda, dan olahraga lainnya
-            terbesar dan teraman di Indonesia.
+            Syiar QRIS Run 2026 merupakan ajang lari yang diselenggarakan oleh Bank Indonesia Kediri untuk mengajak masyarakat menerapkan gaya hidup sehat sekaligus mendukung percepatan digitalisasi sistem pembayaran melalui QRIS.
           </p>
         </div>
         <div class="footer-links">
@@ -119,9 +118,18 @@ const {
         <div class="footer-social">
           <h4>Ikuti Kami</h4>
           <div class="social-icons">
-            <a href="#" aria-label="Instagram">IG</a>
-            <a href="#" aria-label="Twitter">TW</a>
-            <a href="#" aria-label="Facebook">FB</a>
+            <a href="https://youtube.com/@bankindonesiakediri" aria-label="YouTube" target="_blank" rel="noopener noreferrer">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.1c.3-1.5 1.5-2.7 3-3 2.5-.5 6.5-.5 6.5-.5s4 0 6.5.5c1.5.3 2.7 1.5 3 3 .5 2.5.5 4.9.5 4.9s0 2.4-.5 4.9c-.3 1.5-1.5 2.7-3 3-2.5.5-6.5.5-6.5.5s-4 0-6.5-.5c-1.5-.3-2.7-1.5-3-3-.5-2.5-.5-4.9-.5-4.9s0-2.4.5-4.9z"/><path d="m10 15 5-3-5-3v6z"/></svg>
+            </a>
+            <a href="https://x.com/KPwBi_kediri" aria-label="X (Twitter)" target="_blank" rel="noopener noreferrer">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4l11.733 16h4.267l-11.733 -16z"/><path d="M4 20l6.768 -6.768m2.46 -2.46l6.772 -6.772"/></svg>
+            </a>
+            <a href="https://instagram.com/bank_indonesia_kediri" aria-label="Instagram" target="_blank" rel="noopener noreferrer">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+            </a>
+            <a href="https://tiktok.com/@bank.indonesia.ke" aria-label="TikTok" target="_blank" rel="noopener noreferrer">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"/><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"/></svg>
+            </a>
           </div>
         </div>
       </div>
@@ -162,13 +170,18 @@ const {
 <style>
   /* Header Styles */
   .header {
-    position: sticky;
+    position: fixed;
     top: 0;
-    z-index: 100;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
     height: 72px;
     display: flex;
     align-items: center;
     border-bottom: 1px solid var(--border-color);
+    background-color: rgba(43, 119, 223, 0.5);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
   }
 
   .header-container {
@@ -210,11 +223,11 @@ const {
     position: absolute;
     top: 100%;
     left: 0;
-    background-color: var(--bg-secondary);
+    background-color: rgba(43, 119, 223, 0.95); /* Match navbar color but more opaque */
     min-width: 160px;
     box-shadow: var(--shadow-md);
     border-radius: var(--radius-sm);
-    border: 1px solid var(--border-color);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     z-index: 1000;
     padding: 0.5rem 0;
     margin-top: 0.5rem;
@@ -225,7 +238,7 @@ const {
   }
 
   .dropdown-menu a {
-    color: var(--text-primary);
+    color: #ffffff; /* White text for dropdown items */
     padding: 0.75rem 1.5rem;
     display: block;
     font-size: 0.9rem;
@@ -233,20 +246,24 @@ const {
   }
 
   .dropdown-menu a:hover {
-    background-color: var(--card-hover-bg);
+    background-color: rgba(255, 255, 255, 0.1);
     color: var(--accent);
   }
 
-  .btn-buy-ticket {
+  .nav-link.btn-buy-ticket {
     background: var(--accent);
     color: var(--bg-primary) !important;
-    padding: 0.6rem 2.5rem;
-    border-radius: 12px;
+    padding: 0.8rem 1.6rem;
+    border-radius: 999px;
     font-weight: 800;
     margin-left: 0.5rem;
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    box-shadow: 0 8px 18px rgba(232, 186, 70, 0.22);
   }
-  .btn-buy-ticket:hover {
+  .nav-link.btn-buy-ticket:hover {
     box-shadow: var(--shadow-accent);
     transform: translateY(-2px);
   }
@@ -267,7 +284,7 @@ const {
   .nav-link {
     font-size: 0.95rem;
     font-weight: 600;
-    color: var(--text-secondary);
+    color: #ffffff; /* White text for navbar links */
     padding: 0.5rem 0.25rem;
     position: relative;
   }
@@ -394,6 +411,7 @@ const {
     margin-top: 0;
     position: relative;
     z-index: 10;
+    background-color: rgba(43, 119, 223, 0.5);
   }
 
   .footer-grid {
@@ -445,13 +463,12 @@ const {
   .social-icons a {
     width: 36px;
     height: 36px;
-    border-radius: 50%;
+    border-radius: 8px; /* Rounded square */
     background-color: var(--bg-tertiary);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: 700;
-    font-size: 0.85rem;
+    color: white; /* White icon color */
   }
 
   .social-icons a:hover {

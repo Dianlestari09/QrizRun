@@ -1,14 +1,15 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import CTA from '../components/CTA.astro';
 ---
 
-<Layout title="Regulasi - Waru Turi Fun Run 2026">
+<Layout title="Regulasi - Syiar QRIS Run 2026">
   <section class="page-hero">
     <div class="hero-bg-overlay"></div>
     <div class="container hero-content">
       <h1 class="page-title">Regulasi Perlombaan</h1>
       <p class="page-subtitle">
-        Ketentuan resmi dan peraturan yang wajib dipatuhi oleh seluruh peserta Fun Run Waru Turi Kediri demi kelancaran, keamanan, dan sportivitas acara.
+        Ketentuan resmi dan peraturan yang wajib dipatuhi oleh seluruh peserta Syiar QRIS Run 2026 demi kelancaran, keamanan, dan sportivitas acara.
       </p>
       
       <div class="breadcrumb">
@@ -31,7 +32,7 @@ import Layout from '../layouts/Layout.astro';
         <div class="regulasi-card">
           <h3 class="regulasi-card-title">Pendaftaran Peserta</h3>
           <ul class="regulasi-list-items">
-            <li>Pendaftaran dilakukan secara online melalui website resmi dan secara offline di kantor Jawa Pos Radar Kediri.</li>
+            <li>Pendaftaran dilakukan secara online melalui website resmi.</li>
             <li>Peserta wajib mengisi data diri dengan benar, lengkap, dan sesuai identitas.</li>
             <li>Pendaftaran dianggap sah setelah peserta menyelesaikan pembayaran dan menerima konfirmasi dari panitia.</li>
             <li>Biaya pendaftaran yang telah dibayarkan tidak dapat dikembalikan dengan alasan apapun.</li>
@@ -42,7 +43,7 @@ import Layout from '../layouts/Layout.astro';
         <div class="regulasi-card">
           <h3 class="regulasi-card-title">Pengambilan Race Pack</h3>
           <ul class="regulasi-list-items">
-            <li>Race pack berisi jersey, BIB number, dan produk sponsor.</li>
+            <li>Race pack berisi jersey dan BIB Number.</li>
             <li>Race pack diambil pada waktu dan lokasi yang telah ditentukan panitia.</li>
             <li>Pengambilan dapat diwakilkan dengan menunjukkan surat kuasa, bukti pendaftaran, dan identitas.</li>
             <li>Race pack yang tidak diambil sesuai jadwal dianggap hangus.</li>
@@ -126,23 +127,7 @@ import Layout from '../layouts/Layout.astro';
     </div>
   </section>
 
-  <!-- CTA Section -->
-  <section class="cta-section">
-    <div class="container cta-container">
-      <div class="cta-card">
-        <div class="cta-icon-wrapper">
-          <span class="cta-icon">🚀</span>
-        </div>
-        <h2 class="cta-title">Siap Mengikuti Waru Turi Fun Run 2026?</h2>
-        <p class="cta-desc" style="color: rgba(255, 255, 255, 0.8);">
-          Tunjukkan Race terbaik kalian dengan menjadi finisher yang akan mendapatkan medali eksklusif. Dapatkan Achievement kalian!
-        </p>
-        <div class="cta-actions">
-          <a href="/events/1" class="btn btn-accent cta-btn">Daftar Sekarang</a>
-        </div>
-      </div>
-    </div>
-  </section>
+  <CTA />
 </Layout>
 
 <style>
@@ -150,7 +135,7 @@ import Layout from '../layouts/Layout.astro';
     position: relative;
     padding: 120px 0 60px;
     text-align: center;
-    background-image: url('/about-image-placeholder.png'); 
+    background-image: url('/bg_hero.webp'); 
     background-size: cover;
     background-position: center;
     color: var(--neutral-white);
@@ -158,16 +143,6 @@ import Layout from '../layouts/Layout.astro';
     display: flex;
     align-items: center;
     justify-content: center;
-  }
-  
-  .hero-bg-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(to right, rgba(14, 117, 237, 0.9) 0%, rgba(19, 187, 203, 0.85) 100%);
-    z-index: 1;
   }
   
   .hero-content {
@@ -229,7 +204,7 @@ import Layout from '../layouts/Layout.astro';
 
   /* Regulasi Section */
   .regulasi-section {
-    background-color: var(--bg-primary); /* Use dark background */
+    background-color: #ffffff; /* White background */
   }
 
   .text-center {
@@ -245,6 +220,10 @@ import Layout from '../layouts/Layout.astro';
     margin-bottom: 1rem;
   }
 
+  .section-subtitle {
+    color: #4b5563; /* Darker gray for subtitle */
+  }
+
   .regulasi-list {
     display: flex;
     flex-direction: column;
@@ -254,11 +233,11 @@ import Layout from '../layouts/Layout.astro';
   }
 
   .regulasi-card {
-    background-color: #ffffff; /* Card putih */
+    background-color: #f8fafc; /* Light gray card */
     border-radius: var(--radius-md);
     padding: 2.5rem;
     border-left: 6px solid #6366f1; /* Border biru di sebelah kiri */
-    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
     color: #333333; /* Teks gelap di dalam card */
   }
 
@@ -284,107 +263,10 @@ import Layout from '../layouts/Layout.astro';
   .regulasi-list-items li:last-child {
     margin-bottom: 0;
   }
-
-  /* CTA Section */
-  .cta-section {
-    padding: 4rem 0;
-    background-color: transparent;
-  }
-
-  .cta-container {
-    display: flex;
-    justify-content: center;
-  }
-
-  .cta-card {
-    max-width: 800px;
-    width: 100%;
-    padding: 4rem 2rem;
-    text-align: center;
-    border-radius: var(--radius-lg);
-    background-color: #2b498f; /* Warna card biru solid sesuai gambar */
-    border: none;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-bottom: 0;
-  }
-
-  .cta-icon-wrapper {
-    width: 64px;
-    height: 64px;
-    background-color: rgba(255, 255, 255, 0.1);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 1.5rem;
-    border: none;
-  }
-
-  .cta-icon {
-    font-size: 1.8rem;
-  }
-
-  .cta-title {
-    font-size: 2.2rem;
-    font-weight: 800;
-    color: #ffffff;
-    margin-bottom: 1rem;
-  }
-
-  .cta-desc {
-    color: var(--text-secondary);
-    font-size: 1.05rem;
-    line-height: 1.6;
-    max-width: 600px;
-    margin-bottom: 2.5rem;
-  }
-
-  .cta-actions {
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-
-  .cta-btn {
-    padding: 0.8rem 2.5rem;
-    font-size: 1rem;
-    border-radius: 30px;
-    font-weight: 700;
-    background: #d4a938; /* Warna kuning emas solid */
-    color: #111;
-    border: none;
-    transition: background 0.2s;
-  }
-  
-  .cta-btn:hover {
-    background: #b58d28;
-    color: #000;
-  }
   
   @media (max-width: 768px) {
     .regulasi-card {
       padding: 1.5rem;
     }
 
-    .cta-card {
-      padding: 3rem 1.5rem;
-    }
-    
-    .cta-title {
-      font-size: 1.8rem;
-    }
-    
-    .cta-actions {
-      flex-direction: column;
-      width: 100%;
-    }
-    
-    .cta-actions .btn {
-      width: 100%;
-    }
-  }
 </style>

@@ -1,14 +1,15 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import CTA from '../components/CTA.astro';
 ---
 
-<Layout title="Jersey Resmi & Size Chart - Waru Turi Fun Run 2026">
+<Layout title="Jersey Resmi & Size Chart - Syiar QRIS Run 2026">
   <section class="page-hero">
     <div class="hero-bg-overlay"></div>
     <div class="container hero-content">
       <h1 class="page-title">Jersey Resmi & Size Chart</h1>
       <p class="page-subtitle">
-        Kenali desain jersey resmi Waru Turi Fun Run 2026 dan pastikan ukuran yang Anda pilih sesuai untuk kenyamanan maksimal saat berlari.
+        Kenali desain jersey resmi Syiar QRIS Run 2026 dan pastikan ukuran yang Anda pilih sesuai untuk kenyamanan maksimal saat berlari.
       </p>
       
       <div class="breadcrumb">
@@ -23,9 +24,9 @@ import Layout from '../layouts/Layout.astro';
     <div class="container jersey-grid">
       <div class="jersey-text-content">
         <span class="sub-heading">JERSEY RESMI</span>
-        <h2 class="section-title">Jersey Fun Run Waru Turi</h2>
+        <h2 class="section-title">Jersey Syiar QRIS Run 2026</h2>
         <p class="description">
-          Jersey Waru Turi Fun Run dirancang khusus untuk mendukung performa dan kenyamanan peserta selama berlari. Mengutamakan bahan berkualitas, desain modern, serta teknik cetak yang tahan lama.
+          Jersey Syiar QRIS Run 2026 dirancang khusus untuk mendukung performa dan kenyamanan peserta selama berlari. Mengutamakan bahan berkualitas, desain modern, serta teknik cetak yang tahan lama.
         </p>
         
         <ul class="feature-list">
@@ -48,32 +49,32 @@ import Layout from '../layouts/Layout.astro';
         </ul>
         
         <div class="highlight-box">
-          Jersey resmi Waru Turi Fun Run menggabungkan <strong>kenyamanan, kualitas bahan, dan desain eksklusif</strong> untuk mendukung pengalaman lari terbaik bagi setiap peserta.
+          Jersey resmi Syiar QRIS Run 2026 menggabungkan <strong>kenyamanan, kualitas bahan, dan desain eksklusif</strong> untuk mendukung pengalaman lari terbaik bagi setiap peserta.
         </div>
       </div>
       
       <div class="jersey-image-wrapper">
         <!-- Placeholder gambar jersey, bisa diganti dengan gambar asli nanti -->
-        <img src="/jersey-placeholder.png" alt="Jersey Depan Waru Turi Fun Run 2026" class="jersey-image" />
+        <img src="/jersey-placeholder.webp" alt="Jersey Depan Syiar QRIS Run 2026" class="jersey-image" />
       </div>
     </div>
   </section>
 
   <!-- Bagian Belakang Jersey -->
-  <section class="jersey-content section-padding" style="padding-top: 0;">
+  <section class="jersey-content-back section-padding">
     <div class="container jersey-grid jersey-grid-reverse">
       
       <!-- Gambar di Kiri -->
       <div class="jersey-image-wrapper reverse-image">
-        <img src="/jersey-back-placeholder.png" alt="Jersey Belakang Waru Turi Fun Run 2026" class="jersey-image" />
+        <img src="/jersey-back-placeholder.webp" alt="Jersey Belakang Syiar QRIS Run 2026" class="jersey-image" />
       </div>
 
       <!-- Teks di Kanan -->
       <div class="jersey-text-content reverse-text">
         <span class="sub-heading">JERSEY BELAKANG</span>
-        <h2 class="section-title">Detail Desain Belakang Jersey Fun Run Waru Turi</h2>
+        <h2 class="section-title">Detail Desain Belakang Jersey Syiar QRIS Run 2026</h2>
         <p class="description">
-          Bagian belakang jersey Waru Turi Fun Run menampilkan desain eksklusif yang menarik dan nyaman saat dipakai. Tetap mengutamakan kualitas bahan, teknik cetak, dan fleksibilitas saat berlari.
+          Bagian belakang jersey Syiar QRIS Run 2026 menampilkan desain eksklusif yang menarik dan nyaman saat dipakai. Tetap mengutamakan kualitas bahan, teknik cetak, dan fleksibilitas saat berlari.
         </p>
         
         <ul class="feature-list">
@@ -96,7 +97,7 @@ import Layout from '../layouts/Layout.astro';
         </ul>
         
         <div class="highlight-box">
-          Bagian belakang jersey Waru Turi Fun Run dirancang untuk <strong>kenyamanan, kualitas bahan, dan desain eksklusif</strong> sehingga peserta tampil maksimal sepanjang event.
+          Bagian belakang jersey Syiar QRIS Run 2026 dirancang untuk <strong>kenyamanan, kualitas bahan, dan desain eksklusif</strong> sehingga peserta tampil maksimal sepanjang event.
         </div>
       </div>
 
@@ -165,23 +166,7 @@ import Layout from '../layouts/Layout.astro';
     </div>
   </section>
 
-  <!-- CTA Section -->
-  <section class="cta-section">
-    <div class="container cta-container">
-      <div class="cta-card">
-        <div class="cta-icon-wrapper">
-          <span class="cta-icon">🚀</span>
-        </div>
-        <h2 class="cta-title">Siap Mengikuti Waru Turi Fun Run 2026?</h2>
-        <p class="cta-desc">
-          Tunjukkan Race terbaik kalian dengan menjadi finisher yang akan mendapatkan medali eksklusif. Dapatkan Achievement kalian!
-        </p>
-        <div class="cta-actions">
-          <a href="/events/1" class="btn btn-accent cta-btn">Daftar Sekarang</a>
-        </div>
-      </div>
-    </div>
-  </section>
+  <CTA />
 </Layout>
 
 <style>
@@ -190,7 +175,7 @@ import Layout from '../layouts/Layout.astro';
     padding: 120px 0 60px;
     text-align: center;
     /* Gunakan gambar bendungan sebagai background */
-    background-image: url('/about-image-placeholder.png'); 
+    background-image: url('/bg_hero.webp'); 
     background-size: cover;
     background-position: center;
     color: var(--neutral-white);
@@ -198,17 +183,6 @@ import Layout from '../layouts/Layout.astro';
     display: flex;
     align-items: center;
     justify-content: center;
-  }
-  
-  .hero-bg-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    /* Gradient biru ke toska persis seperti pada gambar referensi */
-    background: linear-gradient(to right, rgba(14, 117, 237, 0.9) 0%, rgba(19, 187, 203, 0.85) 100%);
-    z-index: 1;
   }
   
   .hero-content {
@@ -269,6 +243,10 @@ import Layout from '../layouts/Layout.astro';
   }
 
   /* Jersey Content Styles */
+  .jersey-content {
+    background-color: #ffffff;
+  }
+
   .jersey-grid {
     display: grid;
     grid-template-columns: 1.2fr 1fr; /* Teks di kiri (sedikit lebih lebar), gambar di kanan */
@@ -281,6 +259,24 @@ import Layout from '../layouts/Layout.astro';
     flex-direction: column;
     /* Pastikan text ada di urutan pertama */
     order: 1; 
+  }
+
+  .jersey-content-back {
+    background-color: #cbd5e1; /* Match CTA background */
+  }
+
+  .jersey-content-back .section-title,
+  .jersey-content-back .feature-list li {
+    color: #111827;
+  }
+
+  .jersey-content-back .description {
+    color: #374151;
+  }
+
+  .jersey-content-back .highlight-box {
+    background: #ffffff;
+    color: #111827;
   }
 
   .sub-heading {
@@ -296,13 +292,13 @@ import Layout from '../layouts/Layout.astro';
     font-size: 2.5rem;
     font-weight: 800;
     margin-bottom: 1.5rem;
-    color: var(--text-primary);
+    color: #111827; /* Dark text for title */
   }
   
   .description {
     font-size: 1.1rem;
     line-height: 1.7;
-    color: var(--text-secondary);
+    color: #374151; /* Darker gray for description */
     margin-bottom: 2.5rem;
   }
   
@@ -319,10 +315,10 @@ import Layout from '../layouts/Layout.astro';
     display: flex;
     align-items: flex-start;
     gap: 1rem;
-    color: var(--text-primary);
+    color: #111827; /* Dark text for list items */
     line-height: 1.6;
     padding-bottom: 1.25rem;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid #e5e7eb; /* Light gray border */
   }
   
   .feature-list li:last-child {
@@ -346,17 +342,17 @@ import Layout from '../layouts/Layout.astro';
   }
   
   .highlight-box {
-    background: rgba(255, 255, 255, 0.05); /* Warna transparan ringan */
+    background: #f3f4f6; /* Light gray background */
     border-left: 4px solid var(--accent); /* Garis kiri warna emas */
     padding: 1.5rem;
     border-radius: 0 8px 8px 0;
-    color: var(--text-primary);
+    color: #111827; /* Dark text */
     line-height: 1.6;
     font-size: 1.05rem;
   }
   
   .highlight-box strong {
-    color: var(--accent); /* Teks tebal berwarna emas */
+    color: #9c1f4e; /* Maroon color for emphasis */
   }
   
   .jersey-image-wrapper {
@@ -410,7 +406,16 @@ import Layout from '../layouts/Layout.astro';
 
   /* Size Chart Styles */
   .size-chart-section {
-    background-color: rgba(0, 0, 0, 0.2); /* Sedikit gelap dari background utama */
+    background-color: #ffffff; /* White background */
+  }
+
+  .size-chart-section .section-title {
+    color: #111827; /* Dark text for title */
+  }
+
+  .size-chart-section .section-subtitle,
+  .size-chart-section .section-desc {
+    color: #374151; /* Darker gray for description */
   }
 
   .size-chart-container {
@@ -457,8 +462,8 @@ import Layout from '../layouts/Layout.astro';
 
   .size-table td {
     padding: 1.25rem 1rem;
-    color: var(--text-primary);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    color: #111827; /* Dark text for table cells */
+    border-bottom: 1px solid #e5e7eb; /* Light gray border */
     font-size: 1.05rem;
   }
 
@@ -467,12 +472,12 @@ import Layout from '../layouts/Layout.astro';
   }
 
   .size-table tbody tr:hover {
-    background-color: rgba(255, 255, 255, 0.05);
+    background-color: #f3f4f6; /* Light gray hover */
   }
 
   .table-footer-note {
     font-size: 0.95rem;
-    color: var(--text-muted);
+    color: #4b5563; /* Darker gray for note */
     font-style: italic;
     text-align: center;
   }
@@ -484,101 +489,4 @@ import Layout from '../layouts/Layout.astro';
     }
   }
 
-  /* CTA Section */
-  .cta-section {
-    padding: 4rem 0;
-    background-color: transparent;
-  }
-
-  .cta-container {
-    display: flex;
-    justify-content: center;
-  }
-
-  .cta-card {
-    max-width: 800px;
-    width: 100%;
-    padding: 4rem 2rem;
-    text-align: center;
-    border-radius: var(--radius-lg);
-    background-color: #2b498f; /* Warna card biru solid sesuai gambar */
-    border: none;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-bottom: 0;
-  }
-
-  .cta-icon-wrapper {
-    width: 64px;
-    height: 64px;
-    background-color: rgba(255, 255, 255, 0.1);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 1.5rem;
-    border: none;
-  }
-
-  .cta-icon {
-    font-size: 1.8rem;
-  }
-
-  .cta-title {
-    font-size: 2.2rem;
-    font-weight: 800;
-    color: var(--text-primary);
-    margin-bottom: 1rem;
-  }
-
-  .cta-desc {
-    color: var(--text-secondary);
-    font-size: 1.05rem;
-    line-height: 1.6;
-    max-width: 600px;
-    margin-bottom: 2.5rem;
-  }
-
-  .cta-actions {
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-
-  .cta-btn {
-    padding: 0.8rem 2.5rem;
-    font-size: 1rem;
-    border-radius: 30px;
-    font-weight: 700;
-    background: #d4a938; /* Warna kuning emas solid */
-    color: #111;
-    border: none;
-    transition: background 0.2s;
-  }
-  .cta-btn:hover {
-    background: #b58d28;
-    color: #000;
-  }
-  
-  @media (max-width: 768px) {
-    .cta-card {
-      padding: 3rem 1.5rem;
-    }
-    
-    .cta-title {
-      font-size: 1.8rem;
-    }
-    
-    .cta-actions {
-      flex-direction: column;
-      width: 100%;
-    }
-    
-    .cta-actions .btn {
-      width: 100%;
-    }
-  }
 </style>

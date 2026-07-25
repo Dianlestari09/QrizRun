@@ -1,0 +1,125 @@
+---
+// Rute.astro
+---
+
+<section class="rute-section">
+  <div class="container rute-container">
+    <div class="rute-card-wrapper">
+      <div class="rute-card glass">
+        <img src="/rute-placeholder.webp" alt="Peta Rute" class="rute-image" />
+        <div class="rute-details">
+          <h3 class="rute-name">Rute Syiar QRIS Run</h3>
+          <p class="rute-desc">
+            Plan Route : Start - Jl. Hasanudin - Jl. Teuku Umar - Jl. Imam Bonjol - Jl. Ahmad Yani - Std. Brawijaya - Jl. PK. Bangsa - Jl. Erlangga - Jl. Hayam Wuruk - Bank Indonesia - Jl. Brawijaya - Taman Brantas - Jl. Hasanudin - Finish
+          </p>
+          <div class="rute-meta">
+            <div class="meta-item">
+              <span class="meta-icon">📍</span>
+              <span class="meta-text"
+                ><strong>Start:</strong> Kediri Town Square</span
+              >
+            </div>
+            <div class="meta-item">
+              <span class="meta-icon">🏁</span>
+              <span class="meta-text"
+                ><strong>Finish:</strong> Kediri Town Square</span
+              >
+            </div>
+            <div class="meta-item">
+              <span class="meta-icon">⏱️</span>
+              <span class="meta-text"
+                ><strong>COT:</strong> 1 Jam 30 Menit</span
+              >
+            </div>
+            <div class="meta-item">
+              <span class="meta-icon">💧</span>
+              <span class="meta-text"
+                ><strong>Water Station:</strong> KM 2.5</span
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Rute Section */
+  .rute-section {
+    background-color: #ffffff; /* White background */
+    padding: 6rem 0;
+  }
+
+  .rute-card-wrapper {
+    display: flex;
+    justify-content: center;
+  }
+
+  .rute-card {
+    max-width: 1000px;
+    width: 100%;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background: #f8fafc; /* Light gray card background */
+    border: 1px solid #e2e8f0;
+    box-shadow: var(--shadow-lg);
+  }
+
+  .rute-image {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-bottom: 4px solid var(--accent);
+  }
+
+  .rute-details {
+    padding: 3rem;
+    text-align: left;
+  }
+
+  .rute-name {
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 1.5rem;
+    color: #111827; /* Dark text for title */
+  }
+
+  .rute-desc {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    color: #4b5563; /* Dark text for description */
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px dashed rgba(0, 0, 0, 0.1);
+  }
+
+  .rute-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .meta-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 1.05rem;
+    color: #334155; /* Dark text for meta */
+  }
+
+  .meta-item strong {
+    color: #334155;
+    font-weight: 600;
+  }
+
+  @media (max-width: 768px) {
+    .rute-details {
+      padding: 1.5rem;
+    }
+
+    .rute-name {
+      font-size: 1.5rem;
+    }
+  }
+</style>

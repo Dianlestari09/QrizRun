@@ -1,0 +1,74 @@
+---
+// CTA.astro
+---
+
+<section class="cta-section">
+  <div class="container cta-container">
+    <div class="cta-card glass">
+      <h2 class="cta-title">Siap Mengikuti Syiar QRIS Run 2026?</h2>
+      <p class="cta-desc">
+        Tunjukkan Race terbaik kalian dengan menjadi finisher yang akan
+        mendapatkan medali eksklusif. Dapatkan Achievement kalian!
+      </p>
+      <div class="cta-actions">
+        <a href="/events/1" class="btn btn-accent cta-btn">Daftar Sekarang</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* CTA Section */
+  .cta-section {
+    padding: 4rem 0;
+    background-color: #cbd5e1; /* Slightly darker gray background */
+  }
+
+  .cta-container {
+    display: flex;
+    justify-content: center;
+  }
+
+  .cta-card {
+    max-width: 800px;
+    width: 100%;
+    padding: 4rem 2rem;
+    text-align: center;
+    border-radius: var(--radius-lg);
+    background: #ffffff; /* White card background */
+    border: 1px solid #e2e8f0;
+    box-shadow: var(--shadow-lg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .cta-title {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: #111827; /* Dark text for title */
+    margin-bottom: 1rem;
+  }
+
+  .cta-desc {
+    color: #4b5563; /* Dark text for description */
+    font-size: 1.05rem;
+    line-height: 1.6;
+    max-width: 600px;
+    margin-bottom: 2.5rem;
+  }
+
+  .cta-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .cta-btn {
+    padding: 0.8rem 2.5rem;
+    font-size: 1rem;
+    border-radius: 30px;
+    font-weight: 700;
+  }
+</style>
