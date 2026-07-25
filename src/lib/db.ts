@@ -35,7 +35,7 @@ function mapEvent(dbEvent: any): Event {
   return {
     id: dbEvent.id,
     title: dbEvent.title ? dbEvent.title.replace(/Fun Run/gi, 'Syiar QRIS Run') : '',
-    date: dbEvent.date,
+    date: '2026-08-16T12:00:00+07:00', // Override DB date to Minggu, 16 Agustus 2026
     location: 'Kediri Town Square, Jawa Timur', // Override DB location
     category: dbEvent.category,
     imageUrl: dbEvent.image_url,
@@ -224,6 +224,17 @@ export async function getRegistrationById(id: number): Promise<Registration | un
 }
 
 export async function getAllRegistrations(): Promise<(Registration & { eventTitle: string })[]> {
+  // Auto-cleanup: Hapus pendaftar PENDING tanpa bukti transfer yang sudah lewat 30 menit
+  const thirtyMinsAgo = new Date(Date.now() - 30 * 60 * 1000).toISOString();
+  supabase
+    .from('registrations')
+    .delete()
+    .eq('status', 'PENDING')
+    .is('payment_proof', null)
+    .lt('created_at', thirtyMinsAgo)
+    .then(() => {})
+    .catch(() => {});
+
   const { data, error } = await supabase
     .from('registrations')
     .select(`
@@ -248,16 +259,10 @@ export async function getAllRegistrations(): Promise<(Registration & { eventTitl
       reg.status = 'EXPIRED';
     }
 
-    // Filter out EXPIRED so they appear "deleted" in the UI (waiting to be recycled)
-    // AND filter out PENDING without payment proof to prevent admin human error
-    const isPendingWithoutProof = reg.status === 'PENDING' && !reg.paymentProof;
-
-    if (reg.status !== 'EXPIRED' && !isPendingWithoutProof) {
-      acc.push({
-        ...reg,
-        eventTitle: (dbReg.events?.title || 'Unknown Event').replace(/Fun Run/gi, 'Syiar QRIS Run'),
-      });
-    }
+    acc.push({
+      ...reg,
+      eventTitle: (dbReg.events?.title || 'Unknown Event').replace(/Fun Run/gi, 'Syiar QRIS Run'),
+    });
     
     return acc;
   }, []);
@@ -305,7 +310,7 @@ export async function getRegistrationWithEventById(id: number): Promise<(Registr
   return {
     ...reg,
     eventTitle: (data.events?.title || 'Unknown Event').replace(/Fun Run/gi, 'Syiar QRIS Run'),
-    eventDate: data.events?.date || '',
+    eventDate: '2026-08-16T12:00:00+07:00', // Override DB date
     eventLocation: 'Kediri Town Square, Jawa Timur', // Override DB location
     eventImageUrl: data.events?.image_url || '',
   };
@@ -416,7 +421,7 @@ export async function checkInRegistration(id: number): Promise<{ success: boolea
 
   return {
     success: true,
-    message: 'Check-In Berhasil! Selamat mengikuti event.',
+    message: 'Berhasil mengambil Race Pack! Selamat mengikuti event.',
     name: reg.name,
     eventTitle: reg.eventTitle
   };
