@@ -10,8 +10,9 @@
   
   --primary: #9c1f4e;
   --primary-hover: #b8245c;
-  --accent: #e8ba46;
-  --accent-glow: rgba(232, 186, 70, 0.4);
+  --accent: #d97706; /* Darker yellow for text readability */
+  --accent-bright: #e8ba46; /* Original bright yellow for buttons and navbar */
+  --accent-glow: rgba(217, 119, 6, 0.4);
   --accent-secondary: #6b1227;
   
   --neutral-white: #ffffff;
@@ -149,14 +150,14 @@ a {
 }
 
 .btn-accent {
-  background: linear-gradient(135deg, var(--accent) 0%, #c49829 100%);
+  background: linear-gradient(135deg, #e8ba46 0%, #c49829 100%);
   color: #000;
   font-weight: 700;
   box-shadow: 0 4px 15px rgba(232, 186, 70, 0.3);
 }
 .btn-accent:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(232, 186, 70, 0.5), var(--shadow-accent);
+  box-shadow: 0 6px 20px rgba(232, 186, 70, 0.5), 0 0 20px rgba(232, 186, 70, 0.15);
 }
 
 .btn-outline {

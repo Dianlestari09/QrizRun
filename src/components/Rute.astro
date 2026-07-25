@@ -8,34 +8,38 @@
       <div class="rute-card glass">
         <img src="/rute-placeholder.webp" alt="Peta Rute" class="rute-image" />
         <div class="rute-details">
-          <h3 class="rute-name">Rute Syiar QRIS Run</h3>
+          <h3 class="rute-name">Rute Syiar QRIS Run 2026</h3>
           <p class="rute-desc">
             Plan Route : Start - Jl. Hasanudin - Jl. Teuku Umar - Jl. Imam Bonjol - Jl. Ahmad Yani - Std. Brawijaya - Jl. PK. Bangsa - Jl. Erlangga - Jl. Hayam Wuruk - Bank Indonesia - Jl. Brawijaya - Taman Brantas - Jl. Hasanudin - Finish
           </p>
           <div class="rute-meta">
-            <div class="meta-item">
-              <span class="meta-icon">📍</span>
-              <span class="meta-text"
-                ><strong>Start:</strong> Kediri Town Square</span
-              >
+            <div class="meta-column">
+              <div class="meta-item">
+                <span class="meta-icon">📍</span>
+                <span class="meta-text"
+                  ><strong>Start:</strong> Kediri Town Square</span
+                >
+              </div>
+              <div class="meta-item">
+                <span class="meta-icon">🏁</span>
+                <span class="meta-text"
+                  ><strong>Finish:</strong> Kediri Town Square</span
+                >
+              </div>
             </div>
-            <div class="meta-item">
-              <span class="meta-icon">🏁</span>
-              <span class="meta-text"
-                ><strong>Finish:</strong> Kediri Town Square</span
-              >
-            </div>
-            <div class="meta-item">
-              <span class="meta-icon">⏱️</span>
-              <span class="meta-text"
-                ><strong>COT:</strong> 1 Jam 30 Menit</span
-              >
-            </div>
-            <div class="meta-item">
-              <span class="meta-icon">💧</span>
-              <span class="meta-text"
-                ><strong>Water Station:</strong> KM 2.5</span
-              >
+            <div class="meta-column">
+              <div class="meta-item">
+                <span class="meta-icon">⏱️</span>
+                <span class="meta-text"
+                  ><strong>COT:</strong> 1 Jam 30 Menit</span
+                >
+              </div>
+              <div class="meta-item">
+                <span class="meta-icon">💧</span>
+                <span class="meta-text"
+                  ><strong>Water Station:</strong> KM 2.5</span
+                >
+              </div>
             </div>
           </div>
         </div>
@@ -57,7 +61,7 @@
   }
 
   .rute-card {
-    max-width: 1000px;
+    max-width: 900px;
     width: 100%;
     border-radius: var(--radius-lg);
     overflow: hidden;
@@ -83,6 +87,7 @@
     font-weight: 800;
     margin-bottom: 1.5rem;
     color: #111827; /* Dark text for title */
+    text-align: center;
   }
 
   .rute-desc {
@@ -92,9 +97,16 @@
     margin-bottom: 2rem;
     padding-bottom: 2rem;
     border-bottom: 1px dashed rgba(0, 0, 0, 0.1);
+    /* text-align: center; */
   }
 
   .rute-meta {
+    display: flex;
+    justify-content: center;
+    gap: 4rem;
+  }
+
+  .meta-column {
     display: flex;
     flex-direction: column;
     gap: 1.25rem;
@@ -120,6 +132,12 @@
 
     .rute-name {
       font-size: 1.5rem;
+    }
+
+    .rute-meta {
+      flex-direction: column;
+      align-items: center;
+      gap: 1.25rem;
     }
   }
 </style>
