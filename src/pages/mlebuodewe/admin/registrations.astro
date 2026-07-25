@@ -1,8 +1,8 @@
 ---
-import AdminLayout from '../../layouts/AdminLayout.astro';
-import { getAllRegistrations, updateRegistrationStatus, getRegistrationWithEventById } from '../../lib/db';
-import { sendTicketConfirmedEmail } from '../../lib/email';
-import { processBankMutationsCSV } from '../../lib/ocr';
+import AdminLayout from "../../../layouts/AdminLayout.astro";
+import { getAllRegistrations, updateRegistrationStatus, getRegistrationWithEventById } from "../../../lib/db";
+import { sendTicketConfirmedEmail } from "../../../lib/email";
+import { processBankMutationsCSV } from "../../../lib/ocr";
 import { Buffer } from 'node:buffer';
 
 let errorMsg = '';
@@ -17,7 +17,7 @@ if (Astro.request.method === 'POST') {
 
     if (action === 'delete_reg' && idStr) {
       const id = parseInt(idStr.toString(), 10);
-      const { deleteRegistration } = await import('../../lib/db');
+      const { deleteRegistration } = await import("../../../lib/db");
       const success = await deleteRegistration(id);
       if (success) {
         successMsg = 'Pendaftaran berhasil dihapus. Slot tiket kembali tersedia!';

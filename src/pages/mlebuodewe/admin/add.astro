@@ -1,6 +1,6 @@
 ---
-import AdminLayout from '../../layouts/AdminLayout.astro';
-import { createEvent } from '../../lib/db';
+import AdminLayout from "../../../layouts/AdminLayout.astro";
+import { createEvent } from "../../../lib/db";
 
 let errorMsg = '';
 
@@ -34,7 +34,7 @@ if (Astro.request.method === 'POST') {
         slots,
         registered
       });
-      return Astro.redirect('/admin');
+      return Astro.redirect('/mlebuodewe/admin');
     }
   } catch (err) {
     errorMsg = 'Gagal menambahkan event. Periksa kembali inputan Anda.';
@@ -49,7 +49,7 @@ if (Astro.request.method === 'POST') {
     <div class="container form-container relative z-1">
       
       <div class="form-header">
-        <a href="/admin" class="back-link">&larr; Kembali ke Dashboard</a>
+        <a href="/mlebuodewe/admin" class="back-link">&larr; Kembali ke Dashboard</a>
         <h1 class="form-title">Tambah Event Baru</h1>
         <p class="form-subtitle">Buat dan umumkan event olahraga baru Anda ke publik</p>
       </div>
@@ -130,7 +130,7 @@ if (Astro.request.method === 'POST') {
         </div>
 
         <div class="form-actions">
-          <a href="/admin" class="btn btn-outline">Batal</a>
+          <a href="/mlebuodewe/admin" class="btn btn-outline">Batal</a>
           <button type="submit" class="btn btn-accent">Publish Event</button>
         </div>
       </form>

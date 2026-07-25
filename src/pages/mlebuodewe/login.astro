@@ -1,0 +1,160 @@
+---
+import AuthLayout from "../../layouts/AuthLayout.astro";
+import { supabase } from "../../lib/supabase";
+
+let errorMessage = "";
+
+if (Astro.request.method === "POST") {
+  try {
+    const data = await Astro.request.formData();
+    const username = data.get("username")?.toString();
+    const password = data.get("password")?.toString();
+
+    // Cek kredensial ke Supabase Database
+    const { data: adminData, error } = await supabase
+      .from('admins')
+      .select('*')
+      .eq('username', username)
+      .eq('password', password)
+      .single();
+
+    if (adminData && !error) {
+      Astro.cookies.set("admin_session", "authenticated", { 
+        path: "/",
+        httpOnly: true,
+        maxAge: 60 * 60 * 24 // 1 day
+      });
+      return Astro.redirect("/mlebuodewe/admin");
+    } else {
+      errorMessage = "Username atau password salah!";
+    }
+  } catch (error) {
+    errorMessage = "Terjadi kesalahan sistem.";
+  }
+}
+
+// Redirect if already logged in
+if (Astro.cookies.has("admin_session")) {
+  return Astro.redirect("/mlebuodewe/admin");
+}
+---
+
+<AuthLayout title="Login Admin - Syiar QRIS Run 2026">
+  <div class="login-wrapper">
+    <div class="login-container glass">
+      <div class="login-header">
+        <h2>Login Admin</h2>
+        <p>Silakan masuk untuk mengakses dasbor admin</p>
+      </div>
+
+      {errorMessage && <div class="alert alert-danger">{errorMessage}</div>}
+
+      <form method="POST" class="login-form">
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input 
+            type="text" 
+            id="username" 
+            name="username" 
+            class="form-control"
+            required
+            autofocus
+            placeholder="Masukkan username"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input 
+            type="password" 
+            id="password" 
+            name="password" 
+            class="form-control"
+            required
+            placeholder="Masukkan password"
+          />
+        </div>
+
+        <button type="submit" class="btn btn-accent btn-large" style="width: 100%; margin-top: 1rem;">
+          Masuk Dasbor
+        </button>
+      </form>
+    </div>
+  </div>
+</AuthLayout>
+
+<style>
+  .login-wrapper {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+  }
+
+  .login-container {
+    width: 100%;
+    max-width: 450px;
+    padding: 3rem 2rem;
+    border-radius: 1rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  }
+
+  .login-header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .login-header h2 {
+    font-size: 2rem;
+    color: var(--neutral-white);
+    margin-bottom: 0.5rem;
+  }
+
+  .login-header p {
+    color: var(--neutral-light);
+    font-size: 0.95rem;
+  }
+
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+
+  .form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: var(--neutral-white);
+  }
+
+  .form-control {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 0.5rem;
+    color: var(--neutral-white);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+  }
+
+  .form-control:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .alert {
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    font-weight: 500;
+  }
+
+  .alert-danger {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+  }
+</style>

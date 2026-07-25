@@ -26,9 +26,8 @@ const currentPath = Astro.url.pathname;
       <!-- Sidebar -->
       <aside class="admin-sidebar glass">
         <div class="sidebar-header">
-          <a href="/admin" class="logo">
-            <div class="logo-icon">⚡</div>
-            <span class="logo-text">QRIS <span>RUN</span></span>
+          <a href="/mlebuodewe/admin" class="logo">
+            <span class="logo-text">Syiar QRIS <span class="text-accent">Admin</span></span>
           </a>
           <button id="mobile-menu-btn" class="mobile-menu-btn" aria-label="Toggle Menu">
             ☰
@@ -36,30 +35,35 @@ const currentPath = Astro.url.pathname;
         </div>
         
         <nav class="sidebar-nav">
-          <a href="/admin" class={`sidebar-link ${currentPath === '/admin' || currentPath === '/admin/' ? 'active' : ''}`}>
+          <a href="/mlebuodewe/admin" class={`sidebar-link ${currentPath === '/mlebuodewe/admin' || currentPath === '/mlebuodewe/admin/' ? 'active' : ''}`}>
             <span class="icon">📊</span>
             Dashboard
           </a>
-          <a href="/admin/events" class={`sidebar-link ${currentPath.includes('/admin/events') || currentPath.includes('/admin/add') || currentPath.includes('/admin/edit') ? 'active' : ''}`}>
-            <span class="icon">📅</span>
-            Manajemen Event
+          <a href="/mlebuodewe/admin/events" class={`sidebar-link ${currentPath.includes('/mlebuodewe/admin/events') || currentPath.includes('/mlebuodewe/admin/add') || currentPath.includes('/mlebuodewe/admin/edit') ? 'active' : ''}`}>
+            <span class="icon">🏃</span>
+            Kelola Event
           </a>
-          <a href="/admin/registrations" class={`sidebar-link ${currentPath.includes('/admin/registrations') ? 'active' : ''}`}>
+          <a href="/mlebuodewe/admin/registrations" class={`sidebar-link ${currentPath.includes('/mlebuodewe/admin/registrations') ? 'active' : ''}`}>
             <span class="icon">👥</span>
             Pendaftar Masuk
           </a>
-          <a href="/admin/checkin" class={`sidebar-link ${currentPath.includes('/admin/checkin') ? 'active' : ''}`}>
-            <span class="icon">📷</span>
-            Check-In Tiket
+          <a href="/mlebuodewe/admin/checkin" class={`sidebar-link ${currentPath.includes('/mlebuodewe/admin/checkin') ? 'active' : ''}`}>
+            <span class="icon">✅</span>
+            Check-In Peserta
+          </a>
+          
+          <div class="sidebar-divider"></div>
+          
+          <a href="/mlebuodewe/logout" class="sidebar-link text-danger">
+            <span class="icon">🚪</span>
+            Keluar (Logout)
+          </a>
+          
+          <a href="/" class="sidebar-link" target="_blank">
+            <span class="icon">🌐</span>
+            Lihat Website
           </a>
         </nav>
-
-        <div class="sidebar-footer">
-          <a href="/" class="sidebar-link back-link">
-            <span class="icon">🏠</span>
-            Web Publik
-          </a>
-        </div>
       </aside>
 
       <!-- Main Content -->

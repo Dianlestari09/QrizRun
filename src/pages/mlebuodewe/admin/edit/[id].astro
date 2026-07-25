@@ -1,18 +1,18 @@
 ---
-import AdminLayout from '../../../layouts/AdminLayout.astro';
-import { getEventById, updateEvent } from '../../../lib/db';
+import AdminLayout from "../../../../layouts/AdminLayout.astro";
+import { getEventById, updateEvent } from "../../../../lib/db";
 
 const { id } = Astro.params;
 const eventId = parseInt(id || '', 10);
 
 if (isNaN(eventId)) {
-  return Astro.redirect('/admin');
+  return Astro.redirect('/mlebuodewe/admin');
 }
 
 const event = await getEventById(eventId);
 
 if (!event) {
-  return Astro.redirect('/admin');
+  return Astro.redirect('/mlebuodewe/admin');
 }
 
 let errorMsg = '';
@@ -48,7 +48,7 @@ if (Astro.request.method === 'POST') {
         registered
       });
       if (success) {
-        return Astro.redirect('/admin');
+        return Astro.redirect('/mlebuodewe/admin');
       } else {
         errorMsg = 'Gagal menyimpan perubahan. Data tidak ditemukan atau tidak ada perubahan.';
       }
@@ -66,7 +66,7 @@ if (Astro.request.method === 'POST') {
     <div class="container form-container relative z-1">
       
       <div class="form-header">
-        <a href="/admin" class="back-link">&larr; Kembali ke Dashboard</a>
+        <a href="/mlebuodewe/admin" class="back-link">&larr; Kembali ke Dashboard</a>
         <h1 class="form-title">Edit Event</h1>
         <p class="form-subtitle">Lakukan perubahan informasi untuk event ID #{event.id}</p>
       </div>
@@ -146,7 +146,7 @@ if (Astro.request.method === 'POST') {
         </div>
 
         <div class="form-actions">
-          <a href="/admin" class="btn btn-outline">Batal</a>
+          <a href="/mlebuodewe/admin" class="btn btn-outline">Batal</a>
           <button type="submit" class="btn btn-accent">Simpan Perubahan</button>
         </div>
       </form>
