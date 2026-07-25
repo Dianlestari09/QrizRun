@@ -61,7 +61,6 @@ if (Astro.request.method === 'POST') {
     <div class="container relative z-1 max-width-md">
       
       <div class="checkin-header">
-        <a href="/mlebuodewe/admin" class="back-link">&larr; Kembali ke Dashboard</a>
         <h1 class="checkin-title">Check-In Tiket</h1>
         <p class="checkin-subtitle">Scan QR Code E-Tiket peserta atau masukkan ID registrasi untuk check-in masuk</p>
       </div>
@@ -112,7 +111,7 @@ if (Astro.request.method === 'POST') {
             <div id="reader"></div>
           </div>
           
-          <div class="scanner-controls">
+          <div class="scanner-controls" style="margin-top: 1rem;">
             <button id="start-scan-btn" class="btn btn-primary btn-full">Aktifkan Kamera</button>
             <button id="stop-scan-btn" class="btn btn-outline btn-full hidden">Matikan Kamera</button>
           </div>
@@ -174,7 +173,7 @@ if (Astro.request.method === 'POST') {
       // @ts-ignore
       html5QrCode = new Html5Qrcode("reader");
       
-      const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+      const config = { fps: 10, qrbox: { width: 200, height: 200 }, aspectRatio: 1.777778 };
 
       html5QrCode.start(
         { facingMode: "environment" }, // Prioritaskan kamera belakang untuk HP
@@ -337,14 +336,20 @@ if (Astro.request.method === 'POST') {
     line-height: 1.4;
   }
 
-  /* Camera Viewport */
   .camera-viewport-wrapper {
     background-color: #000;
     border-radius: var(--radius-md);
     overflow: hidden;
-    aspect-ratio: 4/3;
+    height: 240px; /* Force a short fixed height */
     border: 1px solid var(--border-color);
     position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  #reader {
+    width: 100% !important;
   }
 
   #reader {
