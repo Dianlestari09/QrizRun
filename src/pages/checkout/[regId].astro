@@ -28,7 +28,8 @@ const totalPay = registration.amount;
 // Hitung Batas Waktu Pembayaran 1 Menit × 60 Detik × 1000 Milidetik
 //Baris 45: errorMsg = 'Pendaftaran Anda sudah kadaluarsa (melebihi batas waktu 1 menit)...'
 //Baris 259: <p>Batas waktu pembayaran 1 menit telah habis...</p>
-const limitTime = new Date(registration.createdAt).getTime() + (1 * 60 * 60 * 1000);
+// Hitung Batas Waktu Pembayaran 30 Menit × 60 Detik × 1000 Milidetik
+const limitTime = new Date(registration.createdAt).getTime() + (30 * 60 * 1000);
 const isExpired = registration.status === 'EXPIRED' || (registration.status === 'PENDING' && Date.now() > limitTime);
 
 let successMsg = '';
@@ -55,15 +56,12 @@ if (Astro.url.searchParams.get('uploaded') === '1') {
 if (Astro.request.method === 'POST') {
   try {
     if (isExpired) {
-      errorMsg = 'Pendaftaran Anda sudah kadaluarsa (melebihi batas waktu 1 jam)! Silakan lakukan pendaftaran ulang.';
+      errorMsg = 'Pendaftaran Anda sudah kadaluarsa (melebihi batas waktu 30 menit)! Jika terlanjur transfer, silakan konfirmasi via WhatsApp.';
     } else {
       const formData = await Astro.request.formData();
       const receiptFile = formData.get('receipt') as File;
-      const transactionId = formData.get('transactionId')?.toString() || '';
       
-      if (!transactionId) {
-        errorMsg = 'Silakan masukkan Nomor Transaksi / Ref yang tertera pada bukti transfer Anda.';
-      } else if (receiptFile && receiptFile.size > 0) {
+      if (receiptFile && receiptFile.size > 0) {
         // Validasi ukuran (misal maksimal 2MB)
         if (receiptFile.size > 2 * 1024 * 1024) {
           errorMsg = 'Ukuran berkas terlalu besar! Maksimal 2MB.';
@@ -72,14 +70,14 @@ if (Astro.request.method === 'POST') {
           const base64Image = `data:${receiptFile.type};base64,${buffer.toString('base64')}`;
           
           // 1. Verifikasi Struk Pembayaran dengan OCR (Tesseract.js)
-          const ocrResult = await validateReceiptOCR(base64Image, totalPay, transactionId);
+          const ocrResult = await validateReceiptOCR(base64Image, totalPay);
           
           if (!ocrResult.success) {
             errorMsg = ocrResult.message;
           } else {
             // 2. Unggah bukti ke Supabase (Cek Duplikasi & Simpan Waktu OCR)
             const finalTime = ocrResult.extractedTime || new Date().toISOString();
-            const uploadResult = await uploadPaymentProof(registration.id, base64Image, transactionId, finalTime);
+            const uploadResult = await uploadPaymentProof(registration.id, base64Image, finalTime);
             if (uploadResult.success) {
               return Astro.redirect(`${Astro.url.pathname}?uploaded=1`);
             } else {
@@ -156,7 +154,7 @@ if (staticQrisPayload) {
             </div>
           </div>
           <div class="paid-actions">
-            <a href="/" class="btn btn-primary">Kembali ke Beranda</a>
+            <a href="/" class="btn btn-primary" style="padding: 0.75rem 2rem; font-size: 1rem; border-radius: 50px;">Kembali ke Beranda</a>
           </div>
         </div>
       ) : (
@@ -181,8 +179,9 @@ if (staticQrisPayload) {
             </div>
 
             {/* QR Dinamis — nominal auto-fill */}
-            <div class="qr-code-wrapper">
-              <img src={dynamicQrisUrl} alt="QRIS QR Code" class="qris-img" />
+            <div class="qr-code-wrapper" style="display: flex; flex-direction: column; align-items: center; gap: 1rem;">
+              <img src={dynamicQrisUrl} alt="QRIS QR Code" class="qris-img" id="qris-img" />
+              <button type="button" class="btn" style="width: 100%; background: #0f172a; color: #ffffff; border: none; font-size: 0.9rem; padding: 0.6rem; border-radius: 8px;" onclick="downloadQR()">📥 Unduh QRIS</button>
             </div>
 
             <div class="nominal-tag">
@@ -191,8 +190,11 @@ if (staticQrisPayload) {
             </div>
             
             <p class="scan-instructions">
-              Scan QR ini menggunakan aplikasi <strong>bank manapun</strong> (BCA, BRI, BNI, Mandiri, dll) atau <strong>e-wallet</strong> (ShopeePay, GoPay, Dana, OVO, dll). Nominal <strong>{formatPrice(totalPay)}</strong> otomatis terisi. Setelah bayar, unggah screenshot bukti di sebelah kanan.
+              Scan QR ini menggunakan aplikasi <strong>bank manapun</strong> atau <strong>e-wallet</strong>. Nominal <strong>{formatPrice(totalPay)}</strong> otomatis terisi. Setelah bayar, unggah screenshot bukti di sebelah kanan.
             </p>
+            <div class="qris-warning" style="margin-top: 1rem; padding: 0.75rem; background: rgba(239, 68, 68, 0.1); border-left: 3px solid #ef4444; font-size: 0.8rem; text-align: left; color: #fca5a5;">
+              ⚠️ <strong>Penting:</strong> Jika Anda mengunduh QRIS ini, pastikan Anda mentransfer sebelum batas waktu habis. Pembayaran yang dilakukan setelah waktu habis konfirmasi ke admin via WhatsApp.
+            </div>
           </div>
 
 
@@ -220,14 +222,14 @@ if (staticQrisPayload) {
           </div>
 
           <div class="upload-area">
-            {errorMsg && <div class="alert alert-danger">{errorMsg}</div>}
+            {errorMsg && <div class="alert alert-danger" set:html={errorMsg}></div>}
             {successMsg && <div class="alert alert-success">{successMsg}</div>}
 
             {isExpired ? (
               <div class="waiting-box expired glass">
                 <div class="waiting-icon">❌</div>
                 <h3>Pendaftaran Kadaluarsa</h3>
-                <p>Batas waktu pembayaran 1 jam telah habis. Pendaftaran Anda otomatis dibatalkan oleh sistem. Silakan lakukan pendaftaran ulang.</p>
+                <p>Batas waktu pembayaran 30 menit telah habis. Pendaftaran otomatis dibatalkan. Jika terlanjur transfer, silakan konfirmasi via WhatsApp.</p>
                 <a href="/" class="btn btn-primary btn-full">Kembali ke Beranda</a>
               </div>
             ) : registration.paymentProof ? (
@@ -243,15 +245,10 @@ if (staticQrisPayload) {
             ) : (
               <form method="POST" enctype="multipart/form-data" class="upload-form">
                 <span class="upload-title">Unggah Bukti Pembayaran</span>
-                
-                <div class="form-group">
-                  <label for="transactionId">Nomor Transaksi / Ref</label>
-                  <input type="text" id="transactionId" name="transactionId" class="form-control" placeholder="Contoh: 202607AABBCC" required />
-                </div>
 
                 <label for="receipt" class="custom-file-upload">
                   <span class="icon">📁</span>
-                  <span class="text" id="file-name-text">Pilih Foto Bukti Transfer (Max 2MB)</span>
+                  <span class="text" id="file-name-text">Pilih Foto Bukti Transfer</span>
                   <input type="file" id="receipt" name="receipt" accept="image/*" required />
                 </label>
                 
@@ -326,14 +323,92 @@ if (staticQrisPayload) {
     updateTimer();
     setInterval(updateTimer, 1000);
   }
+
+  // Fungsi untuk download QR
+  (window as any).downloadQR = async function() {
+    try {
+      const imgEl = document.getElementById('qris-img') as HTMLImageElement;
+      const amountEl = document.querySelector('.nominal-tag .val');
+      const amountText = amountEl ? amountEl.textContent : 'Rp 0';
+      
+      const res = await fetch(imgEl.src);
+      const blob = await res.blob();
+      
+      const qrImg = new Image();
+      qrImg.src = URL.createObjectURL(blob);
+      
+      qrImg.onload = () => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+        
+        // Canvas size
+        canvas.width = 400;
+        canvas.height = 550;
+        
+        // Background
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        // Header Background
+        ctx.fillStyle = '#1e1b4b'; // Deep dark blue / indigo
+        ctx.fillRect(0, 0, canvas.width, 80);
+        
+        // Header Text
+        ctx.fillStyle = '#facc15'; // Yellow
+        ctx.font = 'bold 26px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Syiar QRIS Run', canvas.width / 2, 50);
+        
+        // Subheader
+        ctx.fillStyle = '#1f2937';
+        ctx.font = 'bold 20px sans-serif';
+        ctx.fillText('Scan QRIS untuk Membayar', canvas.width / 2, 120);
+        
+        // Draw QR
+        const qrSize = 260;
+        const qrX = (canvas.width - qrSize) / 2;
+        const qrY = 145;
+        ctx.drawImage(qrImg, qrX, qrY, qrSize, qrSize);
+        
+        // Amount Box
+        ctx.fillStyle = '#f8fafc';
+        ctx.fillRect(40, 430, 320, 90);
+        ctx.strokeStyle = '#e2e8f0';
+        ctx.strokeRect(40, 430, 320, 90);
+        
+        // Amount Text
+        ctx.fillStyle = '#64748b';
+        ctx.font = 'bold 13px sans-serif';
+        ctx.fillText('TOTAL BAYAR (OTOMATIS)', canvas.width / 2, 465);
+        
+        ctx.fillStyle = '#ef4444';
+        ctx.font = 'bold 28px sans-serif';
+        ctx.fillText(amountText || '', canvas.width / 2, 495);
+        
+        // Download
+        const a = document.createElement('a');
+        a.href = canvas.toDataURL('image/png');
+        a.download = 'Syiar-Qris-Run-2026.png';
+        a.click();
+      };
+    } catch (e) {
+      alert('Gagal mengunduh QRIS berbingkai. Silakan tahan gambar QR (long press) lalu simpan manual.');
+    }
+  }
 </script>
 
 <style>
   .countdown-banner {
+    position: sticky;
+    top: 90px;
+    z-index: 40;
     margin-bottom: 1.5rem;
     padding: 1rem 1.5rem;
-    background: rgba(245, 158, 11, 0.12);
-    border: 1px solid rgba(245, 158, 11, 0.3);
+    background: rgba(254, 243, 199, 0.95);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(245, 158, 11, 0.4);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
     border-radius: var(--radius-md);
     display: flex;
     align-items: center;
@@ -887,10 +962,14 @@ if (staticQrisPayload) {
   }
 
   .paid-confirmation {
-    padding: 3rem 2rem;
+    padding: 2.5rem 2rem;
     text-align: center;
-    border-top: 4px solid #10b981;
-    margin-top: 2rem;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 1rem;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+    margin: 2rem auto;
+    max-width: 650px;
   }
 
   .paid-icon {
@@ -900,23 +979,23 @@ if (staticQrisPayload) {
   }
 
   .paid-title {
-    font-size: 1.8rem;
+    font-size: 2rem;
     font-weight: 800;
-    color: #10b981;
+    color: #1f2937;
     margin-bottom: 0.5rem;
   }
 
   .paid-subtitle {
-    font-size: 1rem;
-    color: var(--text-secondary);
+    font-size: 1.05rem;
+    color: #4b5563;
     margin-bottom: 2rem;
   }
 
   .paid-email-notice {
-    background-color: rgba(34, 211, 238, 0.1);
-    border: 1px solid rgba(34, 211, 238, 0.3);
-    border-radius: var(--radius-md);
-    padding: 1.5rem;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 0.75rem;
+    padding: 1.25rem 1.5rem;
     display: flex;
     align-items: flex-start;
     gap: 1rem;
@@ -929,15 +1008,16 @@ if (staticQrisPayload) {
   }
 
   .paid-email-notice strong {
-    color: #22d3ee;
+    color: #1e40af; /* Dark blue */
     display: block;
     margin-bottom: 0.25rem;
     font-size: 1.1rem;
+    font-weight: 700;
   }
 
   .paid-email-notice p {
-    font-size: 0.9rem;
-    color: var(--text-secondary);
+    font-size: 0.95rem;
+    color: #3b82f6;
     margin: 0;
     line-height: 1.5;
   }
@@ -950,8 +1030,8 @@ if (staticQrisPayload) {
 
   @keyframes bounce {
     0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
-    40% {transform: translateY(-20px);}
-    60% {transform: translateY(-10px);}
+    40% {transform: translateY(-15px);}
+    60% {transform: translateY(-7px);}
   }
 
   @media (max-width: 768px) {

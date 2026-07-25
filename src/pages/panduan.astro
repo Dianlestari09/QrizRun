@@ -1,0 +1,244 @@
+---
+import Layout from '../layouts/Layout.astro';
+import CTA from '../components/CTA.astro';
+---
+
+<Layout title="Panduan Pendaftaran - Syiar QRIS Run 2026">
+  <section class="page-hero" style="background: none; border-bottom: 1px solid rgba(255,255,255,0.05);">
+    <div class="container hero-content">
+      <h1 class="page-title">Panduan Pendaftaran</h1>
+      <p class="page-subtitle">
+        Langkah demi langkah cara mendaftar dan melakukan pembayaran menggunakan QRIS secara otomatis.
+      </p>
+      
+      <div class="breadcrumb">
+        <a href="/" class="breadcrumb-link">Home</a>
+        <span class="breadcrumb-separator">›</span>
+        <span class="breadcrumb-current">Panduan</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-padding" style="background-color: var(--bg-primary);">
+    <div class="container" style="max-width: 800px; margin: 0 auto;">
+      
+      <div class="guide-step">
+        <div class="step-number">1</div>
+        <div class="step-content">
+          <h3>Pilih Tiket & Isi Data Diri</h3>
+          <p>Kunjungi halaman pendaftaran, pilih jumlah tiket yang Anda inginkan, dan isi data diri dengan lengkap sesuai dengan identitas asli (KTP/Kartu Pelajar). Pastikan email dan nomor WhatsApp yang dimasukkan aktif karena E-Tiket akan dikirimkan ke sana.</p>
+          <div class="dummy-image-box">
+            <span class="icon">📝</span> <p>Tempat Ilustrasi Pengisian Form (Akan Diupdate)</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="guide-step">
+        <div class="step-number">2</div>
+        <div class="step-content">
+          <h3>Scan QRIS & Bayar</h3>
+          <p>Setelah mengklik tombol daftar, Anda akan diarahkan ke halaman <strong>Checkout Pembayaran</strong>. Sebuah barcode QRIS akan muncul beserta total harga yang harus dibayarkan.</p>
+          <ul class="step-list">
+            <li>Buka aplikasi M-Banking atau E-Wallet favorit Anda (BCA, Mandiri, OVO, Dana, Gopay, dll).</li>
+            <li>Pilih menu <strong>Scan QR</strong>.</li>
+            <li>Arahkan kamera ke barcode QRIS yang tampil di layar, atau klik <strong>Unduh QRIS</strong> jika mendaftar langsung dari HP, lalu unggah gambar QR tersebut di aplikasi M-Banking Anda.</li>
+            <li>Pastikan total nominal transfer <strong>sama persis</strong> dengan yang tertera (termasuk kode unik di belakangnya).</li>
+          </ul>
+          <div class="dummy-image-box">
+            <span class="icon">📱</span> <p>Tempat Ilustrasi Scan Barcode QRIS (Akan Diupdate)</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="guide-step">
+        <div class="step-number">3</div>
+        <div class="step-content">
+          <h3>Unggah Bukti Transfer</h3>
+          <p>Setelah transfer berhasil, <strong>jangan lupa screenshot struk bukti pembayarannya!</strong></p>
+          <p>Kembali ke halaman checkout (batas waktu halaman adalah 30 menit). Klik tombol <strong>Pilih Foto Bukti Transfer</strong> dan unggah screenshot struk Anda. Sistem kami akan memvalidasi bukti Anda secara otomatis menggunakan kecerdasan buatan (OCR).</p>
+          <div class="dummy-image-box">
+            <span class="icon">📸</span> <p>Tempat Ilustrasi Screenshot Bukti Transfer (Akan Diupdate)</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="guide-step">
+        <div class="step-number" style="color: #ef4444; border-color: #ef4444; background: rgba(239,68,68,0.1);">4</div>
+        <div class="step-content">
+          <h3 style="color: #f87171;">Bagaimana Jika Pembayaran Kadaluarsa?</h3>
+          <p>Sistem memberikan waktu <strong>30 menit</strong> untuk menyelesaikan pembayaran. Jika Anda sudah terlanjur mentransfer dana namun terlambat mengunggah bukti hingga batas waktu habis, halaman pembayaran akan otomatis terkunci (kadaluarsa).</p>
+          <p><strong>Jangan khawatir dan tidak perlu mendaftar ulang!</strong> Cukup hubungi Admin kami melalui tombol WhatsApp yang mengambang di pojok kanan bawah layar. Kirimkan <em>screenshot</em> bukti transfer Anda, dan Admin akan dengan senang hati membantu memproses tiket Anda secara manual.</p>
+          <div class="dummy-image-box">
+            <span class="icon" style="color: #f87171;">💬</span> <p>Tempat Ilustrasi Konfirmasi WhatsApp Admin (Akan Diupdate)</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="guide-step">
+        <div class="step-number">5</div>
+        <div class="step-content">
+          <h3>Terima E-Tiket Resmi</h3>
+          <p>Jika validasi berhasil, status Anda akan berubah menjadi <strong>LUNAS</strong>. E-Tiket resmi dengan QR Code Check-In Anda akan langsung dikirimkan melalui Email. Simpan E-Tiket tersebut untuk ditukarkan dengan Race Pack!</p>
+          <div class="dummy-image-box">
+            <span class="icon">🎫</span> <p>Tempat Ilustrasi E-Tiket Email (Akan Diupdate)</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <CTA />
+</Layout>
+
+<style>
+  .page-hero {
+    position: relative;
+    padding: 100px 0 40px;
+    text-align: center;
+    color: var(--neutral-white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 800px;
+  }
+  
+  .page-title {
+    font-size: 2.8rem;
+    font-weight: 800;
+    margin-bottom: 1.5rem;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  }
+  
+  .page-subtitle {
+    font-size: 1.15rem;
+    line-height: 1.6;
+    margin-bottom: 2.5rem;
+    opacity: 0.95;
+    font-weight: 400;
+  }
+  
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1rem;
+    font-weight: 700;
+  }
+  
+  .breadcrumb-link {
+    color: var(--neutral-white);
+    text-decoration: none;
+    transition: opacity 0.2s;
+  }
+  
+  .breadcrumb-link:hover {
+    opacity: 0.8;
+  }
+  
+  .breadcrumb-separator {
+    opacity: 0.7;
+    font-size: 1.2rem;
+    font-weight: 400;
+  }
+  
+  .breadcrumb-current {
+    opacity: 0.9;
+    font-weight: 400;
+  }
+
+  .guide-step {
+    display: flex;
+    gap: 1.5rem;
+    padding: 1.5rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+  
+  .guide-step:last-child {
+    border-bottom: none;
+  }
+
+  .step-number {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    background: rgba(250, 204, 21, 0.1);
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    font-weight: 700;
+  }
+
+  .step-content {
+    flex-grow: 1;
+  }
+
+  .step-content h3 {
+    font-size: 1.5rem;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+    margin-top: 0.2rem;
+  }
+
+  .step-content p {
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin-bottom: 1rem;
+  }
+
+  .step-list {
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin-bottom: 1.5rem;
+    padding-left: 1.2rem;
+  }
+
+  .step-list li {
+    margin-bottom: 0.5rem;
+  }
+
+  .step-list li strong {
+    color: var(--text-primary);
+  }
+
+  .dummy-image-box {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px dashed rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    padding: 1rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1.2rem;
+  }
+
+  .dummy-image-box .icon {
+    font-size: 1.5rem;
+    opacity: 0.8;
+  }
+
+  .dummy-image-box p {
+    margin: 0 !important;
+    font-size: 0.85rem !important;
+    color: var(--text-muted) !important;
+  }
+
+  @media (max-width: 768px) {
+    .guide-step {
+      flex-direction: column;
+      gap: 1rem;
+    }
+  }
+</style>

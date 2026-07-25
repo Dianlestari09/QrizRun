@@ -202,7 +202,7 @@ const parseName = (nameStr: string) => {
                   <th>Kontak</th>
                   <th>Event Terdaftar</th>
                   <th>Total Bayar</th>
-                  <th>No. Transaksi</th>
+                  <th>Bukti Transfer</th>
                   <th>Status</th>
                   <th>Check-In</th>
                   <th>Tanggal Daftar</th>
@@ -211,7 +211,7 @@ const parseName = (nameStr: string) => {
               </thead>
               <tbody>
                 {registrationsDisplay.map((reg) => (
-                  <tr data-id={reg.id} data-raw-name={reg.name} data-email={reg.email} data-phone={reg.phone} data-amount={reg.amount} data-status={reg.status} data-checkin={reg.checkedIn ? 'SUDAH' : 'BELUM'} data-date={formatDate(reg.createdAt)}>
+                  <tr data-id={reg.id} data-raw-name={reg.name} data-email={reg.email} data-phone={reg.phone} data-amount={reg.amount} data-status={reg.status} data-checkin={reg.checkedIn ? 'SUDAH' : 'BELUM'} data-date={formatDate(reg.createdAt)} data-has-proof={reg.paymentProof ? 'Ada' : 'Tidak'}>
                     <td class="reg-id-cell"><strong>#REG-{reg.id}</strong></td>
                     <td>
                       <div class="event-name-cell">
@@ -228,10 +228,12 @@ const parseName = (nameStr: string) => {
                     </td>
                     <td>{formatPrice(reg.amount)}</td>
                     <td>
-                      {reg.transactionId ? (
-                        <span style="font-family: monospace; background: rgba(0,0,0,0.2); padding: 0.2rem 0.4rem; border-radius: 4px; font-size: 0.85rem;">{reg.transactionId}</span>
+                      {reg.paymentProof ? (
+                        <button type="button" class="btn-table btn-edit view-proof-btn" data-proof={reg.paymentProof} style="background: rgba(16, 185, 129, 0.2); color: #34d399; border-color: rgba(16, 185, 129, 0.5);">
+                          Lihat Bukti
+                        </button>
                       ) : (
-                        <span style="color: var(--text-muted); font-size: 0.85rem;">-</span>
+                        <span style="color: var(--text-muted); font-size: 0.85rem;">Belum Upload</span>
                       )}
                     </td>
                     <td>
@@ -249,11 +251,6 @@ const parseName = (nameStr: string) => {
                       <div class="action-buttons">
                         {reg.status === 'PENDING' ? (
                           <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                            {reg.paymentProof && (
-                              <button type="button" class="btn-table btn-edit view-proof-btn" data-proof={reg.paymentProof}>
-                                Lihat Bukti
-                              </button>
-                            )}
                             <form method="POST" style="margin: 0;">
                               <input type="hidden" name="action" value="confirm" />
                               <input type="hidden" name="id" value={reg.id} />
@@ -338,7 +335,7 @@ const parseName = (nameStr: string) => {
   if (exportBtn) {
     exportBtn.addEventListener('click', () => {
       const csvData = [];
-      const headers = ['Reg ID', 'Nama Peserta', 'Email Pemesan', 'No WA Pemesan', 'Jenis Kelamin', 'Jenis ID', 'Nomor ID', 'Ukuran Jersey', 'Total Bayar (Satu Order)', 'Status', 'Check-In', 'Tanggal Daftar'];
+      const headers = ['Reg ID', 'Nama Peserta', 'Email Pemesan', 'No WA Pemesan', 'Jenis Kelamin', 'Jenis ID', 'Nomor ID', 'Ukuran Jersey', 'Total Bayar (Satu Order)', 'Status', 'Check-In', 'Tanggal Daftar', 'Bukti Upload'];
       csvData.push(headers.join(','));
       
       tableRows.forEach(row => {
@@ -351,6 +348,7 @@ const parseName = (nameStr: string) => {
            const status = row.getAttribute('data-status') || '';
            const checkin = row.getAttribute('data-checkin') || '';
            const date = row.getAttribute('data-date') || '';
+           const proof = row.getAttribute('data-has-proof') || 'Tidak';
 
            const escapeCsv = (str: string) => `"${String(str || '-').replace(/"/g, '""')}"`;
            
@@ -370,14 +368,15 @@ const parseName = (nameStr: string) => {
                    escapeCsv(amount),
                    escapeCsv(status),
                    escapeCsv(checkin),
-                   escapeCsv(date)
+                   escapeCsv(date),
+                   escapeCsv(proof)
                  ].join(','));
                });
              } else {
-               csvData.push([ escapeCsv(id), escapeCsv(name), escapeCsv(email), escapeCsv(phone), escapeCsv('-'), escapeCsv('-'), escapeCsv('-'), escapeCsv('-'), escapeCsv(amount), escapeCsv(status), escapeCsv(checkin), escapeCsv(date) ].join(','));
+               csvData.push([ escapeCsv(id), escapeCsv(name), escapeCsv(email), escapeCsv(phone), escapeCsv('-'), escapeCsv('-'), escapeCsv('-'), escapeCsv('-'), escapeCsv(amount), escapeCsv(status), escapeCsv(checkin), escapeCsv(date), escapeCsv(proof) ].join(','));
              }
            } catch(e) {
-             csvData.push([ escapeCsv(id), escapeCsv(name), escapeCsv(email), escapeCsv(phone), escapeCsv('-'), escapeCsv('-'), escapeCsv('-'), escapeCsv('-'), escapeCsv(amount), escapeCsv(status), escapeCsv(checkin), escapeCsv(date) ].join(','));
+             csvData.push([ escapeCsv(id), escapeCsv(name), escapeCsv(email), escapeCsv(phone), escapeCsv('-'), escapeCsv('-'), escapeCsv('-'), escapeCsv('-'), escapeCsv(amount), escapeCsv(status), escapeCsv(checkin), escapeCsv(date), escapeCsv(proof) ].join(','));
            }
         }
       });
@@ -568,6 +567,9 @@ const parseName = (nameStr: string) => {
     border-radius: var(--radius-lg);
     background: #1e293b;
     border: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 240px); /* Leave ample room for header and padding to kill outer scrollbar */
   }
 
   .table-header-flex {
@@ -587,7 +589,25 @@ const parseName = (nameStr: string) => {
   .table-scroll {
     overflow-x: auto;
     overflow-y: auto;
-    max-height: 65vh;
+    flex-grow: 1; /* Take up all remaining space in the container */
+    min-height: 0; /* Needed for flexbox scrolling bug in some browsers */
+  }
+  
+  /* Styling scrollbar for sleek look */
+  .table-scroll::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  .table-scroll::-webkit-scrollbar-track {
+    background: rgba(255,255,255,0.02);
+    border-radius: 4px;
+  }
+  .table-scroll::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.1);
+    border-radius: 4px;
+  }
+  .table-scroll::-webkit-scrollbar-thumb:hover {
+    background: rgba(255,255,255,0.2);
   }
 
   .event-table {
@@ -710,8 +730,11 @@ const parseName = (nameStr: string) => {
     position: relative;
     padding: 2rem;
     border-radius: var(--radius-lg);
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-color);
+    background: rgba(15, 23, 42, 0.95); /* Sleek dark navy */
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+    color: #f8fafc;
     max-width: 500px;
     width: 90%;
   }

@@ -9,8 +9,7 @@ import { updateRegistrationStatus } from './db';
  */
 export async function validateReceiptOCR(
   base64Image: string,
-  amount: number,
-  transactionId: string
+  amount: number
 ): Promise<{ success: boolean; message: string; recognizedText: string; extractedTime?: string }> {
   try {
     // 1. Inisialisasi Tesseract Worker dengan bahasa Inggris (angka & nama standar tercakup)
@@ -22,7 +21,7 @@ export async function validateReceiptOCR(
 
     const upperText = text.toUpperCase();
 
-    // 3. Validasi Penerima (harus mengandung nama merchant: Boleam atau brand Qris Run)
+    // 3. Validasi Penerima (harus mengandung nama merchant: Boleam atau brand Syiar QRIS Run)
     const hasRecipient =
       upperText.includes('EVENT ORGANIZER JAGAD PRE') ||
       upperText.includes('QRIS RUN') ||
@@ -56,7 +55,7 @@ export async function validateReceiptOCR(
     if (!hasRecipient) {
       return {
         success: false,
-        message: 'Validasi OCR Gagal: Nama penerima ("Event Organizer Jagad Pre" / "Qris Run") tidak terdeteksi pada struk bukti pembayaran Anda!',
+        message: 'Validasi OCR Gagal: Nama penerima ("Event Organizer Jagad Pre" / "Syiar QRIS Run") tidak terdeteksi pada struk bukti pembayaran Anda! <strong>Pastikan bukti yang dikirim benar!</strong>',
         recognizedText: text
       };
     }
@@ -77,17 +76,7 @@ export async function validateReceiptOCR(
       };
     }
 
-    // 6. Validasi Nomor Transaksi (Cross-Check Input User vs OCR Text)
-    const cleanUpperText = upperText.replace(/\s+/g, '');
-    const cleanTransactionId = transactionId.toUpperCase().replace(/\s+/g, '');
 
-    if (cleanTransactionId && !cleanUpperText.includes(cleanTransactionId)) {
-      return {
-        success: false,
-        message: `Validasi OCR Gagal: Nomor transaksi "${transactionId}" tidak terdeteksi pada struk. Pastikan nomor yang Anda ketik benar dan foto terbaca jelas!`,
-        recognizedText: text
-      };
-    }
 
     // 7. Ekstraksi Waktu Transaksi (Otomatis dari OCR)
     let extractedTime = new Date().toISOString(); // Default fallback: waktu saat ini
