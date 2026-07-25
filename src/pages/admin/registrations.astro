@@ -163,7 +163,7 @@ const parseName = (nameStr: string) => {
 <AdminLayout title="Data Pendaftar">
   <section class="admin-dashboard">
     <div class="glow-spot admin-glow"></div>
-    <div class="container relative z-1" style="max-width: 98%; padding: 0 1rem;">
+    <div class="container relative z-1 admin-container">
       <div class="admin-header">
         <div>
           <h1 class="admin-title">Pendaftar Masuk</h1>
@@ -177,16 +177,18 @@ const parseName = (nameStr: string) => {
       <div class="table-container glass">
         <div class="table-header-flex">
           <h2 class="table-title">Daftar Pendaftar Masuk</h2>
-          <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
-            <div class="filter-group" style="display: flex; gap: 0.5rem; align-items: center;">
-              <label style="font-size: 0.85rem; color: var(--text-muted);">Rentang Tanggal:</label>
-              <input type="date" id="filter-date-start" class="form-control" style="padding: 0.3rem 0.5rem; border-radius: 4px; background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); color: white;" />
-              <span style="color: var(--text-muted); font-size: 0.85rem;">-</span>
-              <input type="date" id="filter-date-end" class="form-control" style="padding: 0.3rem 0.5rem; border-radius: 4px; background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); color: white;" />
-              <button type="button" id="btn-reset-filter" class="btn btn-outline btn-sm" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;">Reset</button>
+          <div class="header-actions">
+            <div class="filter-group">
+              <label class="filter-label">Rentang Tanggal:</label>
+              <div class="date-inputs">
+                <input type="date" id="filter-date-start" class="form-control date-input" />
+                <span class="date-separator">-</span>
+                <input type="date" id="filter-date-end" class="form-control date-input" />
+              </div>
+              <button type="button" id="btn-reset-filter" class="btn btn-outline btn-sm reset-btn">Reset</button>
             </div>
             
-            <button type="button" id="btn-export-csv" class="btn btn-primary btn-small" style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; padding: 0.5rem 1rem;">
+            <button type="button" id="btn-export-csv" class="btn btn-primary btn-small export-btn">
               ⬇️ Export Data
             </button>
           </div>
@@ -511,6 +513,7 @@ const parseName = (nameStr: string) => {
     padding: 2rem 0;
     position: relative;
     min-height: calc(100vh - 72px);
+    overflow-x: clip; /* Fix for horizontal scrolling caused by glow */
   }
 
   .admin-glow {
@@ -570,6 +573,14 @@ const parseName = (nameStr: string) => {
     display: flex;
     flex-direction: column;
     height: calc(100vh - 240px); /* Leave ample room for header and padding to kill outer scrollbar */
+    overflow: hidden;
+  }
+
+  .table-scroll {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin-top: 1rem;
   }
 
   .table-header-flex {
@@ -579,6 +590,8 @@ const parseName = (nameStr: string) => {
     margin-bottom: 1.5rem;
     padding-bottom: 1rem;
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    flex-wrap: wrap;
+    gap: 1rem;
   }
 
   .table-title {
@@ -586,10 +599,73 @@ const parseName = (nameStr: string) => {
     margin: 0;
   }
 
+  .admin-container {
+    width: 100%;
+    max-width: 100%;
+    padding: 0 1.5rem;
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .filter-group {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    flex-wrap: wrap;
+    background: rgba(0, 0, 0, 0.15);
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .filter-label {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+
+  .date-inputs {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .date-input {
+    padding: 0.35rem 0.6rem;
+    border-radius: 6px;
+    background: rgba(15, 23, 42, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    font-size: 0.85rem;
+    outline: none;
+    transition: all 0.2s ease;
+  }
+
+  .date-input:focus {
+    border-color: var(--accent);
+    background: rgba(15, 23, 42, 0.8);
+  }
+
+  .date-separator {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+  }
+
+  .export-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    padding: 0.6rem 1.25rem;
+    white-space: nowrap;
+  }
+
   .table-scroll {
-    overflow-x: auto;
-    overflow-y: auto;
-    flex-grow: 1; /* Take up all remaining space in the container */
     min-height: 0; /* Needed for flexbox scrolling bug in some browsers */
   }
   
@@ -765,6 +841,47 @@ const parseName = (nameStr: string) => {
     .admin-header {
       flex-direction: column;
       align-items: flex-start;
+    }
+    
+    .table-header-flex {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .header-actions {
+      width: 100%;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 1rem;
+    }
+    
+    .filter-group {
+      width: 100%;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0.75rem;
+    }
+    
+    .date-inputs {
+      width: 100%;
+      justify-content: space-between;
+    }
+    
+    .date-input {
+      flex: 1;
+      width: 100%;
+    }
+
+    .reset-btn {
+      width: 100%;
+    }
+    
+    .export-btn {
+      width: 100%;
+      justify-content: center;
+    }
+    .admin-container {
+      padding: 0 1rem;
     }
   }
 </style>

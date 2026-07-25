@@ -30,6 +30,9 @@ const currentPath = Astro.url.pathname;
             <div class="logo-icon">⚡</div>
             <span class="logo-text">QRIS <span>RUN</span></span>
           </a>
+          <button id="mobile-menu-btn" class="mobile-menu-btn" aria-label="Toggle Menu">
+            ☰
+          </button>
         </div>
         
         <nav class="sidebar-nav">
@@ -73,11 +76,14 @@ const currentPath = Astro.url.pathname;
         background: #0f172a !important;
         color: var(--text-primary);
         font-family: var(--font-sans);
+        width: 100%;
+        min-height: 100vh;
       }
 
       .admin-layout {
         display: flex;
         min-height: 100vh;
+        width: 100%;
       }
 
       /* Sidebar Styles */
@@ -95,8 +101,20 @@ const currentPath = Astro.url.pathname;
       }
 
       .sidebar-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
         padding: 2rem 1.5rem;
         border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      }
+      
+      .mobile-menu-btn {
+        display: none;
+        background: none;
+        border: none;
+        color: var(--text-primary);
+        font-size: 1.5rem;
+        cursor: pointer;
       }
       
       .logo {
@@ -199,14 +217,25 @@ const currentPath = Astro.url.pathname;
         .admin-content {
           margin-left: 0;
           padding-top: 1rem;
+          width: 100%;
+          max-width: 100vw;
         }
         .sidebar-header {
           padding: 1rem 1.5rem;
         }
+        .mobile-menu-btn {
+          display: block;
+        }
         .sidebar-nav {
+          display: none;
+          flex-direction: column;
           padding: 1rem;
-          flex-direction: row;
-          flex-wrap: wrap;
+          width: 100%;
+          background: #1e293b;
+          border-bottom: 1px solid var(--border-color);
+        }
+        .sidebar-nav.active {
+          display: flex;
         }
         .sidebar-link {
           padding: 0.75rem 1rem;
@@ -216,5 +245,17 @@ const currentPath = Astro.url.pathname;
         }
       }
     </style>
+    
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const btn = document.getElementById('mobile-menu-btn');
+        const nav = document.querySelector('.sidebar-nav');
+        if (btn && nav) {
+          btn.addEventListener('click', () => {
+            nav.classList.toggle('active');
+          });
+        }
+      });
+    </script>
   </body>
 </html>

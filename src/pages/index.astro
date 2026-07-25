@@ -31,7 +31,7 @@ const categories = [
       <div class="event-logo-wrapper">
         <img
           src="/logo.webp"
-          alt="Logo QRIS RUN"
+          alt="Logo SYIAR QRIS RUN"
           id="main-logo"
           class="event-hero-logo"
         />
@@ -77,7 +77,11 @@ const categories = [
           >
         </div>
 
-        <a href="/events/1" class="btn btn-accent btn-large" style="margin-top: 2rem; margin-bottom: 2rem;">Daftar Sekarang</a>
+        <a
+          href="/events/1"
+          class="btn btn-accent btn-large"
+          style="margin-top: 2rem; margin-bottom: 2rem;">Daftar Sekarang</a
+        >
 
         <p class="kuota-text" style="color: white;">
           Kuota terbatas! Harga Early Bird Hingga Kuota Terpenuhi.
@@ -90,10 +94,8 @@ const categories = [
       <p class="sponsors-title"></p>
       <div class="sponsor-marquee">
         <div class="sponsor-track">
-          
           <img src="/logo_sponsor.webp" alt="Logo" class="sponsor-logo" />
           <img src="/logo_sponsor.webp" alt="Logo" class="sponsor-logo" />
-
         </div>
       </div>
     </div>
@@ -105,16 +107,27 @@ const categories = [
       <div class="about-content">
         <h2 class="about-title">Syiar QRIS Run 2026</h2>
         <p class="about-desc">
-          <strong>Syiar QRIS Run 2026</strong> merupakan ajang lari yang diselenggarakan oleh <strong>Bank Indonesia Kediri</strong> untuk mengajak masyarakat menerapkan gaya hidup sehat sekaligus mendukung percepatan digitalisasi sistem pembayaran melalui QRIS.
+          <strong>Syiar QRIS Run 2026</strong> merupakan ajang lari yang diselenggarakan
+          oleh <strong>Bank Indonesia Kediri</strong> untuk mengajak masyarakat menerapkan
+          gaya hidup sehat sekaligus mendukung percepatan digitalisasi sistem pembayaran
+          melalui QRIS.
         </p>
         <p class="about-desc">
-          Tak hanya berlari untuk kesehatan, setiap transaksi QRIS yang Anda lakukan juga menjadi bagian dari <strong>gerakan berwakaf</strong>, menghadirkan manfaat yang terus mengalir bagi sesama.
+          Tak hanya berlari untuk kesehatan, setiap transaksi QRIS yang Anda
+          lakukan juga menjadi bagian dari <strong>gerakan berwakaf</strong>,
+          menghadirkan manfaat yang terus mengalir bagi sesama.
         </p>
         <p class="about-desc">
-          Melalui semangat <em>"Berlari, Berwakaf, dan Bertransaksi dengan QRIS"</em>, setiap langkah dan setiap transaksi menjadi bagian dari <strong>gerakan kebaikan</strong> yang memberikan manfaat bagi sesama.
+          Melalui semangat <em
+            >"Berlari, Berwakaf, dan Bertransaksi dengan QRIS"</em
+          >, setiap langkah dan setiap transaksi menjadi bagian dari <strong
+            >gerakan kebaikan</strong
+          > yang memberikan manfaat bagi sesama.
         </p>
         <p class="about-desc">
-          Mari dukung <strong>percepatan digitalisasi pembayaran</strong> sekaligus <strong>menebarkan kebaikan</strong> dalam setiap langkah. Mari Berlari, Berbagi, dan Memberi Arti.
+          Mari dukung <strong>percepatan digitalisasi pembayaran</strong> sekaligus
+          <strong>menebarkan kebaikan</strong> dalam setiap langkah. Mari Berlari,
+          Berbagi, dan Memberi Arti.
         </p>
       </div>
       <div class="about-image-wrapper">
@@ -178,183 +191,177 @@ const categories = [
   </section>
 
   <!-- Rute Section -->
-  <RuteComponent / >
+  <RuteComponent>
+    <CTA />
 
-  <CTA />
-
-  <!-- FAQ Section -->
-  <section class="faq-section" id="faq">
-    <div class="container faq-container">
-      <div class="section-header center">
-        <!-- <span class="badge-pill">SUPPORT CENTER</span> -->
-        <h2 class="section-title">Pertanyaan Seputar Event</h2>
-        <p class="section-subtitle">
-          Temukan jawaban atas pertanyaan umum seputar Syiar QRIS Run 2026 di
-          sini.
-        </p>
-      </div>
-
-      <div class="faq-grid">
-        <div class="faq-item glass">
-          <button class="faq-question">
-            <span>Apa itu Syiar QRIS Run ?</span>
-            <span class="faq-icon">↓</span>
-          </button>
-          <div class="faq-answer">
-            <p>
-              Syiar QRIS Run adalah event lari rekreasi yang menggabungkan
-              gaya hidup sehat dan kepedulian sosial.
-            </p>
-          </div>
+    <!-- FAQ Section -->
+    <section class="faq-section" id="faq">
+      <div class="container faq-container">
+        <div class="section-header center">
+          <!-- <span class="badge-pill">SUPPORT CENTER</span> -->
+          <h2 class="section-title">Pertanyaan Seputar Event</h2>
+          <p class="section-subtitle">
+            Temukan jawaban atas pertanyaan umum seputar Syiar QRIS Run 2026 di
+            sini.
+          </p>
         </div>
 
-        <div class="faq-item glass">
-          <button class="faq-question">
-            <span>Siapa saja yang boleh ikut?</span>
-            <span class="faq-icon">↓</span>
-          </button>
-          <div class="faq-answer">
-            <p>
-              Event ini terbuka untuk umum, dari anak-anak hingga dewasa, baik
-              pelari pemula maupun profesional.
-            </p>
+        <div class="faq-grid">
+          <div class="faq-item glass">
+            <button class="faq-question">
+              <span>Apa itu Syiar QRIS Run ?</span>
+              <span class="faq-icon">↓</span>
+            </button>
+            <div class="faq-answer">
+              <p>
+                Syiar QRIS Run adalah event lari rekreasi yang menggabungkan
+                gaya hidup sehat dan kepedulian sosial.
+              </p>
+            </div>
           </div>
-        </div>
 
-        <div class="faq-item glass">
-          <button class="faq-question">
-            <span>Di mana lokasi start dan finish?</span>
-            <span class="faq-icon">↓</span>
-          </button>
-          <div class="faq-answer">
-            <p>
-              Start dan finish akan dilakukan di Kediri Town Square.
-            </p>
+          <div class="faq-item glass">
+            <button class="faq-question">
+              <span>Siapa saja yang boleh ikut?</span>
+              <span class="faq-icon">↓</span>
+            </button>
+            <div class="faq-answer">
+              <p>
+                Event ini terbuka untuk umum, dari anak-anak hingga dewasa, baik
+                pelari pemula maupun profesional.
+              </p>
+            </div>
           </div>
-        </div>
 
-        <div class="faq-item glass">
-          <button class="faq-question">
-            <span>Fasilitas apa saja yang didapat peserta?</span>
-            <span class="faq-icon">↓</span>
-          </button>
-          <div class="faq-answer">
-            <p>
-              Peserta akan mendapatkan Nomor BIB, Jersey Official, Finisher
-              Medal, Goodie Bag, dan kesempatan Doorprize.
-            </p>
+          <div class="faq-item glass">
+            <button class="faq-question">
+              <span>Di mana lokasi start dan finish?</span>
+              <span class="faq-icon">↓</span>
+            </button>
+            <div class="faq-answer">
+              <p>Start dan finish akan dilakukan di Kediri Town Square.</p>
+            </div>
           </div>
-        </div>
 
-        <div class="faq-item glass">
-          <button class="faq-question">
-            <span>Bagaimana cara mendaftar?</span>
-            <span class="faq-icon">↓</span>
-          </button>
-          <div class="faq-answer">
-            <p>
-              Anda bisa mendaftar secara online melalui website ini dengan
-              menekan tombol "Daftar Sekarang".
-            </p>
+          <div class="faq-item glass">
+            <button class="faq-question">
+              <span>Fasilitas apa saja yang didapat peserta?</span>
+              <span class="faq-icon">↓</span>
+            </button>
+            <div class="faq-answer">
+              <p>
+                Peserta akan mendapatkan Nomor BIB, Jersey Official, Finisher
+                Medal, Goodie Bag, dan kesempatan Doorprize.
+              </p>
+            </div>
           </div>
-        </div>
 
-        <div class="faq-item glass">
-          <button class="faq-question">
-            <span>Bagaimana jika saya datang terlambat?</span>
-            <span class="faq-icon">↓</span>
-          </button>
-          <div class="faq-answer">
-            <p>
-              Peserta yang terlambat setelah flag-off tidak diperkenankan
-              mengikuti lari dan tidak mendapatkan hak finisher.
-            </p>
+          <div class="faq-item glass">
+            <button class="faq-question">
+              <span>Bagaimana cara mendaftar?</span>
+              <span class="faq-icon">↓</span>
+            </button>
+            <div class="faq-answer">
+              <p>
+                Anda bisa mendaftar secara online melalui website ini dengan
+                menekan tombol "Daftar Sekarang".
+              </p>
+            </div>
           </div>
-        </div>
 
-        <div class="faq-item glass">
-          <button class="faq-question">
-            <span>Apakah boleh membawa hewan peliharaan?</span>
-            <span class="faq-icon">↓</span>
-          </button>
-          <div class="faq-answer">
-            <p>
-              Demi kenyamanan dan keamanan bersama, peserta tidak diperkenankan
-              membawa hewan peliharaan.
-            </p>
+          <div class="faq-item glass">
+            <button class="faq-question">
+              <span>Bagaimana jika saya datang terlambat?</span>
+              <span class="faq-icon">↓</span>
+            </button>
+            <div class="faq-answer">
+              <p>
+                Peserta yang terlambat setelah flag-off tidak diperkenankan
+                mengikuti lari dan tidak mendapatkan hak finisher.
+              </p>
+            </div>
           </div>
-        </div>
 
-        <div class="faq-item glass">
-          <button class="faq-question">
-            <span>Apa yang menyebabkan event dihentikan?</span>
-            <span class="faq-icon">↓</span>
-          </button>
-          <div class="faq-answer">
-            <p>
-              Event dapat dihentikan jika terjadi kondisi force majeure seperti
-              cuaca ekstrem atau bencana alam.
-            </p>
+          <div class="faq-item glass">
+            <button class="faq-question">
+              <span>Apakah boleh membawa hewan peliharaan?</span>
+              <span class="faq-icon">↓</span>
+            </button>
+            <div class="faq-answer">
+              <p>
+                Demi kenyamanan dan keamanan bersama, peserta tidak
+                diperkenankan membawa hewan peliharaan.
+              </p>
+            </div>
           </div>
-        </div>
 
-        <div class="faq-item glass">
-          <button class="faq-question">
-            <span>Apa penyebab peserta didiskualifikasi?</span>
-            <span class="faq-icon">↓</span>
-          </button>
-          <div class="faq-answer">
-            <p>
-              Peserta dapat didiskualifikasi jika memotong rute, menggunakan
-              kendaraan, atau tindakan tidak sportif.
-            </p>
+          <div class="faq-item glass">
+            <button class="faq-question">
+              <span>Apa yang menyebabkan event dihentikan?</span>
+              <span class="faq-icon">↓</span>
+            </button>
+            <div class="faq-answer">
+              <p>
+                Event dapat dihentikan jika terjadi kondisi force majeure
+                seperti cuaca ekstrem atau bencana alam.
+              </p>
+            </div>
           </div>
-        </div>
 
-        <div class="faq-item glass">
-          <button class="faq-question">
-            <span>Apakah lomba ini trail run atau road race?</span>
-            <span class="faq-icon">↓</span>
-          </button>
-          <div class="faq-answer">
-            <p>
-              Event ini merupakan road race dengan rute jalan
-              aspal/cor.
-            </p>
+          <div class="faq-item glass">
+            <button class="faq-question">
+              <span>Apa penyebab peserta didiskualifikasi?</span>
+              <span class="faq-icon">↓</span>
+            </button>
+            <div class="faq-answer">
+              <p>
+                Peserta dapat didiskualifikasi jika memotong rute, menggunakan
+                kendaraan, atau tindakan tidak sportif.
+              </p>
+            </div>
           </div>
-        </div>
 
-        <div class="faq-item glass">
-          <button class="faq-question">
-            <span>Bolehkah peserta membawa makanan sendiri?</span>
-            <span class="faq-icon">↓</span>
-          </button>
-          <div class="faq-answer">
-            <p>
-              Tentu boleh, namun kami juga telah menyiapkan water station di
-              rute untuk peserta.
-            </p>
+          <div class="faq-item glass">
+            <button class="faq-question">
+              <span>Apakah lomba ini trail run atau road race?</span>
+              <span class="faq-icon">↓</span>
+            </button>
+            <div class="faq-answer">
+              <p>Event ini merupakan road race dengan rute jalan aspal/cor.</p>
+            </div>
           </div>
-        </div>
 
-        <div class="faq-item glass">
-          <button class="faq-question">
-            <span>Berapa jumlah pos medis & water station?</span>
-            <span class="faq-icon">↓</span>
-          </button>
-          <div class="faq-answer">
-            <p>
-              Akan ada water station di KM 2.5 dan pos medis yang tersebar di
-              sepanjang rute serta area finish.
-            </p>
+          <div class="faq-item glass">
+            <button class="faq-question">
+              <span>Bolehkah peserta membawa makanan sendiri?</span>
+              <span class="faq-icon">↓</span>
+            </button>
+            <div class="faq-answer">
+              <p>
+                Tentu boleh, namun kami juga telah menyiapkan water station di
+                rute untuk peserta.
+              </p>
+            </div>
+          </div>
+
+          <div class="faq-item glass">
+            <button class="faq-question">
+              <span>Berapa jumlah pos medis & water station?</span>
+              <span class="faq-icon">↓</span>
+            </button>
+            <div class="faq-answer">
+              <p>
+                Akan ada water station di KM 2.5 dan pos medis yang tersebar di
+                sepanjang rute serta area finish.
+              </p>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- Sticky Kategori Filter -->
-  <!-- <section class="sticky-filter glass">
+    <!-- Sticky Kategori Filter -->
+    <!-- <section class="sticky-filter glass">
     <div class="container filter-container">
       <div class="filter-scroll-wrapper">
         {
@@ -371,8 +378,8 @@ const categories = [
     </div>
   </section> -->
 
-  <!-- Halaman Event Mendatang -->
-  <!-- <section class="upcoming-section" id="upcoming">
+    <!-- Halaman Event Mendatang -->
+    <!-- <section class="upcoming-section" id="upcoming">
     <div class="container">
       <div class="section-header">
         <div>
@@ -404,8 +411,8 @@ const categories = [
     </div>
   </section> -->
 
-  <!-- Halaman Event Selesai -->
-  <!-- <section class="finished-section" id="finished">
+    <!-- Halaman Event Selesai -->
+    <!-- <section class="finished-section" id="finished">
     <div class="glow-spot finished-glow"></div>
     <div class="container">
       <div class="section-header">
@@ -437,789 +444,674 @@ const categories = [
       }
     </div>
   </section> -->
-</Layout>
+  </RuteComponent>
 
-<script>
-  // Countdown Timer Logic
-  const targetDate = new Date("2026-08-16T06:00:00+07:00").getTime();
+  <script>
+    // Countdown Timer Logic
+    const targetDate = new Date("2026-08-16T06:00:00+07:00").getTime();
 
-  const timer = setInterval(() => {
-    const now = new Date().getTime();
-    const distance = targetDate - now;
+    const timer = setInterval(() => {
+      const now = new Date().getTime();
+      const distance = targetDate - now;
 
-    if (distance < 0) {
-      clearInterval(timer);
-      const timerElement = document.getElementById("countdown-timer");
-      const startedElement = document.getElementById("event-started");
-      if (timerElement) timerElement.style.display = "none";
-      if (startedElement) startedElement.style.display = "flex";
-      return;
-    }
+      if (distance < 0) {
+        clearInterval(timer);
+        const timerElement = document.getElementById("countdown-timer");
+        const startedElement = document.getElementById("event-started");
+        if (timerElement) timerElement.style.display = "none";
+        if (startedElement) startedElement.style.display = "flex";
+        return;
+      }
 
-    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-    const hours = Math.floor(
-      (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
-    );
-    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor(
+        (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
+      );
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-    const dEl = document.getElementById("cd-days");
-    const hEl = document.getElementById("cd-hours");
-    const mEl = document.getElementById("cd-minutes");
-    const sEl = document.getElementById("cd-seconds");
+      const dEl = document.getElementById("cd-days");
+      const hEl = document.getElementById("cd-hours");
+      const mEl = document.getElementById("cd-minutes");
+      const sEl = document.getElementById("cd-seconds");
 
-    if (dEl) dEl.innerText = days.toString().padStart(2, "0");
-    if (hEl) hEl.innerText = hours.toString().padStart(2, "0");
-    if (mEl) mEl.innerText = minutes.toString().padStart(2, "0");
-    if (sEl) sEl.innerText = seconds.toString().padStart(2, "0");
-  }, 1000);
+      if (dEl) dEl.innerText = days.toString().padStart(2, "0");
+      if (hEl) hEl.innerText = hours.toString().padStart(2, "0");
+      if (mEl) mEl.innerText = minutes.toString().padStart(2, "0");
+      if (sEl) sEl.innerText = seconds.toString().padStart(2, "0");
+    }, 1000);
 
-  // Filter Kategori Logic
-  const filterButtons = document.querySelectorAll(".filter-btn");
-  const eventItems = document.querySelectorAll(".event-item-wrapper");
+    // Filter Kategori Logic
+    const filterButtons = document.querySelectorAll(".filter-btn");
+    const eventItems = document.querySelectorAll(".event-item-wrapper");
 
-  filterButtons.forEach((button) => {
-    button.addEventListener("click", () => {
-      // Hapus active class dari semua button
-      filterButtons.forEach((btn) => btn.classList.remove("active"));
+    filterButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        // Hapus active class dari semua button
+        filterButtons.forEach((btn) => btn.classList.remove("active"));
 
-      // Tambah active class ke button yang diklik
-      button.classList.add("active");
+        // Tambah active class ke button yang diklik
+        button.classList.add("active");
 
-      const targetCategory = button.getAttribute("data-category");
+        const targetCategory = button.getAttribute("data-category");
 
-      eventItems.forEach((item) => {
-        const itemCategory = item.getAttribute("data-item-category");
-        if (targetCategory === "SEMUA" || itemCategory === targetCategory) {
-          (item as HTMLElement).style.display = "block";
-          // Animasi fade in
-          (item as HTMLElement).style.opacity = "1";
-          (item as HTMLElement).style.transform = "scale(1)";
-        } else {
-          (item as HTMLElement).style.display = "none";
-        }
+        eventItems.forEach((item) => {
+          const itemCategory = item.getAttribute("data-item-category");
+          if (targetCategory === "SEMUA" || itemCategory === targetCategory) {
+            (item as HTMLElement).style.display = "block";
+            // Animasi fade in
+            (item as HTMLElement).style.opacity = "1";
+            (item as HTMLElement).style.transform = "scale(1)";
+          } else {
+            (item as HTMLElement).style.display = "none";
+          }
+        });
       });
     });
-  });
 
-  // FAQ Logic
-  const faqItems = document.querySelectorAll(".faq-item");
-  faqItems.forEach((item) => {
-    const btn = item.querySelector(".faq-question");
-    btn?.addEventListener("click", () => {
-      // Menutup FAQ lain yang sedang terbuka
-      faqItems.forEach((otherItem) => {
-        if (otherItem !== item) {
-          otherItem.classList.remove("active");
-        }
+    // FAQ Logic
+    const faqItems = document.querySelectorAll(".faq-item");
+    faqItems.forEach((item) => {
+      const btn = item.querySelector(".faq-question");
+      btn?.addEventListener("click", () => {
+        // Menutup FAQ lain yang sedang terbuka
+        faqItems.forEach((otherItem) => {
+          if (otherItem !== item) {
+            otherItem.classList.remove("active");
+          }
+        });
+
+        // Toggle FAQ yang diklik
+        item.classList.toggle("active");
       });
-
-      // Toggle FAQ yang diklik
-      item.classList.toggle("active");
     });
-  });
-</script>
+  </script>
 
-<style>
-  /* Hero Section */
-  .hero {
-    position: relative;
-    padding: 6rem 0 0 0;
-    overflow: hidden;
-    background-image: url('/bg_hero.webp');
-    background-size: cover;
-    background-position: center;
-  }
-
-  .hero-glow-1 {
-    top: -10%;
-    right: -10%;
-    width: 500px;
-    height: 500px;
-    background-color: var(--accent-secondary);
-  }
-
-  .hero-glow-2 {
-    bottom: -20%;
-    left: -10%;
-    width: 400px;
-    height: 400px;
-    background-color: var(--primary);
-  }
-
-  .hero-container-centered {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: 2rem;
-  }
-
-  .event-logo-wrapper {
-    margin-bottom: 1rem;
-    width: 100%;
-    max-width: 600px;
-  }
-
-  .event-hero-logo {
-    width: 100%;
-    height: auto;
-    object-fit: contain;
-    filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.5));
-  }
-
-  .event-meta-pills {
-    display: flex;
-    gap: 1rem;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-
-  .pill {
-    padding: 0.75rem 1.5rem;
-    border-radius: 9999px;
-    font-weight: 600;
-    font-size: 1rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    color: var(--text-primary);
-  }
-
-  .countdown-wrapper {
-    margin-top: 1rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1.5rem;
-  }
-
-  .countdown-label {
-    font-size: 1.1rem;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    color: var(--text-primary);
-    text-transform: uppercase;
-  }
-
-  .countdown-timer {
-    display: flex;
-    gap: 1.5rem;
-  }
-
-  .time-box {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 90px;
-    height: 90px;
-    border-radius: var(--radius-md);
-    background: rgba(18, 22, 32, 0.7);
-    border: 1px solid var(--border-color);
-    box-shadow: var(--shadow-md);
-  }
-
-  .time-num {
-    font-size: 2.5rem;
-    font-weight: 800;
-    font-family: var(--font-display);
-    color: var(--text-primary);
-    line-height: 1;
-  }
-
-  .time-text {
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: var(--accent);
-    margin-top: 0.25rem;
-    letter-spacing: 1px;
-  }
-
-  .event-started-box {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1.5rem;
-  }
-
-  .started-text {
-    font-size: 3rem;
-    font-family: var(--font-display);
-    color: var(--accent);
-    text-transform: uppercase;
-    font-weight: 800;
-    letter-spacing: 2px;
-    text-shadow: 0 0 15px var(--accent-glow);
-  }
-
-  .btn-large {
-    padding: 1rem 3rem;
-    font-size: 1.2rem;
-    border-radius: 50px;
-  }
-
-  .kuota-text {
-    font-size: 0.95rem;
-    font-style: italic;
-    color: var(--text-muted);
-  }
-
-  .sponsors-bar {
-    margin-top: 2rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1.5rem;
-    position: relative;
-    z-index: 1;
-    width: 100%;
-    padding: 2.5rem 0;
-    background: linear-gradient(
-      180deg,
-      transparent 0%,
-      rgba(18, 22, 32, 0.5) 100%
-    );
-  }
-
-  .sponsors-title {
-    font-size: 0.9rem;
-    font-weight: 700;
-    color: var(--text-secondary);
-    letter-spacing: 0.15em;
-  }
-
-  .sponsor-marquee {
-    width: 100%;
-    max-width: 1000px;
-    margin: 0 auto;
-    overflow: hidden;
-    padding: 0.5rem 0;
-    -webkit-mask-image: linear-gradient(
-      to right,
-      transparent 0%,
-      black 15%,
-      black 85%,
-      transparent 100%
-    );
-    mask-image: linear-gradient(
-      to right,
-      transparent 0%,
-      black 15%,
-      black 85%,
-      transparent 100%
-    );
-  }
-
-  .sponsor-track {
-    display: flex;
-    align-items: center;
-    gap: 0;
-    width: max-content;
-    animation: sponsorScroll 25s linear infinite;
-  }
-
-  .sponsor-track:hover {
-    animation-play-state: paused;
-  }
-
-  @keyframes sponsorScroll {
-    0% {
-      transform: translateX(0);
-    }
-    100% {
-      transform: translateX(calc(-50% - 2rem));
-    }
-  }
-
-  .sponsor-logo {
-    height: 100px;
-    width: auto;
-    object-fit: contain;
-    opacity: 0.9;
-    transition: all 0.3s;
-  }
-
-  .sponsors-logo:hover {
-    opacity: 1;
-    transform: scale(1.05);
-  }
-
-  /* About Section */
-  .about-section {
-    padding: 6rem 0;
-    background-color: #ffffff;
-    position: relative;
-  }
-
-  .about-container {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 4rem;
-    align-items: center;
-  }
-
-  .about-content {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
-
-  .about-title {
-    font-size: 2.8rem;
-    font-weight: 800;
-    color: #111827; /* Darker text for title on white bg */
-    line-height: 1.2;
-    margin-bottom: 0.5rem;
-  }
-
-  .about-desc {
-    font-size: 1.1rem;
-    color: #4b5563; /* Lighter text for description on white bg */
-    line-height: 1.7;
-  }
-
-  .about-desc strong {
-    color: var(--accent);
-    font-weight: 600;
-  }
-
-  .about-image-wrapper {
-    width: 100%;
-    border-radius: var(--radius-lg);
-    overflow: hidden;
-    box-shadow:
-      var(--shadow-lg),
-      0 0 30px rgba(0, 229, 255, 0.1);
-    border: 1px solid var(--border-color);
-  }
-
-  .about-image {
-    width: 100%;
-    height: auto;
-    object-fit: cover;
-    display: block;
-    transition: transform 0.5s ease;
-  }
-
-  .about-image:hover {
-    transform: scale(1.03);
-  }
-
-  /* Benefit Section */
-  .benefit-section {
-    padding: 6rem 0;
-    text-align: center;
-    background-color: #cbd5e1; /* Slightly darker gray background */
-  }
-
-  .benefit-title {
-    font-size: 2.2rem;
-    font-weight: 800;
-    color: #111827; /* Dark text for title */
-    margin-bottom: 3.5rem;
-  }
-
-  .benefit-grid {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 1.5rem;
-  }
-
-  .benefit-card {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 170px;
-    height: 170px;
-    background: #ffffff; /* White card background */
-    border: 1px solid #e2e8f0;
-    border-radius: var(--radius-lg);
-    padding: 1.5rem;
-    transition: all 0.3s ease;
-  }
-
-  .benefit-card:hover {
-    transform: translateY(-8px);
-    background: #ffffff;
-    border-color: #cbd5e1;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-  }
-
-  .benefit-icon {
-    width: 70px;
-    height: 70px;
-    object-fit: contain;
-    margin-bottom: 1.25rem;
-    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
-  }
-
-  .benefit-text {
-    font-size: 1rem;
-    font-weight: 700;
-    color: #111827; /* Dark text for benefit text */
-    line-height: 1.2;
-  }
-
-  /* FAQ Section */
-  .faq-section {
-    padding: 6rem 0;
-    position: relative;
-    background-color: #ffffff;
-  }
-
-  .badge-pill {
-    display: inline-block;
-    padding: 0.4rem 1.2rem;
-    background: rgba(0, 229, 255, 0.1);
-    color: var(--accent);
-    border-radius: 20px;
-    font-size: 0.85rem;
-    font-weight: 700;
-    letter-spacing: 1px;
-    margin-bottom: 1rem;
-    text-transform: uppercase;
-  }
-
-  .section-header.center {
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .faq-section .section-title {
-    color: #111827;
-  }
-
-  .faq-section .section-subtitle {
-    color: #4b5563;
-  }
-
-  .faq-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.5rem;
-    margin-top: 3rem;
-  }
-
-  .faq-item {
-    background: #f8fafc; /* Light background for FAQ items */
-    border: 1px solid #e2e8f0;
-    border-radius: var(--radius-md);
-    overflow: hidden;
-    transition: all 0.3s ease;
-  }
-
-  .faq-item.active {
-    background: #f1f5f9;
-    border-color: #cbd5e1;
-  }
-
-  .faq-question {
-    width: 100%;
-    padding: 1.5rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: transparent;
-    border: none;
-    color: #111827; /* Dark text for question */
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    text-align: left;
-    font-family: inherit;
-  }
-
-  .faq-icon {
-    width: 28px;
-    height: 28px;
-    background: rgba(0, 0, 0, 0.05);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.9rem;
-    transition: transform 0.3s ease;
-    color: #111827;
-  }
-
-  .faq-item.active .faq-icon {
-    transform: rotate(180deg);
-  }
-
-  .faq-answer {
-    max-height: 0;
-    overflow: hidden;
-    transition:
-      max-height 0.3s ease,
-      padding 0.3s ease;
-    padding: 0 1.5rem;
-  }
-
-  .faq-item.active .faq-answer {
-    max-height: 200px;
-    padding: 0 1.5rem 1.5rem 1.5rem;
-  }
-
-  .faq-answer p {
-    color: #4b5563; /* Dark text for answer */
-    font-size: 0.95rem;
-    line-height: 1.6;
-    margin: 0;
-  }
-
-  /* Sticky Kategori Filter */
-  .sticky-filter {
-    position: sticky;
-    top: 72px;
-    z-index: 50;
-    border-radius: 0;
-    border-left: none;
-    border-right: none;
-    background: rgba(10, 12, 16, 0.85);
-    padding: 0.85rem 0;
-    border-bottom: 1px solid var(--border-color);
-  }
-
-  .filter-scroll-wrapper {
-    display: flex;
-    gap: 0.75rem;
-    overflow-x: auto;
-    scrollbar-width: none; /* Firefox */
-  }
-
-  .filter-scroll-wrapper::-webkit-scrollbar {
-    display: none; /* Chrome/Safari */
-  }
-
-  .filter-btn {
-    background: var(--bg-tertiary);
-    border: 1px solid var(--border-color);
-    color: var(--text-secondary);
-    padding: 0.6rem 1.25rem;
-    border-radius: 9999px;
-    font-weight: 600;
-    font-size: 0.85rem;
-    cursor: pointer;
-    white-space: nowrap;
-    transition: all 0.25s ease;
-  }
-
-  .filter-btn:hover {
-    background: rgba(255, 255, 255, 0.05);
-    color: var(--text-primary);
-  }
-
-  .filter-btn.active {
-    background: var(--accent);
-    color: #000;
-    border-color: var(--accent);
-    box-shadow: var(--shadow-accent);
-  }
-
-  /* Sections general */
-  .upcoming-section,
-  .finished-section {
-    padding: 6rem 0;
-    position: relative;
-  }
-
-  .finished-section {
-    background: linear-gradient(
-      180deg,
-      var(--bg-primary) 0%,
-      var(--bg-secondary) 100%
-    );
-    overflow: hidden;
-  }
-
-  .finished-glow {
-    bottom: -10%;
-    right: -10%;
-    width: 500px;
-    height: 500px;
-    background-color: var(--accent-secondary);
-  }
-
-  .section-header {
-    margin-bottom: 3.5rem;
-  }
-
-  .section-title {
-    font-size: 2.25rem;
-    font-weight: 800;
-    margin-bottom: 0.5rem;
-  }
-
-  .section-subtitle {
-    color: var(--text-secondary);
-    font-size: 1.05rem;
-  }
-
-  /* Grid layout */
-  .events-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 2rem;
-  }
-
-  .empty-state {
-    padding: 4rem 2rem;
-    text-align: center;
-    border-radius: var(--radius-md);
-    color: var(--text-secondary);
-  }
-
-  /* Infinite Marquee */
-  .marquee-container {
-    width: 100vw;
-    position: relative;
-    left: 50%;
-    right: 50%;
-    margin-left: -50vw;
-    margin-right: -50vw;
-    overflow: hidden;
-    padding: 1rem 0;
-  }
-
-  .marquee-track {
-    display: flex;
-    gap: 2rem;
-    width: max-content;
-    animation: scroll 40s linear infinite;
-  }
-
-  .marquee-track:hover {
-    animation-play-state: paused;
-  }
-
-  .marquee-item {
-    width: 350px;
-    flex-shrink: 0;
-  }
-
-  @keyframes scroll {
-    0% {
-      transform: translateX(0);
-    }
-    100% {
-      transform: translateX(calc(-50% - 1rem));
-    }
-  }
-
-  /* Responsive styling */
-  @media (max-width: 1024px) {
-    .hero-container {
-      grid-template-columns: 1fr;
-      gap: 3rem;
-    }
-
-    .hero-title {
-      font-size: 3rem;
-    }
-
-    .hero-stats {
-      grid-template-columns: repeat(4, 1fr);
-    }
-  }
-
-  @media (max-width: 768px) {
+  <style>
+    /* Hero Section */
     .hero {
-      padding: 4rem 0 0 0;
+      position: relative;
+      padding: 6rem 0 0 0;
+      overflow: hidden;
+      background-image: url("/bg_hero.webp");
+      background-size: cover;
+      background-position: center;
     }
 
-    .hero-title {
-      font-size: 2.5rem;
+    .hero-glow-1 {
+      top: -10%;
+      right: -10%;
+      width: 500px;
+      height: 500px;
+      background-color: var(--accent-secondary);
     }
 
-    .hero-stats {
-      grid-template-columns: repeat(2, 1fr);
+    .hero-glow-2 {
+      bottom: -20%;
+      left: -10%;
+      width: 400px;
+      height: 400px;
+      background-color: var(--primary);
     }
 
-    /* Hero Section Adjustments */
+    .hero-container-centered {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 2rem;
+    }
+
     .event-logo-wrapper {
-      max-width: 320px;
+      margin-bottom: 1rem;
+      width: 100%;
+      max-width: 600px;
     }
 
-    /* Make hero logo smaller on mobile to fit screens */
     .event-hero-logo {
-      max-width: 220px;
+      width: 100%;
       height: auto;
-      margin: 0 auto;
-      display: block;
-      margin-top: 38px; /* space from fixed navbar on mobile */
+      object-fit: contain;
+      filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.5));
     }
 
     .event-meta-pills {
-      flex-wrap: nowrap;
-      gap: 0.5rem;
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
     }
 
     .pill {
-      padding: 0.4rem 0.75rem;
-      font-size: 0.75rem;
-    }
-
-    .countdown-timer {
+      padding: 0.75rem 1.5rem;
+      border-radius: 9999px;
+      font-weight: 600;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
       gap: 0.5rem;
+      color: var(--text-primary);
     }
 
-    .time-box {
-      width: 65px;
-      height: 65px;
-    }
-
-    .time-num {
-      font-size: 1.6rem;
-    }
-
-    .time-text {
-      font-size: 0.6rem;
+    .countdown-wrapper {
+      margin-top: 1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
     }
 
     .countdown-label {
-      font-size: 0.85rem;
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: var(--text-primary);
+      text-transform: uppercase;
     }
 
-    /* Sponsor Adjustments */
+    .countdown-timer {
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    .time-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 90px;
+      height: 90px;
+      border-radius: var(--radius-md);
+      background: rgba(18, 22, 32, 0.7);
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-md);
+    }
+
+    .time-num {
+      font-size: 2.5rem;
+      font-weight: 800;
+      font-family: var(--font-display);
+      color: var(--text-primary);
+      line-height: 1;
+    }
+
+    .time-text {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--accent);
+      margin-top: 0.25rem;
+      letter-spacing: 1px;
+    }
+
+    .event-started-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .started-text {
+      font-size: 3rem;
+      font-family: var(--font-display);
+      color: var(--accent);
+      text-transform: uppercase;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-shadow: 0 0 15px var(--accent-glow);
+    }
+
+    .btn-large {
+      padding: 1rem 3rem;
+      font-size: 1.2rem;
+      border-radius: 50px;
+    }
+
+    .kuota-text {
+      font-size: 0.95rem;
+      font-style: italic;
+      color: var(--text-muted);
+    }
+
     .sponsors-bar {
       margin-top: 2rem;
-      padding: 1.5rem 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      padding: 2.5rem 0;
+      background: linear-gradient(
+        180deg,
+        transparent 0%,
+        rgba(18, 22, 32, 0.5) 100%
+      );
+    }
+
+    .sponsors-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+      letter-spacing: 0.15em;
     }
 
     .sponsor-marquee {
+      width: 100%;
+      max-width: 1000px;
+      margin: 0 auto;
+      overflow: hidden;
+      padding: 0.5rem 0;
       -webkit-mask-image: linear-gradient(
         to right,
-        transparent 5%,
-        black 45%,
+        transparent 0%,
+        black 15%,
         black 85%,
         transparent 100%
       );
       mask-image: linear-gradient(
         to right,
-        transparent 5%,
-        black 45%,
+        transparent 0%,
+        black 15%,
         black 85%,
         transparent 100%
       );
     }
 
-    .sponsor-logo {
-      height: 60px; /* larger on mobile for visibility */
-    }
-
     .sponsor-track {
+      display: flex;
+      align-items: center;
       gap: 0;
-      animation: sponsorScrollMobile 10s linear infinite; /* a bit faster on mobile */
+      width: max-content;
+      animation: sponsorScroll 25s linear infinite;
     }
 
-    @keyframes sponsorScrollMobile {
+    .sponsor-track:hover {
+      animation-play-state: paused;
+    }
+
+    @keyframes sponsorScroll {
+      0% {
+        transform: translateX(0);
+      }
+      100% {
+        transform: translateX(calc(-50% - 2rem));
+      }
+    }
+
+    .sponsor-logo {
+      height: 100px;
+      width: auto;
+      object-fit: contain;
+      opacity: 0.9;
+      transition: all 0.3s;
+    }
+
+    .sponsors-logo:hover {
+      opacity: 1;
+      transform: scale(1.05);
+    }
+
+    /* About Section */
+    .about-section {
+      padding: 6rem 0;
+      background-color: #ffffff;
+      position: relative;
+    }
+
+    .about-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+    }
+
+    .about-content {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .about-title {
+      font-size: 2.8rem;
+      font-weight: 800;
+      color: #111827; /* Darker text for title on white bg */
+      line-height: 1.2;
+      margin-bottom: 0.5rem;
+    }
+
+    .about-desc {
+      font-size: 1.1rem;
+      color: #4b5563; /* Lighter text for description on white bg */
+      line-height: 1.7;
+    }
+
+    .about-desc strong {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .about-image-wrapper {
+      width: 100%;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow:
+        var(--shadow-lg),
+        0 0 30px rgba(0, 229, 255, 0.1);
+      border: 1px solid var(--border-color);
+    }
+
+    .about-image {
+      width: 100%;
+      height: auto;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.5s ease;
+    }
+
+    .about-image:hover {
+      transform: scale(1.03);
+    }
+
+    /* Benefit Section */
+    .benefit-section {
+      padding: 6rem 0;
+      text-align: center;
+      background-color: #cbd5e1; /* Slightly darker gray background */
+    }
+
+    .benefit-title {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: #111827; /* Dark text for title */
+      margin-bottom: 3.5rem;
+    }
+
+    .benefit-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1.5rem;
+    }
+
+    .benefit-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 170px;
+      height: 170px;
+      background: #ffffff; /* White card background */
+      border: 1px solid #e2e8f0;
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      transition: all 0.3s ease;
+    }
+
+    .benefit-card:hover {
+      transform: translateY(-8px);
+      background: #ffffff;
+      border-color: #cbd5e1;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .benefit-icon {
+      width: 70px;
+      height: 70px;
+      object-fit: contain;
+      margin-bottom: 1.25rem;
+      filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+    }
+
+    .benefit-text {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #111827; /* Dark text for benefit text */
+      line-height: 1.2;
+    }
+
+    /* FAQ Section */
+    .faq-section {
+      padding: 6rem 0;
+      position: relative;
+      background-color: #ffffff;
+    }
+
+    .badge-pill {
+      display: inline-block;
+      padding: 0.4rem 1.2rem;
+      background: rgba(0, 229, 255, 0.1);
+      color: var(--accent);
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+    }
+
+    .section-header.center {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .faq-section .section-title {
+      color: #111827;
+    }
+
+    .faq-section .section-subtitle {
+      color: #4b5563;
+    }
+
+    .faq-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-top: 3rem;
+    }
+
+    .faq-item {
+      background: #f8fafc; /* Light background for FAQ items */
+      border: 1px solid #e2e8f0;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .faq-item.active {
+      background: #f1f5f9;
+      border-color: #cbd5e1;
+    }
+
+    .faq-question {
+      width: 100%;
+      padding: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: transparent;
+      border: none;
+      color: #111827; /* Dark text for question */
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: left;
+      font-family: inherit;
+    }
+
+    .faq-icon {
+      width: 28px;
+      height: 28px;
+      background: rgba(0, 0, 0, 0.05);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      transition: transform 0.3s ease;
+      color: #111827;
+    }
+
+    .faq-item.active .faq-icon {
+      transform: rotate(180deg);
+    }
+
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition:
+        max-height 0.3s ease,
+        padding 0.3s ease;
+      padding: 0 1.5rem;
+    }
+
+    .faq-item.active .faq-answer {
+      max-height: 200px;
+      padding: 0 1.5rem 1.5rem 1.5rem;
+    }
+
+    .faq-answer p {
+      color: #4b5563; /* Dark text for answer */
+      font-size: 0.95rem;
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    /* Sticky Kategori Filter */
+    .sticky-filter {
+      position: sticky;
+      top: 72px;
+      z-index: 50;
+      border-radius: 0;
+      border-left: none;
+      border-right: none;
+      background: rgba(10, 12, 16, 0.85);
+      padding: 0.85rem 0;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .filter-scroll-wrapper {
+      display: flex;
+      gap: 0.75rem;
+      overflow-x: auto;
+      scrollbar-width: none; /* Firefox */
+    }
+
+    .filter-scroll-wrapper::-webkit-scrollbar {
+      display: none; /* Chrome/Safari */
+    }
+
+    .filter-btn {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      padding: 0.6rem 1.25rem;
+      border-radius: 9999px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.25s ease;
+    }
+
+    .filter-btn:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-primary);
+    }
+
+    .filter-btn.active {
+      background: var(--accent);
+      color: #000;
+      border-color: var(--accent);
+      box-shadow: var(--shadow-accent);
+    }
+
+    /* Sections general */
+    .upcoming-section,
+    .finished-section {
+      padding: 6rem 0;
+      position: relative;
+    }
+
+    .finished-section {
+      background: linear-gradient(
+        180deg,
+        var(--bg-primary) 0%,
+        var(--bg-secondary) 100%
+      );
+      overflow: hidden;
+    }
+
+    .finished-glow {
+      bottom: -10%;
+      right: -10%;
+      width: 500px;
+      height: 500px;
+      background-color: var(--accent-secondary);
+    }
+
+    .section-header {
+      margin-bottom: 3.5rem;
+    }
+
+    .section-title {
+      font-size: 2.25rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+    }
+
+    .section-subtitle {
+      color: var(--text-secondary);
+      font-size: 1.05rem;
+    }
+
+    /* Grid layout */
+    .events-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 2rem;
+    }
+
+    .empty-state {
+      padding: 4rem 2rem;
+      text-align: center;
+      border-radius: var(--radius-md);
+      color: var(--text-secondary);
+    }
+
+    /* Infinite Marquee */
+    .marquee-container {
+      width: 100vw;
+      position: relative;
+      left: 50%;
+      right: 50%;
+      margin-left: -50vw;
+      margin-right: -50vw;
+      overflow: hidden;
+      padding: 1rem 0;
+    }
+
+    .marquee-track {
+      display: flex;
+      gap: 2rem;
+      width: max-content;
+      animation: scroll 40s linear infinite;
+    }
+
+    .marquee-track:hover {
+      animation-play-state: paused;
+    }
+
+    .marquee-item {
+      width: 350px;
+      flex-shrink: 0;
+    }
+
+    @keyframes scroll {
       0% {
         transform: translateX(0);
       }
@@ -1228,62 +1120,178 @@ const categories = [
       }
     }
 
-    .about-container {
-      grid-template-columns: 1fr;
-      gap: 3rem;
-      text-align: center;
+    /* Responsive styling */
+    @media (max-width: 1024px) {
+      .hero-container {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+      }
+
+      .hero-title {
+        font-size: 3rem;
+      }
+
+      .hero-stats {
+        grid-template-columns: repeat(4, 1fr);
+      }
     }
 
-    .about-title {
-      font-size: 2.2rem;
-    }
+    @media (max-width: 768px) {
+      .hero {
+        padding: 4rem 0 0 0;
+      }
 
-    .benefit-title {
-      font-size: 1.8rem;
-    }
+      .hero-title {
+        font-size: 2.5rem;
+      }
 
-    .benefit-card {
-      width: 140px;
-      height: 140px;
-    }
+      .hero-stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
 
-    .benefit-icon {
-      width: 50px;
-      height: 50px;
-    }
+      /* Hero Section Adjustments */
+      .event-logo-wrapper {
+        max-width: 320px;
+      }
 
-    .rute-details {
-      padding: 1.5rem;
-    }
+      /* Make hero logo smaller on mobile to fit screens */
+      .event-hero-logo {
+        max-width: 220px;
+        height: auto;
+        margin: 0 auto;
+        display: block;
+        margin-top: 38px; /* space from fixed navbar on mobile */
+      }
 
-    .rute-name {
-      font-size: 1.5rem;
-    }
+      .event-meta-pills {
+        flex-wrap: nowrap;
+        gap: 0.5rem;
+      }
 
-    .cta-card {
-      padding: 3rem 1.5rem;
-    }
+      .pill {
+        padding: 0.4rem 0.75rem;
+        font-size: 0.75rem;
+      }
 
-    .cta-title {
-      font-size: 1.8rem;
-    }
+      .countdown-timer {
+        gap: 0.5rem;
+      }
 
-    .cta-actions {
-      flex-direction: column;
-      width: 100%;
-    }
+      .time-box {
+        width: 65px;
+        height: 65px;
+      }
 
-    .cta-actions .btn {
-      width: 100%;
-    }
+      .time-num {
+        font-size: 1.6rem;
+      }
 
-    .faq-grid {
-      grid-template-columns: 1fr;
-    }
+      .time-text {
+        font-size: 0.6rem;
+      }
 
-    .upcoming-section,
-    .finished-section {
-      padding: 4rem 0;
+      .countdown-label {
+        font-size: 0.85rem;
+      }
+
+      /* Sponsor Adjustments */
+      .sponsors-bar {
+        margin-top: 2rem;
+        padding: 1.5rem 0;
+      }
+
+      .sponsor-marquee {
+        -webkit-mask-image: linear-gradient(
+          to right,
+          transparent 5%,
+          black 45%,
+          black 85%,
+          transparent 100%
+        );
+        mask-image: linear-gradient(
+          to right,
+          transparent 5%,
+          black 45%,
+          black 85%,
+          transparent 100%
+        );
+      }
+
+      .sponsor-logo {
+        height: 60px; /* larger on mobile for visibility */
+      }
+
+      .sponsor-track {
+        gap: 0;
+        animation: sponsorScrollMobile 10s linear infinite; /* a bit faster on mobile */
+      }
+
+      @keyframes sponsorScrollMobile {
+        0% {
+          transform: translateX(0);
+        }
+        100% {
+          transform: translateX(calc(-50% - 1rem));
+        }
+      }
+
+      .about-container {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+        text-align: center;
+      }
+
+      .about-title {
+        font-size: 2.2rem;
+      }
+
+      .benefit-title {
+        font-size: 1.8rem;
+      }
+
+      .benefit-card {
+        width: 140px;
+        height: 140px;
+      }
+
+      .benefit-icon {
+        width: 50px;
+        height: 50px;
+      }
+
+      .rute-details {
+        padding: 1.5rem;
+      }
+
+      .rute-name {
+        font-size: 1.5rem;
+      }
+
+      .cta-card {
+        padding: 3rem 1.5rem;
+      }
+
+      .cta-title {
+        font-size: 1.8rem;
+      }
+
+      .cta-actions {
+        flex-direction: column;
+        width: 100%;
+      }
+
+      .cta-actions .btn {
+        width: 100%;
+      }
+
+      .faq-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .upcoming-section,
+      .finished-section {
+        padding: 4rem 0;
+      }
     }
-  }
-</style>
+  </style>
+</Layout>

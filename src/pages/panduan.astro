@@ -27,9 +27,8 @@ import CTA from '../components/CTA.astro';
         <div class="step-content">
           <h3>Pilih Tiket & Isi Data Diri</h3>
           <p>Kunjungi halaman pendaftaran, pilih jumlah tiket yang Anda inginkan, dan isi data diri dengan lengkap sesuai dengan identitas asli (KTP/Kartu Pelajar). Pastikan email dan nomor WhatsApp yang dimasukkan aktif karena E-Tiket akan dikirimkan ke sana.</p>
-          <div class="dummy-image-box">
-            <span class="icon">📝</span> <p>Tempat Ilustrasi Pengisian Form (Akan Diupdate)</p>
-          </div>
+          <img src="/panduan-step1.png" alt="Ilustrasi Pilih Tiket" class="guide-image" />
+          <img src="/panduan-step1%20ke%202.png" alt="Ilustrasi Isi Data Diri" class="guide-image" style="margin-top: 1rem;" />
         </div>
       </div>
 
@@ -37,16 +36,14 @@ import CTA from '../components/CTA.astro';
         <div class="step-number">2</div>
         <div class="step-content">
           <h3>Scan QRIS & Bayar</h3>
-          <p>Setelah mengklik tombol daftar, Anda akan diarahkan ke halaman <strong>Checkout Pembayaran</strong>. Sebuah barcode QRIS akan muncul beserta total harga yang harus dibayarkan.</p>
+          <p>Setelah mengklik tombol daftar, Anda akan diarahkan ke halaman Checkout Pembayaran. Sebuah barcode QRIS akan muncul beserta total harga yang harus dibayarkan.</p>
           <ul class="step-list">
             <li>Buka aplikasi M-Banking atau E-Wallet favorit Anda (BCA, Mandiri, OVO, Dana, Gopay, dll).</li>
             <li>Pilih menu <strong>Scan QR</strong>.</li>
             <li>Arahkan kamera ke barcode QRIS yang tampil di layar, atau klik <strong>Unduh QRIS</strong> jika mendaftar langsung dari HP, lalu unggah gambar QR tersebut di aplikasi M-Banking Anda.</li>
             <li>Pastikan total nominal transfer <strong>sama persis</strong> dengan yang tertera (termasuk kode unik di belakangnya).</li>
           </ul>
-          <div class="dummy-image-box">
-            <span class="icon">📱</span> <p>Tempat Ilustrasi Scan Barcode QRIS (Akan Diupdate)</p>
-          </div>
+          <img src="/panduan-step2.png" alt="Ilustrasi Scan Barcode QRIS" class="guide-image" />
         </div>
       </div>
 
@@ -54,34 +51,46 @@ import CTA from '../components/CTA.astro';
         <div class="step-number">3</div>
         <div class="step-content">
           <h3>Unggah Bukti Transfer</h3>
-          <p>Setelah transfer berhasil, <strong>jangan lupa screenshot struk bukti pembayarannya!</strong></p>
+          <p>Setelah transfer berhasil, jangan lupa screenshot struk bukti pembayarannya!</p>
           <p>Kembali ke halaman checkout (batas waktu halaman adalah 30 menit). Klik tombol <strong>Pilih Foto Bukti Transfer</strong> dan unggah screenshot struk Anda. Sistem kami akan memvalidasi bukti Anda secara otomatis menggunakan kecerdasan buatan (OCR).</p>
-          <div class="dummy-image-box">
-            <span class="icon">📸</span> <p>Tempat Ilustrasi Screenshot Bukti Transfer (Akan Diupdate)</p>
-          </div>
+          <img src="/panduan-step3.png" alt="Ilustrasi Screenshot Bukti Transfer" class="guide-image" />
         </div>
       </div>
 
       <div class="guide-step">
-        <div class="step-number" style="color: #ef4444; border-color: #ef4444; background: rgba(239,68,68,0.1);">4</div>
+        <div class="step-number">4</div>
         <div class="step-content">
-          <h3 style="color: #f87171;">Bagaimana Jika Pembayaran Kadaluarsa?</h3>
-          <p>Sistem memberikan waktu <strong>30 menit</strong> untuk menyelesaikan pembayaran. Jika Anda sudah terlanjur mentransfer dana namun terlambat mengunggah bukti hingga batas waktu habis, halaman pembayaran akan otomatis terkunci (kadaluarsa).</p>
-          <p><strong>Jangan khawatir dan tidak perlu mendaftar ulang!</strong> Cukup hubungi Admin kami melalui tombol WhatsApp yang mengambang di pojok kanan bawah layar. Kirimkan <em>screenshot</em> bukti transfer Anda, dan Admin akan dengan senang hati membantu memproses tiket Anda secara manual.</p>
-          <div class="dummy-image-box">
-            <span class="icon" style="color: #f87171;">💬</span> <p>Tempat Ilustrasi Konfirmasi WhatsApp Admin (Akan Diupdate)</p>
-          </div>
+          <h3>Menunggu Konfirmasi Admin</h3>
+          <p>Bukti pembayaran berhasil dikirim! Pesanan Anda saat ini sedang menunggu konfirmasi dari Admin. Anda akan menerima E-Tiket melalui email setelah pembayaran berhasil dikonfirmasi.</p>
+          <img src="/panduan-step4.png" alt="Ilustrasi Menunggu Konfirmasi" class="guide-image" />
         </div>
       </div>
 
       <div class="guide-step">
         <div class="step-number">5</div>
         <div class="step-content">
+          <h3>Bagaimana Jika Pembayaran Kadaluarsa?</h3>
+          <p>Sistem memberikan waktu <strong>30 menit</strong> untuk menyelesaikan pembayaran. Jika Anda sudah terlanjur mentransfer dana namun terlambat mengunggah bukti hingga batas waktu habis, halaman pembayaran akan otomatis terkunci (kadaluarsa).</p>
+          <p><strong>Jangan khawatir dan tidak perlu mendaftar ulang!</strong> Cukup hubungi Admin kami melalui tombol WhatsApp yang mengambang di pojok kanan bawah layar. Kirimkan screenshot bukti transfer Anda, dan Admin akan dengan senang hati membantu memproses tiket Anda secara manual.</p>
+          <img src="/panduan-step5.png" alt="Ilustrasi Pembayaran Kadaluarsa" class="guide-image" />
+        </div>
+      </div>
+
+      <div class="guide-step">
+        <div class="step-number">6</div>
+        <div class="step-content">
+          <h3>Pembayaran Terkonfirmasi</h3>
+          <p>Pendaftaran Anda untuk Syiar QRIS Run telah berhasil dikonfirmasi oleh Admin. Silakan periksa kotak masuk email Anda, E-Tiket telah dikirimkan ke sana. Buka email tersebut untuk melihat dan mengunduh E-Tiket Anda.</p>
+          <img src="/panduan-step6.png" alt="Ilustrasi Pembayaran Terkonfirmasi" class="guide-image" />
+        </div>
+      </div>
+
+      <div class="guide-step">
+        <div class="step-number">7</div>
+        <div class="step-content">
           <h3>Terima E-Tiket Resmi</h3>
           <p>Jika validasi berhasil, status Anda akan berubah menjadi <strong>LUNAS</strong>. E-Tiket resmi dengan QR Code Check-In Anda akan langsung dikirimkan melalui Email. Simpan E-Tiket tersebut untuk ditukarkan dengan Race Pack!</p>
-          <div class="dummy-image-box">
-            <span class="icon">🎫</span> <p>Tempat Ilustrasi E-Tiket Email (Akan Diupdate)</p>
-          </div>
+          <img src="/panduan-step7.png" alt="Ilustrasi Terima E-Tiket Resmi" class="guide-image" />
         </div>
       </div>
 
@@ -213,26 +222,15 @@ import CTA from '../components/CTA.astro';
     color: var(--text-primary);
   }
 
-  .dummy-image-box {
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px dashed rgba(255, 255, 255, 0.15);
+  .guide-image {
+    width: 100%;
+    max-width: 600px;
+    height: auto;
     border-radius: 8px;
-    padding: 1rem 1.5rem;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
     margin-top: 1.2rem;
-  }
-
-  .dummy-image-box .icon {
-    font-size: 1.5rem;
-    opacity: 0.8;
-  }
-
-  .dummy-image-box p {
-    margin: 0 !important;
-    font-size: 0.85rem !important;
-    color: var(--text-muted) !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    display: block;
   }
 
   @media (max-width: 768px) {
