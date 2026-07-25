@@ -1,6 +1,6 @@
 ---
-import AdminLayout from '../../layouts/AdminLayout.astro';
-import { getAllEvents, getAllRegistrations } from '../../lib/db';
+import AdminLayout from "../../layouts/AdminLayout.astro";
+import { getAllEvents, getAllRegistrations } from "../../lib/db";
 
 // Fetch data awal untuk statistik
 const events = await getAllEvents();
@@ -8,13 +8,21 @@ const registrations = await getAllRegistrations();
 
 // Hitung Statistik
 const totalEvents = events.length;
-const upcomingEventsCount = events.filter(e => e.status === 'UPCOMING').length;
+const upcomingEventsCount = events.filter(
+  (e) => e.status === "UPCOMING",
+).length;
 const totalRegistered = registrations.length;
-const totalRevenue = registrations.filter(r => r.status === 'PAID').reduce((sum, r) => sum + r.amount, 0);
+const totalRevenue = registrations
+  .filter((r) => r.status === "PAID")
+  .reduce((sum, r) => sum + r.amount, 0);
 
 const formatPrice = (price: number) => {
-  if (price === 0) return 'Gratis';
-  return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(price);
+  if (price === 0) return "Gratis";
+  return new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+    minimumFractionDigits: 0,
+  }).format(price);
 };
 ---
 
@@ -25,7 +33,9 @@ const formatPrice = (price: number) => {
       <div class="admin-header">
         <div>
           <h1 class="admin-title">Dashboard Admin</h1>
-          <p class="admin-subtitle">Ikhtisar data sistem pendaftaran event Fun Run</p>
+          <p class="admin-subtitle">
+            Ikhtisar data sistem pendaftaran event Qris Run
+          </p>
         </div>
       </div>
 
@@ -63,7 +73,13 @@ const formatPrice = (price: number) => {
 
       <div class="dashboard-welcome glass">
         <h2>Selamat Datang di Admin Panel</h2>
-        <p>Gunakan menu navigasi di sebelah kiri untuk mengelola <strong>Event</strong>, memeriksa <strong>Pendaftar Masuk</strong>, atau melakukan <strong>Check-In Tiket</strong> saat hari H pelaksanaan event.</p>
+        <p>
+          Gunakan menu navigasi di sebelah kiri untuk mengelola <strong
+            >Event</strong
+          >, memeriksa <strong>Pendaftar Masuk</strong>, atau melakukan <strong
+            >Check-In Tiket</strong
+          > saat hari H pelaksanaan event.
+        </p>
       </div>
     </div>
   </section>
@@ -115,8 +131,8 @@ const formatPrice = (price: number) => {
     display: flex;
     align-items: center;
     gap: 1.25rem;
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
+    background: #1e293b;
+    border: 1px solid rgba(255, 255, 255, 0.1);
   }
 
   .stat-icon {
@@ -169,8 +185,8 @@ const formatPrice = (price: number) => {
   .dashboard-welcome {
     padding: 2.5rem;
     border-radius: var(--radius-lg);
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
+    background: #1e293b;
+    border: 1px solid rgba(255, 255, 255, 0.1);
     text-align: center;
     max-width: 600px;
     margin: 0 auto;

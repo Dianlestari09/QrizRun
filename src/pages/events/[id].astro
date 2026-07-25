@@ -242,7 +242,7 @@ const isFinished = event.status === 'FINISHED';
           
           <!-- Kolom Ringkasan Kanan (Sticky) -->
           {!isFinished && !isFull && (
-            <div class="summary-column" style="position: sticky; top: 2rem; align-self: start;">
+            <div class="summary-column">
               <div class="reg-card glass">
                 <div class="price-header" style="margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px dashed rgba(255,255,255,0.2);">
                   <span class="label">Biaya Pendaftaran</span>
@@ -524,9 +524,14 @@ const isFinished = event.status === 'FINISHED';
     border-radius: var(--radius-lg);
     padding: 2.5rem;
     border: 1px solid var(--border-color);
-    position: sticky;
-    top: 96px;
     background: rgba(18, 22, 32, 0.7);
+  }
+
+  @media (min-width: 1025px) {
+    .summary-column {
+      position: sticky;
+      top: 96px;
+    }
   }
 
   .price-header {

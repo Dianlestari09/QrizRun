@@ -11,13 +11,13 @@ if (Astro.request.method === 'POST') {
     const formData = await Astro.request.formData();
     const rawTicketId = formData.get('ticketId')?.toString() || '';
     
-    // Parse ID dari QR Code teks format: "TICKET:FUNRUN-REG-[ID]:..."
+    // Parse ID dari QR Code teks format: "TICKET:QRISRUN-REG-[ID]:..."
     // Atau jika panitia ketik manual angka ID nya saja
     let regId = parseInt(rawTicketId, 10);
     
-    if (rawTicketId.startsWith('TICKET:FUNRUN-REG-')) {
+    if (rawTicketId.startsWith('TICKET:QRISRUN-REG-')) {
       const parts = rawTicketId.split(':');
-      const regIdPart = parts[1].replace('FUNRUN-REG-', '');
+      const regIdPart = parts[1].replace('QRISRUN-REG-', '');
       regId = parseInt(regIdPart, 10);
     }
 
@@ -130,7 +130,7 @@ if (Astro.request.method === 'POST') {
                 type="text" 
                 id="ticketId" 
                 name="ticketId" 
-                placeholder="Contoh: 1 atau TICKET:FUNRUN-REG-1..." 
+                placeholder="Contoh: 1 atau TICKET:QRISRUN-REG-1..."
                 required 
               />
             </div>

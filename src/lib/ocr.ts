@@ -22,10 +22,10 @@ export async function validateReceiptOCR(
 
     const upperText = text.toUpperCase();
 
-    // 3. Validasi Penerima (harus mengandung nama merchant: Boleam atau brand Fun Run)
+    // 3. Validasi Penerima (harus mengandung nama merchant: Boleam atau brand Qris Run)
     const hasRecipient =
       upperText.includes('EVENT ORGANIZER JAGAD PRE') ||
-      upperText.includes('FUN RUN') ||
+      upperText.includes('QRIS RUN') ||
       upperText.includes('GO-JEK') || // Mendeteksi GoPay Merchant
       upperText.includes('GOPAY');
 
@@ -56,7 +56,7 @@ export async function validateReceiptOCR(
     if (!hasRecipient) {
       return {
         success: false,
-        message: 'Validasi OCR Gagal: Nama penerima ("Event Organizer Jagad Pre" / "Fun Run") tidak terdeteksi pada struk bukti pembayaran Anda!',
+        message: 'Validasi OCR Gagal: Nama penerima ("Event Organizer Jagad Pre" / "Qris Run") tidak terdeteksi pada struk bukti pembayaran Anda!',
         recognizedText: text
       };
     }

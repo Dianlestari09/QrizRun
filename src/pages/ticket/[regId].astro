@@ -31,7 +31,7 @@ const formatPrice = (price: number) => {
 };
 
 // QR Code Tiket unik untuk validasi masuk panitia
-const ticketCode = `TICKET:FUNRUN-REG-${registration.id}:EMAIL-${registration.email}`;
+const ticketCode = `TICKET:QRISRUN-REG-${registration.id}:EMAIL-${registration.email}`;
 const qrCodeUrl = `https://quickchart.io/qr?size=150&text=${encodeURIComponent(ticketCode)}&ecLevel=M`;
 
 let primaryName = registration.name;

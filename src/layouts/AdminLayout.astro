@@ -6,7 +6,7 @@ interface Props {
   description?: string;
 }
 
-const { title, description = "Admin Dashboard | Fun Run" } = Astro.props;
+const { title, description = "Admin Dashboard | Qris Run" } = Astro.props;
 const currentPath = Astro.url.pathname;
 ---
 
@@ -28,7 +28,7 @@ const currentPath = Astro.url.pathname;
         <div class="sidebar-header">
           <a href="/admin" class="logo">
             <div class="logo-icon">⚡</div>
-            <span class="logo-text">FUN <span>RUN</span></span>
+            <span class="logo-text">QRIS <span>RUN</span></span>
           </a>
         </div>
         
@@ -69,8 +69,8 @@ const currentPath = Astro.url.pathname;
       .admin-body {
         margin: 0;
         padding: 0;
-        overflow-x: hidden;
-        background-color: var(--bg-primary);
+        overflow-x: clip;
+        background: #0f172a !important;
         color: var(--text-primary);
         font-family: var(--font-sans);
       }
@@ -82,10 +82,10 @@ const currentPath = Astro.url.pathname;
 
       /* Sidebar Styles */
       .admin-sidebar {
-        width: 280px;
+        width: 220px;
         min-height: 100vh;
-        background: var(--bg-secondary);
-        border-right: 1px solid var(--border-color);
+        background: #1e293b;
+        border-right: 1px solid rgba(255, 255, 255, 0.08);
         display: flex;
         flex-direction: column;
         position: fixed;
@@ -170,18 +170,18 @@ const currentPath = Astro.url.pathname;
       /* Content Area */
       .admin-content {
         flex: 1;
-        margin-left: 280px;
+        margin-left: 220px;
         min-height: 100vh;
-        background: var(--bg-primary);
+        background: transparent;
         padding: 2rem 0;
       }
 
       @media (max-width: 1024px) {
         .admin-sidebar {
-          width: 240px;
+          width: 200px;
         }
         .admin-content {
-          margin-left: 240px;
+          margin-left: 200px;
         }
       }
 

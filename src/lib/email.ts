@@ -22,7 +22,7 @@ function createTransporter() {
   });
 }
 
-const FROM_NAME = 'Fun Run';
+const FROM_NAME = 'Qris Run';
 const BASE_URL = process.env.PUBLIC_BASE_URL || import.meta.env.PUBLIC_BASE_URL || 'http://localhost:4321';
 
 // ─────────────────────────────────────────
@@ -79,7 +79,7 @@ function wrapEmailTemplate(title: string, bodyHtml: string): string {
         ${bodyHtml}
       </div>
       <div class="footer">
-        <p>Email ini dikirim otomatis oleh sistem Fun Run.</p>
+        <p>Email ini dikirim otomatis oleh sistem Qris Run.</p>
         <p>Jangan balas email ini. Hubungi panitia jika ada pertanyaan.</p>
       </div>
     </div>
@@ -140,7 +140,7 @@ export async function sendPaymentReceivedEmail(params: {
     await transporter.sendMail({
       from: `"${FROM_NAME}" <${process.env.EMAIL_USER || import.meta.env.EMAIL_USER}>`,
       to: params.to,
-      subject: `[Fun Run] Bukti Pembayaran Diterima — ${params.eventTitle}`,
+      subject: `[Qris Run] Bukti Pembayaran Diterima — ${params.eventTitle}`,
       html: wrapEmailTemplate('Bukti Pembayaran Diterima', bodyHtml),
     });
     console.log(`[EMAIL] Sent payment received email to ${params.to}`);
@@ -172,17 +172,17 @@ export async function sendTicketConfirmedEmail(params: {
 
   const ticketUrl = `${BASE_URL}/ticket/${params.regId}`;
 
-  const ticketCode = `TICKET:FUNRUN-REG-${params.regId}:EMAIL-${params.to}`;
+  const ticketCode = `TICKET:QRISRUN-REG-${params.regId}:EMAIL-${params.to}`;
   const qrCodeUrl = `https://quickchart.io/qr?size=200&text=${encodeURIComponent(ticketCode)}&ecLevel=M`;
 
   let formattedName = params.name;
   let participantListHtml = '';
-  
+
   try {
     const arr = JSON.parse(params.name);
     if (Array.isArray(arr) && arr.length > 0) {
       formattedName = arr[0].name;
-      
+
       participantListHtml = `
         <tr>
           <td colspan="2" class="mobile-block" style="padding-bottom: 15px; border-top: 1px dashed #334155; padding-top: 15px; margin-top: 5px;">
@@ -199,14 +199,14 @@ export async function sendTicketConfirmedEmail(params: {
         </tr>
       `;
     }
-  } catch (e) {}
+  } catch (e) { }
 
   const bodyHtml = `
     <div style="background-color: #0f172a; border-radius: 12px; overflow: hidden; border: 1px solid #1e293b; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
       
       <!-- Ticket Header -->
       <div style="background-color: #1e293b; padding: 15px 25px; border-bottom: 1px solid #334155; display: flex; justify-content: space-between; align-items: center;">
-        <span style="color: #f8fafc; font-weight: 800; font-size: 18px;">⚡ FUN RUN</span>
+        <span style="color: #f8fafc; font-weight: 800; font-size: 18px;">⚡ QRIS RUN</span>
         <span style="background-color: rgba(255,255,255,0.1); color: #f8fafc; padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: 600; letter-spacing: 1px;">E-TICKET OFFICIAL</span>
       </div>
 
@@ -271,7 +271,7 @@ export async function sendTicketConfirmedEmail(params: {
     await transporter.sendMail({
       from: `"${FROM_NAME}" <${process.env.EMAIL_USER || import.meta.env.EMAIL_USER}>`,
       to: params.to,
-      subject: `[Fun Run] ✅ Pembayaran Dikonfirmasi — E-Tiket ${params.eventTitle} Siap!`,
+      subject: `[Qris Run] ✅ Pembayaran Dikonfirmasi — E-Tiket ${params.eventTitle} Siap!`,
       html: wrapEmailTemplate('E-Tiket Siap', bodyHtml),
     });
     console.log(`[EMAIL] Sent ticket confirmation email to ${params.to}`);

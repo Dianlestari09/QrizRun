@@ -163,7 +163,7 @@ const parseName = (nameStr: string) => {
 <AdminLayout title="Data Pendaftar">
   <section class="admin-dashboard">
     <div class="glow-spot admin-glow"></div>
-    <div class="container relative z-1">
+    <div class="container relative z-1" style="max-width: 98%; padding: 0 1rem;">
       <div class="admin-header">
         <div>
           <h1 class="admin-title">Pendaftar Masuk</h1>
@@ -179,8 +179,10 @@ const parseName = (nameStr: string) => {
           <h2 class="table-title">Daftar Pendaftar Masuk</h2>
           <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
             <div class="filter-group" style="display: flex; gap: 0.5rem; align-items: center;">
-              <label for="filter-date" style="font-size: 0.85rem; color: var(--text-muted);">Filter Tanggal:</label>
-              <input type="date" id="filter-date" class="form-control" style="padding: 0.3rem 0.5rem; border-radius: 4px; background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); color: white;" />
+              <label style="font-size: 0.85rem; color: var(--text-muted);">Rentang Tanggal:</label>
+              <input type="date" id="filter-date-start" class="form-control" style="padding: 0.3rem 0.5rem; border-radius: 4px; background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); color: white;" />
+              <span style="color: var(--text-muted); font-size: 0.85rem;">-</span>
+              <input type="date" id="filter-date-end" class="form-control" style="padding: 0.3rem 0.5rem; border-radius: 4px; background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); color: white;" />
               <button type="button" id="btn-reset-filter" class="btn btn-outline btn-sm" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;">Reset</button>
             </div>
             
@@ -292,31 +294,42 @@ const parseName = (nameStr: string) => {
 <script>
   // Filter and Export Logic
   const tableRows = document.querySelectorAll('.event-table tbody tr');
-  const filterDateInput = document.getElementById('filter-date');
+  const filterDateStart = document.getElementById('filter-date-start') as HTMLInputElement;
+  const filterDateEnd = document.getElementById('filter-date-end') as HTMLInputElement;
   const resetFilterBtn = document.getElementById('btn-reset-filter');
   
-  if (filterDateInput && resetFilterBtn) {
-    filterDateInput.addEventListener('change', (e) => {
-      const selectedDate = (e.target as HTMLInputElement).value;
-      if (!selectedDate) {
-        tableRows.forEach(row => (row as HTMLElement).style.display = '');
-        return;
-      }
-      
-      const targetDate = new Date(selectedDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
-      
-      tableRows.forEach(row => {
-        const dateCell = row.querySelector('.date-cell');
-        if (dateCell && dateCell.textContent?.includes(targetDate)) {
+  const applyFilter = () => {
+    const startStr = filterDateStart?.value;
+    const endStr = filterDateEnd?.value;
+    
+    if (!startStr && !endStr) {
+      tableRows.forEach(row => (row as HTMLElement).style.display = '');
+      return;
+    }
+    
+    const startDate = startStr ? new Date(startStr).setHours(0,0,0,0) : 0;
+    const endDate = endStr ? new Date(endStr).setHours(23,59,59,999) : Infinity;
+    
+    tableRows.forEach(row => {
+      const dateRaw = row.getAttribute('data-date');
+      if (dateRaw) {
+        const rowDate = new Date(dateRaw).getTime();
+        if (rowDate >= startDate && rowDate <= endDate) {
           (row as HTMLElement).style.display = '';
         } else {
           (row as HTMLElement).style.display = 'none';
         }
-      });
+      }
     });
+  };
+
+  if (filterDateStart && filterDateEnd && resetFilterBtn) {
+    filterDateStart.addEventListener('change', applyFilter);
+    filterDateEnd.addEventListener('change', applyFilter);
 
     resetFilterBtn.addEventListener('click', () => {
-      (filterDateInput as HTMLInputElement).value = '';
+      filterDateStart.value = '';
+      filterDateEnd.value = '';
       tableRows.forEach(row => (row as HTMLElement).style.display = '');
     });
   }
@@ -551,10 +564,10 @@ const parseName = (nameStr: string) => {
   }
 
   .table-container {
-    padding: 1.5rem;
+    padding: 1.25rem 1rem;
     border-radius: var(--radius-lg);
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
+    background: #1e293b;
+    border: 1px solid rgba(255, 255, 255, 0.08);
   }
 
   .table-header-flex {
@@ -573,6 +586,8 @@ const parseName = (nameStr: string) => {
 
   .table-scroll {
     overflow-x: auto;
+    overflow-y: auto;
+    max-height: 65vh;
   }
 
   .event-table {
@@ -583,20 +598,29 @@ const parseName = (nameStr: string) => {
 
   .event-table th {
     text-align: left;
-    padding: 1rem;
+    padding: 0.85rem 0.5rem;
     color: var(--text-secondary);
     font-size: 0.875rem;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    position: sticky;
+    top: 0;
+    background-color: #1e293b;
+    z-index: 10;
   }
 
   .event-table td {
-    padding: 1rem;
+    padding: 0.85rem 0.5rem;
     vertical-align: middle;
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     color: var(--text-primary);
+    transition: background-color 0.2s ease;
+  }
+  
+  .event-table tbody tr:hover td {
+    background-color: rgba(255, 255, 255, 0.04);
   }
 
   .event-name-cell {
