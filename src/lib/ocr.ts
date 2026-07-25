@@ -1,4 +1,5 @@
 import { createWorker } from 'tesseract.js';
+import os from 'os';
 import { updateRegistrationStatus } from './db';
 
 /**
@@ -13,7 +14,10 @@ export async function validateReceiptOCR(
 ): Promise<{ success: boolean; message: string; recognizedText: string; extractedTime?: string }> {
   try {
     // 1. Inisialisasi Tesseract Worker dengan bahasa Inggris (angka & nama standar tercakup)
-    const worker = await createWorker('eng');
+    // Gunakan os.tmpdir() untuk cachePath agar tidak crash di Vercel (read-only filesystem EACCES)
+    const worker = await createWorker('eng', 1, {
+      cachePath: os.tmpdir(),
+    });
 
     // 2. Jalankan pemindaian teks pada berkas Base64
     const { data: { text } } = await worker.recognize(base64Image);
