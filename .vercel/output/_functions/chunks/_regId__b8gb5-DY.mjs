@@ -2,7 +2,7 @@ import { n as __exportAll, t as createComponent } from "./compiler_ZoD8EgYh.mjs"
 import { C as unescapeHTML, T as createAstro, _ as addAttribute, a as Fragment, d as renderTemplate, h as maybeRenderHead, i as renderComponent } from "./server_B7Q_e2SV.mjs";
 import { t as renderScript } from "./script_Cu9Q5UeQ.mjs";
 import { h as uploadPaymentProof, u as getRegistrationWithEventById } from "./db_CBEJZ1lV.mjs";
-import { n as validateReceiptOCR } from "./ocr_CfjYQ2zK.mjs";
+import { n as validateReceiptOCR } from "./ocr_BZW1cvR1.mjs";
 import { t as $$Layout } from "./Layout_DzANYLig.mjs";
 //#region src/lib/qris.ts
 /**

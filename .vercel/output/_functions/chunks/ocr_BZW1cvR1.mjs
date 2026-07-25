@@ -1,5 +1,5 @@
 import { m as updateRegistrationStatus } from "./db_CBEJZ1lV.mjs";
-import { createWorker } from "tesseract.js";
+import os from "os";
 //#region src/lib/ocr.ts
 /**
 * Memvalidasi struk bukti pembayaran menggunakan OCR (Optical Character Recognition)
@@ -9,7 +9,8 @@ import { createWorker } from "tesseract.js";
 */
 async function validateReceiptOCR(base64Image, amount) {
 	try {
-		const worker = await createWorker("eng");
+		const { createWorker } = await import("tesseract.js");
+		const worker = await createWorker("eng", 1, { cachePath: os.tmpdir() });
 		const { data: { text } } = await worker.recognize(base64Image);
 		await worker.terminate();
 		const upperText = text.toUpperCase();

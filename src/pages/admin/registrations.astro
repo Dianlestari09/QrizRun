@@ -4,11 +4,6 @@ import { getAllRegistrations, updateRegistrationStatus, getRegistrationWithEvent
 import { sendTicketConfirmedEmail } from '../../lib/email';
 import { processBankMutationsCSV } from '../../lib/ocr';
 import { Buffer } from 'node:buffer';
-import { createRequire } from 'node:module';
-import { createWorker } from 'tesseract.js';
-
-const require = createRequire(import.meta.url);
-const pdfParse = require('pdf-parse');
 
 let errorMsg = '';
 let successMsg = '';
@@ -59,6 +54,7 @@ if (Astro.request.method === 'POST') {
         if (fileName.endsWith('.pdf')) {
           try {
             const buffer = Buffer.from(await file.arrayBuffer());
+            const pdfParse = (await import('pdf-parse')).default;
             const pdfData = await pdfParse(buffer);
             text = pdfData.text;
           } catch (pdfErr: any) {
@@ -69,7 +65,11 @@ if (Astro.request.method === 'POST') {
           isImage = true;
           try {
             const buffer = Buffer.from(await file.arrayBuffer());
-            const worker = await createWorker('eng');
+            const { createWorker } = await import('tesseract.js');
+            const os = await import('os');
+            const worker = await createWorker('eng', 1, {
+              cachePath: os.tmpdir(),
+            });
             const { data } = await worker.recognize(buffer);
             text = data.text;
             console.log("\n=== HASIL OCR FOTO MUTASI ===");
@@ -83,7 +83,7 @@ if (Astro.request.method === 'POST') {
         } else if (fileName.match(/\.(xlsx|xls)$/i)) {
           try {
             const buffer = Buffer.from(await file.arrayBuffer());
-            const xlsx = require('xlsx');
+            const xlsx = await import('xlsx');
             const workbook = xlsx.read(buffer, { type: 'buffer' });
             for (const sheetName of workbook.SheetNames) {
               const sheet = workbook.Sheets[sheetName];
