@@ -101,7 +101,7 @@ const isFinished = event.status === 'FINISHED';
       <!-- Kolom Info Atas (Full Width) -->
       <div class="info-column" style="margin-bottom: 2rem;">
         <div class="banner-wrapper glass">
-          <img src={event.imageUrl} alt={event.title} class="detail-banner" />
+          <img src={event.imageUrl} alt={event.title} class="detail-banner" width="1200" height="320" fetchpriority="high" />
           <span class={`badge badge-${event.category.toLowerCase()} detail-badge`}>{event.category}</span>
         </div>
       </div>
@@ -188,11 +188,11 @@ const isFinished = event.status === 'FINISHED';
                   <div class="jersey-preview-card mt-3">
                     <div class="jersey-preview-grid">
                       <div class="jersey-preview-item">
-                        <img src="/jersey-placeholder.webp" alt="Jersey Depan" class="jersey-thumb" />
+                        <img src="/jersey-placeholder.webp" alt="Jersey Depan" class="jersey-thumb" width="400" height="240" loading="lazy" />
                         <span class="jersey-caption">Depan Jersey</span>
                       </div>
                       <div class="jersey-preview-item">
-                        <img src="/jersey-back-placeholder.webp" alt="Jersey Belakang" class="jersey-thumb" />
+                        <img src="/jersey-back-placeholder.webp" alt="Jersey Belakang" class="jersey-thumb" width="400" height="240" loading="lazy" />
                         <span class="jersey-caption">Belakang Jersey</span>
                       </div>
                     </div>

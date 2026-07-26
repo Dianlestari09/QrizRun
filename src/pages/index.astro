@@ -32,6 +32,10 @@ const categories = [
           alt="Logo SYIAR QRIS RUN"
           id="main-logo"
           class="event-hero-logo"
+          width="385"
+          height="152"
+          fetchpriority="high"
+          loading="eager"
         />
       </div>
 
@@ -92,8 +96,8 @@ const categories = [
       <p class="sponsors-title"></p>
       <div class="sponsor-marquee">
         <div class="sponsor-track">
-          <img src="/logo_sponsor.webp" alt="Logo" class="sponsor-logo" />
-          <img src="/logo_sponsor.webp" alt="Logo" class="sponsor-logo" />
+          <img src="/logo_sponsor.webp" alt="Logo Sponsor Syiar QRIS Run" class="sponsor-logo" width="200" height="100" loading="lazy" />
+          <img src="/logo_sponsor.webp" alt="Logo Sponsor Syiar QRIS Run" class="sponsor-logo" width="200" height="100" loading="lazy" />
         </div>
       </div>
     </div>
@@ -133,6 +137,9 @@ const categories = [
           src="/about-image-placeholder.webp"
           alt="Syiar QRIS Run 2026 Poster"
           class="about-image"
+          width="634"
+          height="792"
+          loading="lazy"
         />
       </div>
     </div>
@@ -145,7 +152,7 @@ const categories = [
 
       <div class="benefit-grid">
         <div class="benefit-card glass">
-          <img src="/benefit-bib.webp" alt="Nomor BIB" class="benefit-icon" />
+          <img src="/benefit-bib.webp" alt="Nomor BIB" class="benefit-icon" width="88" height="88" loading="lazy" />
           <p class="benefit-text">Nomor BIB</p>
         </div>
 
@@ -154,6 +161,9 @@ const categories = [
             src="/benefit-jersey.webp"
             alt="Jersey Official"
             class="benefit-icon"
+            width="88"
+            height="88"
+            loading="lazy"
           />
           <p class="benefit-text">Jersey Official</p>
         </div>
@@ -163,6 +173,9 @@ const categories = [
             src="/benefit-medal.webp"
             alt="Finisher Medal"
             class="benefit-icon"
+            width="88"
+            height="88"
+            loading="lazy"
           />
           <p class="benefit-text">Finisher Medal</p>
         </div>
@@ -172,6 +185,9 @@ const categories = [
             src="/benefit-doorprize.webp"
             alt="Doorprize"
             class="benefit-icon"
+            width="88"
+            height="88"
+            loading="lazy"
           />
           <p class="benefit-text">Doorprize</p>
         </div>
@@ -363,22 +379,22 @@ const categories = [
       </div>
       <div class="gallery-grid">
         <div class="gallery-item glass">
-          <img src="/gallery-placeholder-1.webp" alt="Galeri 1" class="gallery-image" />
+          <img src="/gallery-placeholder-1.webp" alt="Galeri 1" class="gallery-image" width="400" height="300" loading="lazy" />
         </div>
         <div class="gallery-item glass">
-          <img src="/gallery-placeholder-2.webp" alt="Galeri 2" class="gallery-image" />
+          <img src="/gallery-placeholder-2.webp" alt="Galeri 2" class="gallery-image" width="400" height="300" loading="lazy" />
         </div>
         <div class="gallery-item glass">
-          <img src="/gallery-placeholder-3.webp" alt="Galeri 3" class="gallery-image" />
+          <img src="/gallery-placeholder-3.webp" alt="Galeri 3" class="gallery-image" width="400" height="300" loading="lazy" />
         </div>
         <div class="gallery-item glass">
-          <img src="/gallery-placeholder-4.webp" alt="Galeri 4" class="gallery-image" />
+          <img src="/gallery-placeholder-4.webp" alt="Galeri 4" class="gallery-image" width="400" height="300" loading="lazy" />
         </div>
         <div class="gallery-item glass">
-          <img src="/gallery-placeholder-5.webp" alt="Galeri 5" class="gallery-image" />
+          <img src="/gallery-placeholder-5.webp" alt="Galeri 5" class="gallery-image" width="400" height="300" loading="lazy" />
         </div>
         <div class="gallery-item glass">
-          <img src="/gallery-placeholder-6.webp" alt="Galeri 6" class="gallery-image" />
+          <img src="/gallery-placeholder-6.webp" alt="Galeri 6" class="gallery-image" width="400" height="300" loading="lazy" />
         </div>
       </div>
     </div>
@@ -810,8 +826,8 @@ const categories = [
   }
 
   .about-desc strong {
-    color: var(--accent);
-    font-weight: 600;
+    color: #b45309; /* Darker amber for WCAG AA contrast on white bg */
+    font-weight: 700;
   }
 
   .about-image-wrapper {
@@ -1445,8 +1461,8 @@ const categories = [
     }
 
     .about-desc strong {
-      color: var(--accent);
-      font-weight: 600;
+      color: #b45309; /* Darker amber for WCAG AA contrast on white bg */
+      font-weight: 700;
     }
 
     .about-image-wrapper {
