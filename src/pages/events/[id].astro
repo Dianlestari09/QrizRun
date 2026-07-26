@@ -506,7 +506,8 @@ const isFinished = event.status === 'FINISHED';
     }
 
     .detail-banner {
-      height: 260px;
+      height: auto;
+      min-height: 260px;
     }
   }
 
@@ -981,10 +982,6 @@ const isFinished = event.status === 'FINISHED';
     .detail-grid {
       grid-template-columns: 1fr;
       gap: 3rem;
-    }
-
-    .banner-wrapper {
-      height: 300px;
     }
   }
 </style>
