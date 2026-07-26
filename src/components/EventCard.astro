@@ -23,7 +23,7 @@ const badgeClass = `badge badge-${event.category.toLowerCase()}`;
 
 <a href={`/events/${event.id}`} class="card glass">
   <div class="card-image-wrapper">
-    <img src={event.imageUrl} alt={event.title} loading="lazy" class="card-image" />
+    <img src={event.imageUrl} alt={event.title} loading="lazy" class="card-image" width="400" height="250" />
     <div class="card-overlay"></div>
     <span class={badgeClass}>{event.category}</span>
   </div>

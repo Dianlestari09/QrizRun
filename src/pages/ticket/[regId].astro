@@ -67,7 +67,7 @@ try {
         </div>
 
         <div class="ticket-image-header">
-          <img src={registration.eventImageUrl} alt={registration.eventTitle} class="ticket-img" />
+          <img src={registration.eventImageUrl} alt={registration.eventTitle} class="ticket-img" width="800" height="250" loading="lazy" />
           <div class="overlay"></div>
           <h1 class="ticket-event-title">{registration.eventTitle}</h1>
         </div>
@@ -124,7 +124,7 @@ try {
 
           <div class="ticket-qr-section">
             <div class="qr-box">
-              <img src={qrCodeUrl} alt="Ticket QR Code" />
+              <img src={qrCodeUrl} alt="Ticket QR Code" width="200" height="200" loading="lazy" />
             </div>
             <div class="qr-instructions">
               <strong>Tunjukkan QR Code ini</strong>

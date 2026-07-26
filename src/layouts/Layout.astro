@@ -18,7 +18,9 @@ const {
     <meta charset="utf-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" href="/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <meta name="generator" content={Astro.generator} />
     <meta name="description" content={description} />
     <title>{title} - Syiar QRIS Run 2026</title>
@@ -33,6 +35,9 @@ const {
             alt="Logo Syiar QRIS Run"
             id="main-logo"
             class="navbar-logo-img"
+            width="180"
+            height="71"
+            fetchpriority="high"
           />
         </a>
 
@@ -100,6 +105,9 @@ const {
               src="/logo.webp"
               alt="Logo Syiar QRIS Run"
               class="navbar-logo-img"
+              width="180"
+              height="71"
+              loading="lazy"
             />
           </div>
           <p class="footer-desc">
@@ -107,21 +115,21 @@ const {
           </p>
         </div>
         <div class="footer-links">
-          <h4>Informasi</h4>
+          <h3>Informasi</h3>
           <a href="/">Beranda</a>
           <a href="/jersey">Jersey</a>
           <a href="/medali">Medali</a>
           <a href="/rute">Rute</a>
         </div>
         <div class="footer-links">
-          <h4 style="visibility: hidden;">Layanan</h4>
+          <h3 style="visibility: hidden;">Layanan</h3>
           <a href="/panduan">Panduan</a>
           <a href="/events/1">Daftar Event</a>
           <a href="/regulasi">Regulasi</a>
           <a href="/kontak">Kontak</a>
         </div>
         <div class="footer-social">
-          <h4>Ikuti Kami</h4>
+          <h3>Ikuti Kami</h3>
           <div class="social-icons">
             <a href="https://youtube.com/@bankindonesiakediri" aria-label="YouTube" target="_blank" rel="noopener noreferrer">
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.1c.3-1.5 1.5-2.7 3-3 2.5-.5 6.5-.5 6.5-.5s4 0 6.5.5c1.5.3 2.7 1.5 3 3 .5 2.5.5 4.9.5 4.9s0 2.4-.5 4.9c-.3 1.5-1.5 2.7-3 3-2.5.5-6.5.5-6.5.5s-4 0-6.5-.5c-1.5-.3-2.7-1.5-3-3-.5-2.5-.5-4.9-.5-4.9s0-2.4.5-4.9z"/><path d="m10 15 5-3-5-3v6z"/></svg>
@@ -452,8 +460,8 @@ const {
     gap: 1rem;
   }
 
-  .footer-links h4,
-  .footer-social h4 {
+  .footer-links h3,
+  .footer-social h3 {
     font-size: 1.1rem;
     color: var(--text-primary);
     margin-bottom: 0.5rem;
