@@ -1,12 +1,12 @@
 ---
-import AdminLayout from '../../layouts/AdminLayout.astro';
-import { getAllRegistrations, updateRegistrationStatus, getRegistrationWithEventById } from '../../lib/db';
-import { sendTicketConfirmedEmail } from '../../lib/email';
-import { processBankMutationsCSV } from '../../lib/ocr';
+import AdminLayout from "../../../layouts/AdminLayout.astro";
+import { getAllRegistrations, updateRegistrationStatus, getRegistrationWithEventById, getAllEvents } from "../../../lib/db";
+import { sendTicketConfirmedEmail } from "../../../lib/email";
+import { processBankMutationsCSV } from "../../../lib/ocr";
 import { Buffer } from 'node:buffer';
 
 let errorMsg = '';
-let successMsg = '';
+let successMsg = Astro.url.searchParams.get('msg') === 'manual_success' ? 'Pendaftar manual berhasil ditambahkan dan E-Tiket telah dikirim!' : '';
 
 // Handle POST request (Konfirmasi Pembayaran / Import CSV)
 if (Astro.request.method === 'POST') {
@@ -17,12 +17,87 @@ if (Astro.request.method === 'POST') {
 
     if (action === 'delete_reg' && idStr) {
       const id = parseInt(idStr.toString(), 10);
-      const { deleteRegistration } = await import('../../lib/db');
+      const { deleteRegistration } = await import("../../../lib/db");
       const success = await deleteRegistration(id);
       if (success) {
         successMsg = 'Pendaftaran berhasil dihapus. Slot tiket kembali tersedia!';
       } else {
         errorMsg = 'Gagal menghapus pendaftaran.';
+      }
+    } else if (action === 'add_manual') {
+      const eventId = parseInt(formData.get('eventId')?.toString() || '0', 10);
+      const email = formData.get('email')?.toString() || '';
+      const phone = formData.get('phone')?.toString() || '';
+      const amount = parseInt(formData.get('amount')?.toString() || '0', 10);
+      const paymentMethod = formData.get('paymentMethod')?.toString() || 'Manual (Admin)';
+      
+      const receiptFile = formData.get('receipt') as File;
+      
+      const participants = [];
+      let i = 1;
+      while (formData.has(`name_${i}`)) {
+        participants.push({
+          name: formData.get(`name_${i}`)?.toString() || '',
+          jenisKelamin: formData.get(`jenisKelamin_${i}`)?.toString() || '',
+          jenisId: formData.get(`jenisId_${i}`)?.toString() || '',
+          nomorId: formData.get(`nomorId_${i}`)?.toString() || '',
+          ukuranJersey: formData.get(`ukuranJersey_${i}`)?.toString() || ''
+        });
+        i++;
+      }
+
+      if (eventId && participants.length > 0 && email && phone && receiptFile && receiptFile.size > 0) {
+        const nameField = JSON.stringify(participants);
+        const { createRegistration, uploadPaymentProof } = await import("../../../lib/db");
+
+        const newRegId = await createRegistration({
+          eventId,
+          name: nameField,
+          email,
+          phone,
+          status: 'PAID', // Langsung dianggap lunas
+          amount,
+          paymentMethod,
+          checkedIn: false
+        });
+        
+        if (newRegId) {
+          successMsg = `Pendaftar manual berhasil ditambahkan (${participants.length} tiket) dengan status LUNAS!`;
+          
+          // Kirim email e-tiket
+          const regDetail = await getRegistrationWithEventById(newRegId);
+          if (regDetail) {
+            await sendTicketConfirmedEmail({
+              to: regDetail.email,
+              name: regDetail.name,
+              eventTitle: regDetail.eventTitle,
+              eventDate: regDetail.eventDate,
+              eventLocation: regDetail.eventLocation,
+              amount: regDetail.amount,
+              regId: regDetail.id,
+            });
+          }
+          
+          if (receiptFile && receiptFile.size > 0) {
+            if (receiptFile.size > 2 * 1024 * 1024) {
+              errorMsg = 'Pendaftar berhasil ditambahkan, namun Bukti Transfer gagal diunggah (Ukuran terlalu besar, Maks 2MB).';
+            } else {
+              const buffer = Buffer.from(await receiptFile.arrayBuffer());
+              const base64Image = `data:${receiptFile.type};base64,${buffer.toString('base64')}`;
+              const uploadResult = await uploadPaymentProof(newRegId, base64Image, new Date().toISOString());
+              if (!uploadResult.success) {
+                errorMsg = 'Pendaftar ditambahkan, tetapi gagal mengunggah Bukti Transfer: ' + uploadResult.message;
+              }
+            }
+          }
+          if (!errorMsg) {
+             return Astro.redirect('/mlebuodewe/admin/registrations?msg=manual_success');
+          }
+        } else {
+          errorMsg = 'Gagal menambahkan pendaftar ke database.';
+        }
+      } else {
+        errorMsg = 'Mohon lengkapi data pendaftar (Event, Nama, Email, No. WA, dan Bukti Transfer wajib diisi).';
       }
     } else if (action === 'confirm' && idStr) {
       const id = parseInt(idStr.toString(), 10);
@@ -137,6 +212,7 @@ if (Astro.request.method === 'POST') {
 
 // Re-fetch data
 const registrationsDisplay = await getAllRegistrations();
+const allEvents = await getAllEvents();
 
 const formatPrice = (price: number) => {
   if (price === 0) return 'Gratis';
@@ -162,8 +238,8 @@ const parseName = (nameStr: string) => {
 
 <AdminLayout title="Data Pendaftar">
   <section class="admin-dashboard">
-    
-    <div class="container relative z-1" style="max-width: 98%; padding: 0 1rem;">
+    <div class="glow-spot admin-glow"></div>
+    <div class="container relative z-1 admin-container">
       <div class="admin-header">
         <div>
           <h1 class="admin-title">Pendaftar Masuk</h1>
@@ -175,19 +251,26 @@ const parseName = (nameStr: string) => {
       {errorMsg && <div class="alert alert-danger">{errorMsg}</div>}
 
       <div class="table-container glass">
-        <div class="table-header-flex">
-          <h2 class="table-title">Daftar Pendaftar Masuk</h2>
-          <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
-            <div class="filter-group" style="display: flex; gap: 0.5rem; align-items: center;">
-              <label style="font-size: 0.85rem; color: var(--text-muted);">Rentang Tanggal:</label>
-              <input type="date" id="filter-date-start" class="form-control" style="padding: 0.3rem 0.5rem; border-radius: 4px; background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); color: white;" />
-              <span style="color: var(--text-muted); font-size: 0.85rem;">-</span>
-              <input type="date" id="filter-date-end" class="form-control" style="padding: 0.3rem 0.5rem; border-radius: 4px; background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); color: white;" />
-              <button type="button" id="btn-reset-filter" class="btn btn-outline btn-sm" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;">Reset</button>
+        <div class="table-header-flex" style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem;">
+          <h2 class="table-title" style="margin: 0; min-width: 200px;">Daftar Pendaftar Masuk</h2>
+          <div class="header-actions" style="display: flex; flex-wrap: wrap; gap: 0.8rem; align-items: center; justify-content: flex-end; flex: 1;">
+            
+            <div class="filter-group" style="display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; background: rgba(255,255,255,0.03); padding: 0.4rem 0.8rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
+              <label class="filter-label" style="font-size: 0.8rem; color: #94a3b8; margin:0;">Filter Tgl:</label>
+              <div class="date-inputs" style="display: flex; align-items: center; gap: 0.4rem;">
+                <input type="date" id="filter-date-start" class="form-control date-input" style="padding: 0.3rem; font-size: 0.8rem; height: auto;" />
+                <span class="date-separator" style="color: #64748b; font-size: 0.8rem;">-</span>
+                <input type="date" id="filter-date-end" class="form-control date-input" style="padding: 0.3rem; font-size: 0.8rem; height: auto;" />
+              </div>
+              <button type="button" id="btn-reset-filter" class="btn btn-outline btn-sm reset-btn" style="padding: 0.3rem 0.6rem; font-size: 0.8rem; height: auto;">Reset</button>
             </div>
             
-            <button type="button" id="btn-export-csv" class="btn btn-primary btn-small" style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; padding: 0.5rem 1rem;">
-              ⬇️ Export Data
+            <button type="button" id="btn-export-csv" class="btn btn-outline btn-small export-btn" style="padding: 0.5rem 0.9rem; font-size: 0.85rem; display: flex; align-items: center; gap: 0.4rem;">
+              <span>⬇️</span> Export Data
+            </button>
+            
+            <button type="button" class="btn btn-primary btn-small" id="btn-add-manual" style="padding: 0.5rem 0.9rem; font-size: 0.85rem; display: flex; align-items: center; gap: 0.4rem; background: rgba(16, 185, 129, 0.15); color: #34d399; border-color: rgba(16, 185, 129, 0.4);">
+              <span style="font-size: 1rem;">➕</span> Tambah Pendaftar
             </button>
           </div>
         </div>
@@ -272,6 +355,124 @@ const parseName = (nameStr: string) => {
             <p>Belum ada data pendaftar masuk.</p>
           </div>
         )}
+      </div>
+
+      <!-- Modal Tambah Pendaftar Manual -->
+      <div id="addManualModal" class="modal-overlay">
+        <div class="modal-content glass" style="max-width: 900px; max-height: 90vh; overflow-y: auto; padding: 2rem;">
+          <div class="modal-header" style="position: sticky; top: -2rem; background: rgba(15, 23, 42, 0.98); z-index: 10; padding: 1.5rem 0 1rem; border-bottom: 1px solid rgba(255, 255, 255, 0.1); margin-bottom: 1.5rem; margin-top: -2rem;">
+            <h3 style="margin: 0; font-size: 1.5rem;">➕ Tambah Pendaftar Manual</h3>
+            <button class="close-modal" id="closeAddManualModal" style="position: absolute; right: 0; top: 1.5rem; background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer;">&times;</button>
+          </div>
+          <form method="POST" class="manual-add-form" enctype="multipart/form-data">
+            <input type="hidden" name="action" value="add_manual" />
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem;">
+              <div class="form-group">
+                <label for="manualEventId" style="display:block; margin-bottom:0.5rem;">Event <span class="text-danger">*</span></label>
+                <select name="eventId" id="manualEventId" class="form-control" required style="width:100%; padding:0.6rem; background:#1e293b; color:white; border:1px solid #334155; border-radius:4px;">
+                  <option value="">-- Pilih Event --</option>
+                  {allEvents.map((evt: any) => (
+                    <option value={evt.id}>{evt.title} ({evt.status})</option>
+                  ))}
+                </select>
+              </div>
+              
+              <div class="form-group">
+                <label for="manualEmail" style="display:block; margin-bottom:0.5rem;">Email Pemesan <span class="text-danger">*</span></label>
+                <input type="email" name="email" id="manualEmail" class="form-control" required style="width:100%; padding:0.6rem; background:#1e293b; color:white; border:1px solid #334155; border-radius:4px;" />
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem;">
+              <div class="form-group">
+                <label for="manualPhone" style="display:block; margin-bottom:0.5rem;">No. WhatsApp <span class="text-danger">*</span></label>
+                <input type="text" name="phone" id="manualPhone" class="form-control" placeholder="Contoh: 08123456789" required style="width:100%; padding:0.6rem; background:#1e293b; color:white; border:1px solid #334155; border-radius:4px;" />
+              </div>
+              
+              <div class="form-group">
+                <label for="manualReceipt" style="display:block; margin-bottom:0.5rem;">Unggah Bukti Transfer <span class="text-danger">*</span></label>
+                <input type="file" name="receipt" id="manualReceipt" accept="image/*" class="form-control" required style="width:100%; padding:0.5rem; background:#1e293b; color:white; border:1px solid #334155; border-radius:4px;" />
+              </div>
+            </div>
+
+            <div style="background: rgba(255,255,255,0.03); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border: 1px solid rgba(255,255,255,0.1);">
+              <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem; margin-bottom: 1.5rem;">
+                <h4 style="margin:0; font-size: 1.1rem;">Data Diri Peserta</h4>
+                <div>
+                  <button type="button" id="admin-add-participant-btn" class="btn btn-primary btn-sm" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">+ Tambah</button>
+                  <button type="button" id="admin-remove-participant-btn" class="btn btn-danger btn-sm" style="padding: 0.4rem 0.8rem; font-size: 0.8rem; display: none;">- Kurangi</button>
+                </div>
+              </div>
+              
+              <div id="admin-participants-container">
+                <!-- Participant 1 -->
+                <div class="admin-participant-block" data-index="1" style="margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px dashed rgba(255,255,255,0.1);">
+                  <h5 style="margin-top:0; margin-bottom:1rem; color: var(--accent);">Peserta 1</h5>
+                  
+                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 1rem;">
+                    <div class="form-group">
+                      <label style="display:block; margin-bottom:0.5rem;">Nama Lengkap (Sesuai ID) *</label>
+                      <input type="text" name="name_1" class="form-control" required style="width:100%; padding:0.6rem; background:#1e293b; color:white; border:1px solid #334155; border-radius:4px;" />
+                    </div>
+                    <div class="form-group">
+                      <label style="display:block; margin-bottom:0.5rem;">Nomor Identitas *</label>
+                      <input type="text" name="nomorId_1" class="form-control" required style="width:100%; padding:0.6rem; background:#1e293b; color:white; border:1px solid #334155; border-radius:4px;" />
+                    </div>
+                  </div>
+
+                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1.5rem;">
+                    <div class="form-group">
+                      <label style="display:block; margin-bottom:0.5rem;">Jenis Kelamin *</label>
+                      <select name="jenisKelamin_1" class="form-control" required style="width:100%; padding:0.6rem; background:#1e293b; color:white; border:1px solid #334155; border-radius:4px;">
+                        <option value="Pria">Pria</option>
+                        <option value="Wanita">Wanita</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label style="display:block; margin-bottom:0.5rem;">Jenis ID *</label>
+                      <select name="jenisId_1" class="form-control" required style="width:100%; padding:0.6rem; background:#1e293b; color:white; border:1px solid #334155; border-radius:4px;">
+                        <option value="KTP">KTP</option>
+                        <option value="SIM">SIM</option>
+                        <option value="KTM / Kartu Pelajar">KTM / Kartu Pelajar</option>
+                        <option value="Paspor">Paspor</option>
+                        <option value="Lainnya">Lainnya</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label style="display:block; margin-bottom:0.5rem;">Ukuran Jersey *</label>
+                      <select name="ukuranJersey_1" class="form-control" required style="width:100%; padding:0.6rem; background:#1e293b; color:white; border:1px solid #334155; border-radius:4px;">
+                        <option value="S">S</option>
+                        <option value="M">M</option>
+                        <option value="L">L</option>
+                        <option value="XL">XL</option>
+                        <option value="XXL">XXL</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem;">
+              <div class="form-group">
+                <label for="manualAmountDisplay" style="display:block; margin-bottom:0.5rem;">Total Bayar Keseluruhan (Rp)</label>
+                <input type="text" id="manualAmountDisplay" class="form-control" placeholder="Rp 0" style="width:100%; padding:0.6rem; background:#1e293b; color:white; border:1px solid #334155; border-radius:4px;" />
+                <input type="hidden" name="amount" id="manualAmountValue" value="0" />
+              </div>
+              
+              <div class="form-group">
+                <label for="manualPaymentMethod" style="display:block; margin-bottom:0.5rem;">Metode Pembayaran</label>
+                <input type="text" name="paymentMethod" id="manualPaymentMethod" class="form-control" value="Manual (Admin)" style="width:100%; padding:0.6rem; background:#1e293b; color:white; border:1px solid #334155; border-radius:4px;" />
+              </div>
+            </div>
+
+            <div class="form-actions" style="display:flex; justify-content:flex-end; gap:1rem; position: sticky; bottom: -2rem; background: rgba(15, 23, 42, 0.98); padding: 1.5rem 0; border-top: 1px solid rgba(255, 255, 255, 0.1); margin-top: 1rem; z-index: 10;">
+              <button type="button" class="btn btn-outline" id="cancelAddManual" style="padding: 0.6rem 1.5rem;">Batal</button>
+              <button type="submit" class="btn btn-primary" id="btn-submit-manual" style="padding: 0.6rem 1.5rem;">Simpan Pendaftar</button>
+            </div>
+          </form>
+        </div>
       </div>
 
       <!-- Modal Pratinjau Bukti Pembayaran -->
@@ -396,6 +597,147 @@ const parseName = (nameStr: string) => {
     });
   }
 
+  // Tambah Manual Logic
+  const addManualBtn = document.getElementById('btn-add-manual');
+  const addManualModal = document.getElementById('addManualModal');
+  const closeAddManualModal = document.getElementById('closeAddManualModal');
+  const cancelAddManual = document.getElementById('cancelAddManual');
+
+  if (addManualBtn && addManualModal) {
+    addManualBtn.addEventListener('click', () => {
+      addManualModal.classList.add('active');
+    });
+  }
+
+  const closeManualModalFunc = () => {
+    if (addManualModal) addManualModal.classList.remove('active');
+  };
+
+  if (closeAddManualModal) closeAddManualModal.addEventListener('click', closeManualModalFunc);
+  if (cancelAddManual) cancelAddManual.addEventListener('click', closeManualModalFunc);
+  
+  if (addManualModal) {
+    addManualModal.addEventListener('click', (e) => {
+      if (e.target === addManualModal) {
+        closeManualModalFunc();
+      }
+    });
+  }
+
+  // Dynamic Participants Logic
+  const addParticipantBtn = document.getElementById('admin-add-participant-btn');
+  const removeParticipantBtn = document.getElementById('admin-remove-participant-btn');
+  const participantsContainer = document.getElementById('admin-participants-container');
+  let participantCount = 1;
+  const TICKET_PRICE = 80000;
+  const ADMIN_FEE = 1000;
+
+  const updateAmount = () => {
+    const total = participantCount > 0 ? (participantCount * TICKET_PRICE) + ADMIN_FEE : 0;
+    const manualAmountDisplay = document.getElementById('manualAmountDisplay') as HTMLInputElement;
+    const manualAmountValue = document.getElementById('manualAmountValue') as HTMLInputElement;
+    if (manualAmountDisplay) manualAmountDisplay.value = 'Rp ' + total.toLocaleString('id-ID');
+    if (manualAmountValue) manualAmountValue.value = total.toString();
+  };
+  
+  updateAmount(); // Initialize
+
+  if (addParticipantBtn && removeParticipantBtn && participantsContainer) {
+    addParticipantBtn.addEventListener('click', () => {
+      participantCount++;
+      const index = participantCount;
+      const block = document.createElement('div');
+      block.className = 'admin-participant-block';
+      block.setAttribute('data-index', index.toString());
+      block.style.cssText = 'margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px dashed rgba(255,255,255,0.1);';
+      
+      block.innerHTML = `
+        <h5 style="margin-top:0; margin-bottom:1rem; color: var(--accent);">Peserta ${index}</h5>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 1rem;">
+          <div class="form-group">
+            <label style="display:block; margin-bottom:0.5rem;">Nama Lengkap (Sesuai ID) *</label>
+            <input type="text" name="name_${index}" class="form-control" required style="width:100%; padding:0.6rem; background:#1e293b; color:white; border:1px solid #334155; border-radius:4px;" />
+          </div>
+          <div class="form-group">
+            <label style="display:block; margin-bottom:0.5rem;">Nomor Identitas *</label>
+            <input type="text" name="nomorId_${index}" class="form-control" required style="width:100%; padding:0.6rem; background:#1e293b; color:white; border:1px solid #334155; border-radius:4px;" />
+          </div>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1.5rem;">
+          <div class="form-group">
+            <label style="display:block; margin-bottom:0.5rem;">Jenis Kelamin *</label>
+            <select name="jenisKelamin_${index}" class="form-control" required style="width:100%; padding:0.6rem; background:#1e293b; color:white; border:1px solid #334155; border-radius:4px;">
+              <option value="Pria">Pria</option>
+              <option value="Wanita">Wanita</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label style="display:block; margin-bottom:0.5rem;">Jenis ID *</label>
+            <select name="jenisId_${index}" class="form-control" required style="width:100%; padding:0.6rem; background:#1e293b; color:white; border:1px solid #334155; border-radius:4px;">
+              <option value="KTP">KTP</option>
+              <option value="SIM">SIM</option>
+              <option value="KTM / Kartu Pelajar">KTM / Kartu Pelajar</option>
+              <option value="Paspor">Paspor</option>
+              <option value="Lainnya">Lainnya</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label style="display:block; margin-bottom:0.5rem;">Ukuran Jersey *</label>
+            <select name="ukuranJersey_${index}" class="form-control" required style="width:100%; padding:0.6rem; background:#1e293b; color:white; border:1px solid #334155; border-radius:4px;">
+              <option value="S">S</option>
+              <option value="M">M</option>
+              <option value="L">L</option>
+              <option value="XL">XL</option>
+              <option value="XXL">XXL</option>
+            </select>
+          </div>
+        </div>
+      `;
+      participantsContainer.appendChild(block);
+      if (participantCount > 1) {
+        removeParticipantBtn.style.display = 'inline-block';
+      }
+      updateAmount();
+    });
+
+    removeParticipantBtn.addEventListener('click', () => {
+      if (participantCount > 1) {
+        const lastBlock = participantsContainer.querySelector(`.admin-participant-block[data-index="${participantCount}"]`);
+        if (lastBlock) {
+          participantsContainer.removeChild(lastBlock);
+          participantCount--;
+          if (participantCount <= 1) {
+            removeParticipantBtn.style.display = 'none';
+          }
+          updateAmount();
+        }
+      }
+    });
+  }
+
+  // Handle form submission loader
+  const addManualForm = document.querySelector('.manual-add-form');
+  if (addManualForm) {
+    addManualForm.addEventListener('submit', function() {
+      const submitBtn = document.getElementById('btn-submit-manual') as HTMLButtonElement;
+      if (submitBtn) {
+        submitBtn.innerHTML = '⏱️ Sedang Menyimpan...';
+        submitBtn.style.opacity = '0.7';
+        submitBtn.style.pointerEvents = 'none';
+      }
+      
+      const loader = document.createElement('div');
+      loader.innerHTML = `
+        <div style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:9999; display:flex; flex-direction:column; justify-content:center; align-items:center;">
+          <div style="width:50px; height:50px; border:5px solid #fff; border-top:5px solid var(--accent); border-radius:50%; animation:spin 1s linear infinite;"></div>
+          <style>@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
+          <p style="color:white; margin-top:20px; font-size:1.2rem; font-weight:bold;">Sedang Memproses & Mengirim Email E-Tiket...</p>
+        </div>
+      `;
+      document.body.appendChild(loader);
+    });
+  }
+
   // Modal Logic
   const viewProofBtns = document.querySelectorAll('.view-proof-btn');
   const modal = document.getElementById('receipt-modal');
@@ -511,6 +853,7 @@ const parseName = (nameStr: string) => {
     padding: 2rem 0;
     position: relative;
     min-height: calc(100vh - 72px);
+    overflow-x: clip; /* Fix for horizontal scrolling caused by glow */
   }
 
   .admin-glow {
@@ -570,6 +913,14 @@ const parseName = (nameStr: string) => {
     display: flex;
     flex-direction: column;
     height: calc(100vh - 240px); /* Leave ample room for header and padding to kill outer scrollbar */
+    overflow: hidden;
+  }
+
+  .table-scroll {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin-top: 1rem;
   }
 
   .table-header-flex {
@@ -579,6 +930,8 @@ const parseName = (nameStr: string) => {
     margin-bottom: 1.5rem;
     padding-bottom: 1rem;
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    flex-wrap: wrap;
+    gap: 1rem;
   }
 
   .table-title {
@@ -586,10 +939,73 @@ const parseName = (nameStr: string) => {
     margin: 0;
   }
 
+  .admin-container {
+    width: 100%;
+    max-width: 100%;
+    padding: 0 1.5rem;
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .filter-group {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    flex-wrap: wrap;
+    background: rgba(0, 0, 0, 0.15);
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .filter-label {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+
+  .date-inputs {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .date-input {
+    padding: 0.35rem 0.6rem;
+    border-radius: 6px;
+    background: rgba(15, 23, 42, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    font-size: 0.85rem;
+    outline: none;
+    transition: all 0.2s ease;
+  }
+
+  .date-input:focus {
+    border-color: var(--accent);
+    background: rgba(15, 23, 42, 0.8);
+  }
+
+  .date-separator {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+  }
+
+  .export-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    padding: 0.6rem 1.25rem;
+    white-space: nowrap;
+  }
+
   .table-scroll {
-    overflow-x: auto;
-    overflow-y: auto;
-    flex-grow: 1; /* Take up all remaining space in the container */
     min-height: 0; /* Needed for flexbox scrolling bug in some browsers */
   }
   
@@ -765,6 +1181,47 @@ const parseName = (nameStr: string) => {
     .admin-header {
       flex-direction: column;
       align-items: flex-start;
+    }
+    
+    .table-header-flex {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .header-actions {
+      width: 100%;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 1rem;
+    }
+    
+    .filter-group {
+      width: 100%;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0.75rem;
+    }
+    
+    .date-inputs {
+      width: 100%;
+      justify-content: space-between;
+    }
+    
+    .date-input {
+      flex: 1;
+      width: 100%;
+    }
+
+    .reset-btn {
+      width: 100%;
+    }
+    
+    .export-btn {
+      width: 100%;
+      justify-content: center;
+    }
+    .admin-container {
+      padding: 0 1rem;
     }
   }
 </style>

@@ -1,6 +1,6 @@
 ---
-import AdminLayout from "../../layouts/AdminLayout.astro";
-import { getAllEvents, getAllRegistrations } from "../../lib/db";
+import AdminLayout from "../../../layouts/AdminLayout.astro";
+import { getAllEvents, getAllRegistrations } from "../../../lib/db";
 
 // Fetch data awal untuk statistik
 const events = await getAllEvents();
@@ -89,6 +89,7 @@ const formatPrice = (price: number) => {
   .admin-dashboard {
     padding: 3rem 0;
     position: relative;
+    overflow-x: clip;
     min-height: calc(100vh - 72px - 300px);
   }
 
