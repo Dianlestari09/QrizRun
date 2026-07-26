@@ -92,7 +92,12 @@ const isFull = event.registered >= event.slots;
 const isFinished = event.status === 'FINISHED';
 ---
 
-<Layout title={event.title} description={event.description}>
+<Layout
+  title={`${event.title} - Pendaftaran Resmi`}
+  description={`Daftar ${event.title} di Kediri Town Square pada 16 Agustus 2026. Harga tiket Rp 150.000 dengan benefit Jersey, Medali Finisher, BIB, dan Doorprize.`}
+  image={event.imageUrl}
+  schemaType="Event"
+>
   <section class="event-detail-section">
     
     <div class="container relative z-1">

@@ -1,0 +1,21 @@
+# Robots.txt for Syiar QRIS Run 2026
+# Domain: https://syiarqrisrun.vercel.app
+
+User-agent: *
+Allow: /
+Allow: /jersey
+Allow: /medali
+Allow: /rute
+Allow: /panduan
+Allow: /regulasi
+Allow: /kontak
+Allow: /events/
+
+# Disallow private & admin areas
+Disallow: /mlebuodewe/
+Disallow: /checkout/
+Disallow: /ticket/
+Disallow: /api/
+
+# Sitemap location
+Sitemap: https://syiarqrisrun.vercel.app/sitemap.xml
