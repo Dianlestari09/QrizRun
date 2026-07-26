@@ -3,8 +3,9 @@ import Layout from '../layouts/Layout.astro';
 import CTA from '../components/CTA.astro';
 ---
 
-<Layout title="Panduan Pendaftaran - Syiar QRIS Run 2026">
-  <section class="page-hero" style="background: none; border-bottom: 1px solid rgba(255,255,255,0.05);">
+<Layout title="Panduan Pendaftaran">
+  <section class="page-hero">
+    <div class="hero-bg-overlay"></div>
     <div class="container hero-content">
       <h1 class="page-title">Panduan Pendaftaran</h1>
       <p class="page-subtitle">
@@ -19,10 +20,10 @@ import CTA from '../components/CTA.astro';
     </div>
   </section>
 
-  <section class="section-padding" style="background-color: var(--bg-primary);">
-    <div class="container" style="max-width: 800px; margin: 0 auto;">
+  <section class="section-padding" style="background-color: #ffffff;">
+    <div class="container" style="max-width: 900px; margin: 0 auto; padding: 4rem 0;">
       
-      <div class="guide-step">
+      <div class="guide-step regulasi-card">
         <div class="step-number">1</div>
         <div class="step-content">
           <h3>Pilih Tiket & Isi Data Diri</h3>
@@ -32,7 +33,7 @@ import CTA from '../components/CTA.astro';
         </div>
       </div>
 
-      <div class="guide-step">
+      <div class="guide-step regulasi-card">
         <div class="step-number">2</div>
         <div class="step-content">
           <h3>Scan QRIS & Bayar</h3>
@@ -47,7 +48,7 @@ import CTA from '../components/CTA.astro';
         </div>
       </div>
 
-      <div class="guide-step">
+      <div class="guide-step regulasi-card">
         <div class="step-number">3</div>
         <div class="step-content">
           <h3>Unggah Bukti Transfer</h3>
@@ -66,7 +67,7 @@ import CTA from '../components/CTA.astro';
         </div>
       </div>
 
-      <div class="guide-step">
+      <div class="guide-step regulasi-card">
         <div class="step-number">5</div>
         <div class="step-content">
           <h3>Bagaimana Jika Pembayaran Kadaluarsa?</h3>
@@ -103,9 +104,13 @@ import CTA from '../components/CTA.astro';
 <style>
   .page-hero {
     position: relative;
-    padding: 100px 0 40px;
+    padding: 120px 0 60px;
     text-align: center;
+    background-image: url('/bg_hero.webp'); 
+    background-size: cover;
+    background-position: center;
     color: var(--neutral-white);
+    min-height: 250px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -167,48 +172,50 @@ import CTA from '../components/CTA.astro';
   .guide-step {
     display: flex;
     gap: 1.5rem;
-    padding: 1.5rem 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  }
-  
-  .guide-step:last-child {
-    border-bottom: none;
+    padding: 2.5rem;
+    margin-bottom: 2rem;
+    background-color: #f8fafc;
+    border-radius: var(--radius-md);
+    border-left: 6px solid #6366f1;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    color: #333333;
   }
 
   .step-number {
     flex-shrink: 0;
-    width: 40px;
-    height: 40px;
-    background: rgba(250, 204, 21, 0.1);
-    color: var(--accent);
-    border: 1px solid var(--accent);
+    width: 45px;
+    height: 45px;
+    background: rgba(99, 102, 241, 0.1);
+    color: #6366f1;
+    border: 2px solid #6366f1;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.2rem;
-    font-weight: 700;
+    font-size: 1.3rem;
+    font-weight: 800;
   }
 
   .step-content {
     flex-grow: 1;
   }
 
-  .step-content h3 {
+  .regulasi-card-title {
     font-size: 1.5rem;
-    color: var(--text-primary);
-    margin-bottom: 1rem;
-    margin-top: 0.2rem;
+    font-weight: 800;
+    color: #1f2937;
+    margin-bottom: 1.5rem;
+    margin-top: 0;
   }
 
-  .step-content p {
-    color: var(--text-secondary);
+  .text-dark {
+    color: #4b5563;
     line-height: 1.7;
     margin-bottom: 1rem;
   }
 
   .step-list {
-    color: var(--text-secondary);
+    color: #4b5563;
     line-height: 1.7;
     margin-bottom: 1.5rem;
     padding-left: 1.2rem;
@@ -219,7 +226,7 @@ import CTA from '../components/CTA.astro';
   }
 
   .step-list li strong {
-    color: var(--text-primary);
+    color: #111827;
   }
 
   .guide-image {
@@ -237,6 +244,9 @@ import CTA from '../components/CTA.astro';
     .guide-step {
       flex-direction: column;
       gap: 1rem;
+      padding: 1.5rem;
+      margin-left: 1rem;
+      margin-right: 1rem;
     }
   }
 </style>
