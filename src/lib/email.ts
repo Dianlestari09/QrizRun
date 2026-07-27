@@ -173,7 +173,7 @@ export async function sendTicketConfirmedEmail(params: {
   const ticketUrl = `${BASE_URL}/ticket/${params.regId}`;
 
   const ticketCode = `TICKET:QRISRUN-REG-${params.regId}:EMAIL-${params.to}`;
-  const qrCodeUrl = `https://quickchart.io/qr?size=200&text=${encodeURIComponent(ticketCode)}&ecLevel=M`;
+  const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(ticketCode)}`;
 
   let formattedName = params.name;
   let participantListHtml = '';

@@ -10,6 +10,10 @@ interface Props {
   noindex?: boolean;
 }
 
+// Cek apakah pendaftaran sudah dibuka (31 Juli 2026, 08:00 WIB)
+const registrationOpenDate = new Date('2026-07-31T08:00:00+07:00');
+const isRegistrationOpen = new Date() >= registrationOpenDate;
+
 const {
   title,
   description = "Syiar QRIS Run 2026 adalah ajang lari resmi yang diselenggarakan oleh Bank Indonesia Kediri di Kediri Town Square pada 16 Agustus 2026. Daftar sekarang untuk mendukung digitalisasi pembayaran QRIS dan gaya hidup sehat!",
@@ -73,8 +77,11 @@ const {
         </nav>
 
         <div class="header-actions">
-          <a href="/events/1" class="nav-link btn-buy-ticket desktop-only">Daftar Sekarang</a
-          >
+          {isRegistrationOpen ? (
+            <a href="/events/1" class="nav-link btn-buy-ticket desktop-only">Daftar Sekarang</a>
+          ) : (
+            <button class="nav-link btn-buy-ticket desktop-only" style="background-color: #6b7280; color: white; cursor: not-allowed; opacity: 0.8; border: none;" disabled>Dibuka 31 Juli 2026</button>
+          )}
           <button
             class="mobile-menu-btn"
             id="mobile-menu-toggle"
@@ -101,7 +108,12 @@ const {
         </div>
         <a href="/regulasi" class="mobile-nav-link">Regulasi</a>
         <a href="/kontak" class="mobile-nav-link">Kontak</a>
-        <a href="/events/1" class="mobile-nav-link" style="background-color: var(--accent-bright); color: var(--bg-primary) !important; padding: 0.8rem 1rem; border-radius: 12px; text-align: center; margin-top: 1rem; border-bottom: none; font-weight: 800; display: block; white-space: nowrap;">Daftar Sekarang</a>
+        <!-- <a href="/events/1" class="mobile-nav-link" style="background-color: var(--accent-bright); color: var(--bg-primary) !important; padding: 0.8rem 1rem; border-radius: 12px; text-align: center; margin-top: 1rem; border-bottom: none; font-weight: 800; display: block; white-space: nowrap;">Daftar Sekarang</a> -->
+        {isRegistrationOpen ? (
+          <a href="/events/1" class="mobile-nav-link" style="background-color: var(--accent-bright); color: var(--bg-primary) !important; padding: 0.8rem 1rem; border-radius: 12px; text-align: center; margin-top: 1rem; border-bottom: none; font-weight: 800; display: block; white-space: nowrap;">Daftar Sekarang</a>
+        ) : (
+          <button class="mobile-nav-link" style="background-color: #6b7280; color: white !important; padding: 0.8rem 1rem; border-radius: 12px; text-align: center; margin-top: 1rem; border-bottom: none; font-weight: 800; display: block; white-space: nowrap; cursor: not-allowed; opacity: 0.8; width: 100%; border: none;" disabled>Dibuka 31 Juli 2026</button>
+        )}
       </div>
     </header>
 

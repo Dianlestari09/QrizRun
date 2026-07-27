@@ -224,16 +224,15 @@ export async function getRegistrationById(id: number): Promise<Registration | un
 }
 
 export async function getAllRegistrations(): Promise<(Registration & { eventTitle: string })[]> {
-  // Auto-cleanup: Hapus pendaftar PENDING tanpa bukti transfer yang sudah lewat 30 menit
-  const thirtyMinsAgo = new Date(Date.now() - 30 * 60 * 1000).toISOString();
+  // Auto-cleanup: Hapus pendaftar PENDING tanpa bukti transfer yang sudah lewat 20 menit
+  const twentyMinsAgo = new Date(Date.now() - 20 * 60 * 1000).toISOString();
   supabase
     .from('registrations')
     .delete()
     .eq('status', 'PENDING')
     .is('payment_proof', null)
-    .lt('created_at', thirtyMinsAgo)
-    .then(() => {})
-    .catch(() => {});
+    .lt('created_at', twentyMinsAgo)
+    .then(() => {}, () => {});
 
   const { data, error } = await supabase
     .from('registrations')

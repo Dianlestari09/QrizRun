@@ -13,12 +13,18 @@ if (Astro.request.method === 'POST') {
     
     // Parse ID dari QR Code teks format: "TICKET:QRISRUN-REG-[ID]:..."
     // Atau jika panitia ketik manual angka ID nya saja
-    let regId = parseInt(rawTicketId, 10);
+    let regId = NaN;
     
     if (rawTicketId.startsWith('TICKET:QRISRUN-REG-')) {
       const parts = rawTicketId.split(':');
       const regIdPart = parts[1].replace('QRISRUN-REG-', '');
       regId = parseInt(regIdPart, 10);
+    } else {
+      // Ekstrak hanya angka dari input jika user mengetik "#REG-5" atau "REG 5"
+      const match = rawTicketId.match(/\d+/);
+      if (match) {
+        regId = parseInt(match[0], 10);
+      }
     }
 
     if (isNaN(regId)) {

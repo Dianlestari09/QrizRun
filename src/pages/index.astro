@@ -8,6 +8,10 @@ import { getUpcomingEvents, getFinishedEvents } from "../lib/db";
 const upcomingEvents = await getUpcomingEvents();
 const finishedEvents = await getFinishedEvents();
 
+// Cek apakah pendaftaran sudah dibuka (31 Juli 2026, 08:00 WIB)
+const registrationOpenDate = new Date('2026-07-31T08:00:00+07:00');
+const isRegistrationOpen = new Date() >= registrationOpenDate;
+
 // Ambil list kategori unik untuk filter
 const categories = [
   "Semua",
@@ -83,11 +87,17 @@ const categories = [
           >
         </div>
 
-        <a
-          href="/events/1"
-          class="btn btn-accent btn-large"
-          style="margin-top: 2rem; margin-bottom: 2rem;">Daftar Sekarang</a
-        >
+        {isRegistrationOpen ? (
+          <a
+            href="/events/1"
+            class="btn btn-accent btn-large"
+            style="margin-top: 2rem; margin-bottom: 2rem;">Daftar Sekarang</a>
+        ) : (
+          <button
+            class="btn btn-large"
+            style="margin-top: 2rem; margin-bottom: 2rem; background-color: #6b7280; color: white; cursor: not-allowed; opacity: 0.8;"
+            disabled>Dibuka 31 Juli 2026</button>
+        )}
 
         <p class="kuota-text" style="color: white;">
           Kuota terbatas! Daftar Sekarang Juga Sebelum Kuota Terpenuhi.
