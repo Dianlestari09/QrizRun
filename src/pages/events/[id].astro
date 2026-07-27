@@ -62,8 +62,8 @@ if (Astro.request.method === 'POST') {
       });
 
       if (regId) {
-        // Gunakan ID Registrasi ditambah 566 sebagai kode unik (mulai dari 567)
-        const uniqueCode = 566 + regId;
+        // Gunakan ID Registrasi sebagai kode unik (mulai dari 1)
+        const uniqueCode = regId;
         const finalAmount = totalBase + uniqueCode;
         await updateRegistrationAmount(regId, finalAmount);
         
