@@ -62,8 +62,9 @@ if (Astro.request.method === 'POST') {
       });
 
       if (regId) {
-        // Gunakan ID Registrasi sebagai kode unik
-        const finalAmount = totalBase + regId;
+        // Gunakan ID Registrasi ditambah 566 sebagai kode unik (mulai dari 567)
+        const uniqueCode = 566 + regId;
+        const finalAmount = totalBase + uniqueCode;
         await updateRegistrationAmount(regId, finalAmount);
         
         return Astro.redirect(`/checkout/${regId}`);
@@ -259,7 +260,9 @@ const isFinished = event.status === 'FINISHED';
                 <div class="price-header" style="margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px dashed rgba(255,255,255,0.2);">
                   <span class="label">Biaya Pendaftaran</span>
                   <span class="value price-tag">{formatPrice(event.price)}</span>
-                  <span style="font-size: 0.85rem; color: #64748b; margin-top: 0.25rem;">(Termasuk donasi sebesar Rp 30.000)</span>
+                  <span style="font-size: 0.85rem; color: #64748b; margin-top: 0.25rem;">(Termasuk <strong>Wakaf Produktif</strong> sebesar Rp 30.000)</span>
+                  <span style="font-size: 0.85rem; color: #64748b; margin-top: 0.25rem;">(Belum termasuk biaya penanganan 0,7%)</span>
+
                 </div>
                 
                 <h4 class="form-section-title">Ringkasan Pesanan</h4>

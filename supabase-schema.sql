@@ -92,6 +92,20 @@ VALUES
   180
 );
 
+-- 5. BUAT TABEL ADMINS DAN SEED DATA (3 Admin)
+DROP TABLE IF EXISTS admins;
+CREATE TABLE admins (
+  id SERIAL PRIMARY KEY,
+  username TEXT NOT NULL UNIQUE,
+  password TEXT NOT NULL
+);
+
+INSERT INTO admins (username, password)
+VALUES 
+('admin1', 'admin123'),
+('admin2', 'admin123'),
+('admin3', 'admin123');
+
 -- ==========================================
 -- QUERY CONTOH (Untuk Referensi Manual)
 -- ==========================================

@@ -28,8 +28,8 @@ const totalPay = registration.amount;
 // Hitung Batas Waktu Pembayaran 1 Menit × 60 Detik × 1000 Milidetik
 //Baris 45: errorMsg = 'Pendaftaran Anda sudah kadaluarsa (melebihi batas waktu 1 menit)...'
 //Baris 259: <p>Batas waktu pembayaran 1 menit telah habis...</p>
-// Hitung Batas Waktu Pembayaran 30 Menit × 60 Detik × 1000 Milidetik
-const limitTime = new Date(registration.createdAt).getTime() + (30 * 60 * 1000);
+// Hitung Batas Waktu Pembayaran 20 Menit × 60 Detik × 1000 Milidetik
+const limitTime = new Date(registration.createdAt).getTime() + (20 * 60 * 1000);
 const isExpired = registration.status === 'EXPIRED' || (registration.status === 'PENDING' && Date.now() > limitTime);
 
 let successMsg = '';
@@ -56,7 +56,7 @@ if (Astro.url.searchParams.get('uploaded') === '1') {
 if (Astro.request.method === 'POST') {
   try {
     if (isExpired) {
-      errorMsg = 'Pendaftaran Anda sudah kadaluarsa (melebihi batas waktu 30 menit)! Jika terlanjur transfer, silakan konfirmasi via WhatsApp.';
+      errorMsg = 'Pendaftaran Anda sudah kadaluarsa (melebihi batas waktu 20 menit)! Jika terlanjur transfer, silakan konfirmasi via WhatsApp.';
     } else {
       const formData = await Astro.request.formData();
       const receiptFile = formData.get('receipt') as File;
@@ -217,7 +217,10 @@ if (staticQrisPayload) {
           
           <div class="summary-total">
             <span class="total-label">Total Bayar</span>
-            <span class="total-val">{formatPrice(totalPay)}</span>
+            <div style="display: flex; flex-direction: column; align-items: flex-end;">
+              <span class="total-val">{formatPrice(totalPay)}</span>
+              <span style="font-size: 0.75rem; color: #64748b; margin-top: 0.25rem;">(Termasuk biaya penanganan)</span>
+            </div>
           </div>
 
           <div class="upload-area">
@@ -228,7 +231,7 @@ if (staticQrisPayload) {
               <div class="waiting-box expired glass">
                 <div class="waiting-icon">❌</div>
                 <h3>Pendaftaran Kadaluarsa</h3>
-                <p>Batas waktu pembayaran 30 menit telah habis. Pendaftaran otomatis dibatalkan. Jika terlanjur transfer, silakan konfirmasi via WhatsApp.</p>
+                <p>Batas waktu pembayaran 20 menit telah habis. Pendaftaran otomatis dibatalkan. Jika terlanjur transfer, silakan konfirmasi via WhatsApp.</p>
                 <a href="/" class="btn btn-primary btn-full">Kembali ke Beranda</a>
               </div>
             ) : registration.paymentProof ? (
